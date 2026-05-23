@@ -1,0 +1,623 @@
+[
+  {
+    "id": "case_001",
+    "category": "should_save_fact",
+    "conversation": [
+      {"role": "user", "content": "My name is Aman."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "fact",
+      "memory_content_contains": ["Aman"]
+    }
+  },
+  {
+    "id": "case_002",
+    "category": "should_save_fact",
+    "conversation": [
+      {"role": "user", "content": "I live in Bangalore, India."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "fact",
+      "memory_content_contains": ["Bangalore"]
+    }
+  },
+  {
+    "id": "case_003",
+    "category": "should_save_fact",
+    "conversation": [
+      {"role": "user", "content": "I work as a backend engineer at Acme Corp."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "fact",
+      "memory_content_contains": ["Acme"]
+    }
+  },
+  {
+    "id": "case_004",
+    "category": "should_save_fact",
+    "conversation": [
+      {"role": "user", "content": "I graduated from IIT Delhi in 2018."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "fact",
+      "memory_content_contains": ["IIT Delhi"]
+    }
+  },
+  {
+    "id": "case_005",
+    "category": "should_save_fact",
+    "conversation": [
+      {"role": "user", "content": "My birthday is on March 15th."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "fact",
+      "memory_content_contains": ["March"]
+    }
+  },
+  {
+    "id": "case_006",
+    "category": "should_save_fact",
+    "conversation": [
+      {"role": "user", "content": "I have two younger brothers."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "fact",
+      "memory_content_contains": ["brother"]
+    }
+  },
+  {
+    "id": "case_007",
+    "category": "should_save_fact",
+    "conversation": [
+      {"role": "user", "content": "My phone number is 555-867-5309."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "fact",
+      "memory_content_contains": ["555-867-5309"]
+    }
+  },
+  {
+    "id": "case_008",
+    "category": "should_save_fact",
+    "conversation": [
+      {"role": "user", "content": "I'm 28 years old."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "fact",
+      "memory_content_contains": ["28"]
+    }
+  },
+  {
+    "id": "case_009",
+    "category": "should_save_fact",
+    "conversation": [
+      {"role": "user", "content": "I drive a silver Toyota Camry."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "fact",
+      "memory_content_contains": ["Toyota"]
+    }
+  },
+  {
+    "id": "case_010",
+    "category": "should_save_fact",
+    "conversation": [
+      {"role": "user", "content": "My email address is aman@example.com."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "fact",
+      "memory_content_contains": ["aman@example.com"]
+    }
+  },
+  {
+    "id": "case_011",
+    "category": "should_save_preference",
+    "conversation": [
+      {"role": "user", "content": "I prefer dark mode in all my apps."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "preference",
+      "memory_content_contains": ["dark mode"]
+    }
+  },
+  {
+    "id": "case_012",
+    "category": "should_save_preference",
+    "conversation": [
+      {"role": "user", "content": "I really hate cilantro — tastes like soap to me."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "preference",
+      "memory_content_contains": ["cilantro"]
+    }
+  },
+  {
+    "id": "case_013",
+    "category": "should_save_preference",
+    "conversation": [
+      {"role": "user", "content": "I'd rather use Python than JavaScript for backend work."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "preference",
+      "memory_content_contains": ["Python"]
+    }
+  },
+  {
+    "id": "case_014",
+    "category": "should_save_preference",
+    "conversation": [
+      {"role": "user", "content": "I do my best focused work in the early mornings."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "preference",
+      "memory_content_contains": ["morning"]
+    }
+  },
+  {
+    "id": "case_015",
+    "category": "should_save_preference",
+    "conversation": [
+      {"role": "user", "content": "I'm a huge fan of sci-fi novels, especially Ted Chiang."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "preference",
+      "memory_content_contains": ["sci-fi"]
+    }
+  },
+  {
+    "id": "case_016",
+    "category": "should_save_preference",
+    "conversation": [
+      {"role": "user", "content": "I don't drink coffee at all — only green tea."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "preference",
+      "memory_content_contains": ["coffee"]
+    }
+  },
+  {
+    "id": "case_017",
+    "category": "should_save_preference",
+    "conversation": [
+      {"role": "user", "content": "I prefer vim over vscode for editing."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "preference",
+      "memory_content_contains": ["vim"]
+    }
+  },
+  {
+    "id": "case_018",
+    "category": "should_save_preference",
+    "conversation": [
+      {"role": "user", "content": "I'm vegetarian — no meat or fish."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "preference",
+      "memory_content_contains": ["vegetarian"]
+    }
+  },
+  {
+    "id": "case_019",
+    "category": "should_save_episodic",
+    "conversation": [
+      {"role": "user", "content": "I just got promoted to senior engineer today!"}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "episodic",
+      "memory_content_contains": ["promoted"]
+    }
+  },
+  {
+    "id": "case_020",
+    "category": "should_save_episodic",
+    "conversation": [
+      {"role": "user", "content": "I'm flying to Tokyo next Tuesday for a week-long trip."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "episodic",
+      "memory_content_contains": ["Tokyo"]
+    }
+  },
+  {
+    "id": "case_021",
+    "category": "should_save_episodic",
+    "conversation": [
+      {"role": "user", "content": "I had a really tough one-on-one with my manager this morning."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "episodic",
+      "memory_content_contains": ["manager"]
+    }
+  },
+  {
+    "id": "case_022",
+    "category": "should_save_episodic",
+    "conversation": [
+      {"role": "user", "content": "I finished reading Project Hail Mary yesterday — loved it."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "episodic",
+      "memory_content_contains": ["Project Hail Mary"]
+    }
+  },
+  {
+    "id": "case_023",
+    "category": "should_save_episodic",
+    "conversation": [
+      {"role": "user", "content": "I'm taking vacation from June 15 to June 25."}
+    ],
+    "expected": {
+      "should_save": true,
+      "memory_type": "episodic",
+      "memory_content_contains": ["vacation"]
+    }
+  },
+  {
+    "id": "case_024",
+    "category": "should_not_save",
+    "conversation": [
+      {"role": "user", "content": "What's the capital of France?"}
+    ],
+    "expected": {
+      "should_save": false
+    }
+  },
+  {
+    "id": "case_025",
+    "category": "should_not_save",
+    "conversation": [
+      {"role": "user", "content": "Hey, how's it going?"}
+    ],
+    "expected": {
+      "should_save": false
+    }
+  },
+  {
+    "id": "case_026",
+    "category": "should_not_save",
+    "conversation": [
+      {"role": "user", "content": "Can you explain how recursion works?"}
+    ],
+    "expected": {
+      "should_save": false
+    }
+  },
+  {
+    "id": "case_027",
+    "category": "should_not_save",
+    "conversation": [
+      {"role": "user", "content": "What's 234 multiplied by 17?"}
+    ],
+    "expected": {
+      "should_save": false
+    }
+  },
+  {
+    "id": "case_028",
+    "category": "should_not_save",
+    "conversation": [
+      {"role": "user", "content": "Tell me a short joke."}
+    ],
+    "expected": {
+      "should_save": false
+    }
+  },
+  {
+    "id": "case_029",
+    "category": "should_not_save",
+    "conversation": [
+      {"role": "user", "content": "Thanks, that was helpful."}
+    ],
+    "expected": {
+      "should_save": false
+    }
+  },
+  {
+    "id": "case_030",
+    "category": "should_not_save",
+    "conversation": [
+      {"role": "user", "content": "Hmm, okay."}
+    ],
+    "expected": {
+      "should_save": false
+    }
+  },
+  {
+    "id": "case_031",
+    "category": "should_not_save",
+    "conversation": [
+      {"role": "user", "content": "Write a Python function that reverses a string."}
+    ],
+    "expected": {
+      "should_save": false
+    }
+  },
+  {
+    "id": "case_032",
+    "category": "should_not_save",
+    "conversation": [
+      {"role": "user", "content": "What time zone is Tokyo in?"}
+    ],
+    "expected": {
+      "should_save": false
+    }
+  },
+  {
+    "id": "case_033",
+    "category": "should_not_save",
+    "conversation": [
+      {"role": "user", "content": "Who was the first president of the United States?"}
+    ],
+    "expected": {
+      "should_save": false
+    }
+  },
+  {
+    "id": "case_034",
+    "category": "contradiction_update",
+    "setup_memories": [
+      {"content": "User's name is Aman.", "type": "fact"}
+    ],
+    "conversation": [
+      {"role": "user", "content": "Actually, my name is Raj, not Aman. Sorry for the mix-up earlier."}
+    ],
+    "expected": {
+      "should_save": true,
+      "update": true,
+      "memory_content_contains": ["Raj"]
+    }
+  },
+  {
+    "id": "case_035",
+    "category": "contradiction_update",
+    "setup_memories": [
+      {"content": "User lives in Bangalore.", "type": "fact"}
+    ],
+    "conversation": [
+      {"role": "user", "content": "I just moved from Bangalore to Mumbai for a new job."}
+    ],
+    "expected": {
+      "should_save": true,
+      "update": true,
+      "memory_content_contains": ["Mumbai"]
+    }
+  },
+  {
+    "id": "case_036",
+    "category": "contradiction_update",
+    "setup_memories": [
+      {"content": "User works at Acme Corp.", "type": "fact"}
+    ],
+    "conversation": [
+      {"role": "user", "content": "I left Acme last month — I'm at Globex now."}
+    ],
+    "expected": {
+      "should_save": true,
+      "update": true,
+      "memory_content_contains": ["Globex"]
+    }
+  },
+  {
+    "id": "case_037",
+    "category": "contradiction_update",
+    "setup_memories": [
+      {"content": "User prefers dark mode.", "type": "preference"}
+    ],
+    "conversation": [
+      {"role": "user", "content": "I've switched back to light mode — dark mode hurts my eyes now."}
+    ],
+    "expected": {
+      "should_save": true,
+      "update": true,
+      "memory_content_contains": ["light mode"]
+    }
+  },
+  {
+    "id": "case_038",
+    "category": "contradiction_update",
+    "setup_memories": [
+      {"content": "User dislikes cilantro.", "type": "preference"}
+    ],
+    "conversation": [
+      {"role": "user", "content": "Funny enough, I've grown to like cilantro lately."}
+    ],
+    "expected": {
+      "should_save": true,
+      "update": true,
+      "memory_content_contains": ["like", "cilantro"]
+    }
+  },
+  {
+    "id": "case_039",
+    "category": "contradiction_update",
+    "setup_memories": [
+      {"content": "User is 28 years old.", "type": "fact"}
+    ],
+    "conversation": [
+      {"role": "user", "content": "I turned 29 last week."}
+    ],
+    "expected": {
+      "should_save": true,
+      "update": true,
+      "memory_content_contains": ["29"]
+    }
+  },
+  {
+    "id": "case_040",
+    "category": "contradiction_update",
+    "setup_memories": [
+      {"content": "User drives a silver Toyota Camry.", "type": "fact"}
+    ],
+    "conversation": [
+      {"role": "user", "content": "I sold the Camry — I'm driving a Tesla Model 3 now."}
+    ],
+    "expected": {
+      "should_save": true,
+      "update": true,
+      "memory_content_contains": ["Tesla"]
+    }
+  },
+  {
+    "id": "case_041",
+    "category": "retrieval_relevance",
+    "setup_memories": [
+      {"content": "User's name is Aman.", "type": "fact"}
+    ],
+    "conversation": [
+      {"role": "user", "content": "Quick check — what's my name?"}
+    ],
+    "expected": {
+      "should_save": false,
+      "response_contains": ["Aman"]
+    }
+  },
+  {
+    "id": "case_042",
+    "category": "retrieval_relevance",
+    "setup_memories": [
+      {"content": "User prefers Python over JavaScript for backend work.", "type": "preference"}
+    ],
+    "conversation": [
+      {"role": "user", "content": "I need to write a backend script. What language should I use?"}
+    ],
+    "expected": {
+      "should_save": false,
+      "response_contains": ["Python"]
+    }
+  },
+  {
+    "id": "case_043",
+    "category": "retrieval_relevance",
+    "setup_memories": [
+      {"content": "User is vegetarian.", "type": "preference"}
+    ],
+    "conversation": [
+      {"role": "user", "content": "Recommend a restaurant for dinner tonight."}
+    ],
+    "expected": {
+      "should_save": false,
+      "response_contains": ["vegetarian"]
+    }
+  },
+  {
+    "id": "case_044",
+    "category": "retrieval_relevance",
+    "setup_memories": [
+      {"content": "User lives in Bangalore.", "type": "fact"}
+    ],
+    "conversation": [
+      {"role": "user", "content": "Where do I live again?"}
+    ],
+    "expected": {
+      "should_save": false,
+      "response_contains": ["Bangalore"]
+    }
+  },
+  {
+    "id": "case_045",
+    "category": "retrieval_relevance",
+    "setup_memories": [
+      {"content": "User works at Acme Corp as a backend engineer.", "type": "fact"}
+    ],
+    "conversation": [
+      {"role": "user", "content": "What do I do for work?"}
+    ],
+    "expected": {
+      "should_save": false,
+      "response_contains": ["Acme"]
+    }
+  },
+  {
+    "id": "case_046",
+    "category": "retrieval_relevance",
+    "setup_memories": [
+      {"content": "User dislikes cilantro.", "type": "preference"}
+    ],
+    "conversation": [
+      {"role": "user", "content": "Suggest a Mexican recipe I could cook tonight."}
+    ],
+    "expected": {
+      "should_save": false,
+      "response_contains": ["cilantro"]
+    }
+  },
+  {
+    "id": "case_047",
+    "category": "retrieval_relevance",
+    "setup_memories": [
+      {"content": "User's birthday is March 15.", "type": "fact"}
+    ],
+    "conversation": [
+      {"role": "user", "content": "When's my birthday?"}
+    ],
+    "expected": {
+      "should_save": false,
+      "response_contains": ["March 15"]
+    }
+  },
+  {
+    "id": "case_048",
+    "category": "retrieval_relevance",
+    "setup_memories": [
+      {"content": "User drives a silver Toyota Camry.", "type": "fact"}
+    ],
+    "conversation": [
+      {"role": "user", "content": "What car do I drive?"}
+    ],
+    "expected": {
+      "should_save": false,
+      "response_contains": ["Toyota"]
+    }
+  },
+  {
+    "id": "case_049",
+    "category": "retrieval_relevance",
+    "setup_memories": [
+      {"content": "User has two younger brothers.", "type": "fact"}
+    ],
+    "conversation": [
+      {"role": "user", "content": "How many siblings do I have?"}
+    ],
+    "expected": {
+      "should_save": false,
+      "response_contains": ["two", "2"]
+    }
+  },
+  {
+    "id": "case_050",
+    "category": "retrieval_relevance",
+    "setup_memories": [
+      {"content": "User does their best focused work in the early mornings.", "type": "preference"}
+    ],
+    "conversation": [
+      {"role": "user", "content": "When should I schedule my deep work block?"}
+    ],
+    "expected": {
+      "should_save": false,
+      "response_contains": ["morning"]
+    }
+  }
+]
