@@ -31,10 +31,13 @@ from langgraph.store.base import BaseStore
 from pydantic import BaseModel, Field, model_validator
 
 from sage_agent.model import get_model
-from sage_agent.prompts import JUDGE_PROMPT, SYSTEM_PROMPT
+from sage_agent.prompts import CLASSIFIER_PROMPT, JUDGE_PROMPT, SYSTEM_PROMPT
 from sage_agent.state import State
 from sage_agent.store import make_store, memory_namespace
 from sage_agent.tools import save_memory
+
+MemoryType = Literal["fact", "preference", "episodic"]
+DEFAULT_TYPE: MemoryType = "fact"
 
 TOOLS = [save_memory]
 TOOLS_BY_NAME = {t.name: t for t in TOOLS}
@@ -51,7 +54,9 @@ def _user_id(config: RunnableConfig) -> str:
 def _format_user_info(memories: list[dict]) -> str:
     if not memories:
         return "(no memories yet)"
-    return "\n".join(f"- {m['content']}" for m in memories)
+    return "\n".join(
+        f"- [{m.get('type', DEFAULT_TYPE)}] {m['content']}" for m in memories
+    )
 
 
 def _last_human_text(messages: list) -> str | None:
@@ -62,8 +67,11 @@ def _last_human_text(messages: list) -> str | None:
 
 
 class JudgeDecision(BaseModel):
-    """Insert-or-replace decision produced by the conflict-resolution judge."""
+    """Type + insert-or-replace decision produced by the conflict-resolution judge."""
 
+    type: MemoryType = Field(
+        description="Memory type: fact / preference / episodic."
+    )
     action: Literal["insert", "replace"] = Field(
         description="`insert` for new info, `replace` to update an existing memory."
     )
@@ -82,9 +90,16 @@ class JudgeDecision(BaseModel):
         return self
 
 
+class _ClassifierResponse(BaseModel):
+    """Type-only response for the no-neighbor save path."""
+
+    type: MemoryType
+
+
 def _format_neighbors(neighbors: list[dict]) -> str:
     return "\n".join(
-        f'- {{"key": "{n["key"]}", "content": "{n["content"]}"}}' for n in neighbors
+        f'- {{"key": "{n["key"]}", "type": "{n.get("type", DEFAULT_TYPE)}", "content": "{n["content"]}"}}'
+        for n in neighbors
     )
 
 
@@ -95,10 +110,29 @@ async def _judge_save(candidate: str, neighbors: list[dict]) -> JudgeDecision:
     )
     judge = get_model().with_structured_output(JudgeDecision)
     decision = await judge.ainvoke(prompt)
+
     valid_keys = {n["key"] for n in neighbors}
-    if decision.action == "replace" and decision.target_key not in valid_keys:
-        return JudgeDecision(action="insert", target_key=None, content=candidate)
+    if decision.action == "replace":
+        if decision.target_key not in valid_keys:
+            return JudgeDecision(
+                type=decision.type, action="insert", target_key=None, content=candidate
+            )
+        target = next(n for n in neighbors if n["key"] == decision.target_key)
+        if target.get("type", DEFAULT_TYPE) != decision.type:
+            return JudgeDecision(
+                type=decision.type, action="insert", target_key=None, content=candidate
+            )
     return decision
+
+
+async def _classify_save(candidate: str) -> MemoryType:
+    prompt = CLASSIFIER_PROMPT.format(candidate=candidate)
+    classifier = get_model().with_structured_output(_ClassifierResponse)
+    try:
+        result = await classifier.ainvoke(prompt)
+        return result.type
+    except Exception:
+        return DEFAULT_TYPE
 
 
 async def retrieve_memories(state: State, config: RunnableConfig, store: BaseStore) -> dict:
@@ -137,34 +171,49 @@ async def store_memory(state: State, config: RunnableConfig, store: BaseStore) -
             namespace, query=candidate, limit=CONFLICT_NEIGHBORS_K
         )
         neighbors = [
-            {"key": n.key, "content": n.value.get("content", "")} for n in neighbors_items
+            {
+                "key": n.key,
+                "type": n.value.get("type", DEFAULT_TYPE),
+                "content": n.value.get("content", ""),
+            }
+            for n in neighbors_items
         ]
 
         if not neighbors:
+            mem_type = await _classify_save(candidate)
             new_id = str(uuid.uuid4())
-            await store.aput(namespace, key=new_id, value={"content": candidate})
-            content_msg = f"Saved memory {new_id}"
+            await store.aput(
+                namespace, key=new_id, value={"content": candidate, "type": mem_type}
+            )
+            content_msg = f"Saved memory {new_id} ({mem_type})"
         else:
             try:
                 decision = await _judge_save(candidate, neighbors)
             except Exception:
-                decision = JudgeDecision(action="insert", target_key=None, content=candidate)
+                fallback_type = await _classify_save(candidate)
+                decision = JudgeDecision(
+                    type=fallback_type, action="insert", target_key=None, content=candidate
+                )
 
             if decision.action == "replace":
                 await store.adelete(namespace, key=decision.target_key)
                 new_id = str(uuid.uuid4())
                 await store.aput(
-                    namespace, key=new_id, value={"content": decision.content}
+                    namespace,
+                    key=new_id,
+                    value={"content": decision.content, "type": decision.type},
                 )
                 content_msg = (
-                    f"Replaced memory {decision.target_key} with new content"
+                    f"Replaced memory {decision.target_key} with new {decision.type}"
                 )
             else:
                 new_id = str(uuid.uuid4())
                 await store.aput(
-                    namespace, key=new_id, value={"content": decision.content}
+                    namespace,
+                    key=new_id,
+                    value={"content": decision.content, "type": decision.type},
                 )
-                content_msg = f"Saved memory {new_id}"
+                content_msg = f"Saved memory {new_id} ({decision.type})"
 
         return ToolMessage(content=content_msg, tool_call_id=tc["id"], name=tc["name"])
 
