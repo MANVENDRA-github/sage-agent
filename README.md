@@ -16,13 +16,14 @@ the eval harness so weeks 2–4 can claim measurable wins against it.
 
 | Category               | Baseline | Week 2 (semantic + conflict) | Week 3 (typed) | Final |
 |------------------------|---------:|-----------------------------:|---------------:|------:|
-| `should_save_fact`     |  100.0% |                       100.0% |              — |     — |
-| `should_save_preference` | 100.0% |                     100.0% |              — |     — |
-| `should_save_episodic` |   80.0% |                        80.0% |              — |     — |
-| `should_not_save`      |  100.0% |                       100.0% |              — |     — |
-| `contradiction_update` |    0.0% |                    **57.1%** |              — |     — |
-| `retrieval_relevance`  |   90.0% |                        80.0% |              — |     — |
-| **Save-decision P / R / F1** | 1.000 / 0.967 / 0.983 | 1.000 / 0.967 / 0.983 | — / — / — | — / — / — |
+| `should_save_fact`     |  100.0% |                       100.0% |         100.0% |     — |
+| `should_save_preference` | 100.0% |                     100.0% |         100.0% |     — |
+| `should_save_episodic` |   80.0% |                        80.0% |          80.0% |     — |
+| `should_not_save`      |  100.0% |                       100.0% |         100.0% |     — |
+| `contradiction_update` |    0.0% |                       57.1% |      **85.7%** |     — |
+| `retrieval_relevance`  |   90.0% |                        80.0% |      **90.0%** |     — |
+| **Save-decision P / R / F1** | 1.000 / 0.967 / 0.983 | 1.000 / 0.967 / 0.983 | 1.000 / 0.967 / 0.983 | — / — / — |
+| **Type accuracy** |       n/a |                          n/a |      **80.0%** |     — |
 
 > **Baseline** (`baseline_20260524T094912Z.json`): `openai/gpt-oss-120b:free`
 > via OpenRouter, 50 cases, in-memory store, blind append, dump-all retrieval.
@@ -39,12 +40,27 @@ the eval harness so weeks 2–4 can claim measurable wins against it.
 > DELETE-then-INSERT pattern — `replace` still counts as a save.
 > `retrieval_relevance` slipped one case (case_043 — model asks for context
 > instead of applying the retrieved "User is vegetarian" memory; flaky
-> across re-runs at temperature 0 on the free tier). The remaining
-> `contradiction_update` failures (035 "moved from Bangalore to Mumbai",
-> 036 "left Acme — at Globex now", 040 "sold Camry — driving Tesla now") are
-> all the judge mis-routing same-facet substitutions as inserts; tuning the
-> judge prompt to add a substitution example traded these for others, so
-> we're shipping the cleaner version and revisiting in Week 4.
+> across re-runs at temperature 0 on the free tier).
+>
+> **Week 3** (`week3_20260524T115043Z.json`): Typed memory. Every save
+> carries a `type` (fact / preference / episodic) — assigned by the
+> conflict-resolution judge when neighbors exist, or by a small dedicated
+> classifier when they don't. Type surfaces in the rendered memory list as
+> a `[type]` prefix so the assistant can reason about which memory applies,
+> and gates `replace` in the judge: cross-type replacements are downgraded
+> to `insert` by a post-validator. Headlines:
+> **`contradiction_update` 57.1% → 85.7%** (the type-aware judge correctly
+> handles cases 035 Bangalore→Mumbai and 036 Acme→Globex that Week 2's
+> non-typed judge mis-routed as inserts); **`retrieval_relevance` recovers
+> to 90%** (case_043 passes again — type tags help the assistant treat the
+> retrieved memory as binding); **type accuracy 80%** (24/30 eligible: 100%
+> on facts and contradiction_update, 62.5% on preference, 40% on episodic).
+> The classifier misses are mostly subjective — "dislikes cilantro"
+> labeled `fact` rather than `preference`, "loved reading Project Hail
+> Mary" labeled `preference` rather than `episodic` — defensible reads
+> that disagree with the eval's category. Only remaining
+> `contradiction_update` fail is case_040 (Camry → Tesla); judge picks
+> insert despite same-facet hint. Save-decision F1 holds at 0.983.
 
 ## Architecture
 
@@ -68,14 +84,21 @@ flowchart LR
   `state.retrieved_memories`. *(Week 2: live.)*
 - **chat LLM** — system prompt + retrieved memories + history → either a
   natural response or a `save_memory` tool call. *(live since Week 1.)*
-- **classify type** — route the candidate memory to `fact` / `preference` /
-  `episodic`. *(Week 3 — still absent; everything is type-less today.)*
+- **classify type** — assign `fact` / `preference` / `episodic` to the
+  candidate. Two paths: when neighbors exist, the conflict-resolution judge
+  classifies *and* decides insert-vs-replace in one structured-output call;
+  when no neighbors exist, a small dedicated classifier prompt runs. Stored
+  alongside `content` on every memory; surfaced in the retrieval rendering
+  as `[type]` so the assistant LLM can reason about which memory applies.
+  *(Week 3: live.)*
 - **conflict check** — for each save, semantic-search top-3 similar existing
   memories, then an LLM judge decides insert-vs-replace; replace is
   implemented as DELETE-then-INSERT (not upsert) so the runner's
-  save-decision metric still counts it as a save. *(Week 2: live, folded
-  into `store_memory` rather than a separate node so the N tool_calls / N
-  ToolMessages pairing the LLM expects stays intact.)*
+  save-decision metric still counts it as a save. The judge gates `replace`
+  on same-type-AND-same-facet (Week 3), so a preference can never replace a
+  fact and episodic events always insert. *(Week 2 base, Week 3 type-aware;
+  lives inside `store_memory` rather than as a separate node so the N
+  tool_calls / N ToolMessages pairing the LLM expects stays intact.)*
 - **store** — Chroma collection (`sage_memories`) with namespace encoded as
   metadata; one shared collection across all users keeps eval per-case
   setup cheap. *(Week 2: live via `ChromaStore`.)*
@@ -106,10 +129,14 @@ scores against three predicates:
 - `memory_content_contains` — **all** substrings must appear across newly-saved memories
 - `response_contains` — **any** substring must appear in the final response
 - `contradiction_update` — exactly one memory must remain for that user, carrying the new value
+- **type accuracy** *(Week 3)* — saved memory's `type` field matches the
+  expected type for the category (`should_save_fact` → `fact`,
+  `should_save_preference` → `preference`, `should_save_episodic` →
+  `episodic`, `contradiction_update` → setup memory's type)
 
-Results land in `tests/eval/results/baseline_<UTC>.json` alongside aggregate
-metrics: per-category pass rate plus a global save-decision precision /
-recall / F1 treating `should_save` as a binary classifier.
+Results land in `tests/eval/results/<label>_<UTC>.json` alongside aggregate
+metrics: per-category pass rate, global save-decision precision / recall /
+F1, and (Week 3+) global type-accuracy with per-category breakdown.
 
 ## Tradeoffs considered
 
@@ -158,6 +185,23 @@ than overwriting in place. The eval runner's save-decision metric counts
 ones); a same-key overwrite of a setup key would pass the per-category
 predicate but tank save-decision recall. The new UUID makes the case count
 as a true positive.
+
+**Classifier on no-neighbor saves, vs always-invoke judge.** Week 3's type
+assignment uses two paths: the conflict-resolution judge classifies as
+part of its structured output when neighbors exist, and a small dedicated
+`_classify_save` runs when they don't. The alternative — always invoke the
+full judge with an empty neighbors list — wastes ~50% of judge tokens on
+the empty case and inflates eval latency without a quality win. The
+two-path design keeps the no-conflict save at one small LLM call.
+
+**Type rules gate `replace`, not retrieval.** The judge can only
+`replace` when candidate and neighbor share the same `type` AND describe
+the same facet. Cross-type replacements are downgraded to `insert` by a
+post-validator on `JudgeDecision`. We don't bias retrieval scores by
+type — top-`k` is still pure semantic similarity. Type signal surfaces in
+the prompt as a `[type]` prefix on each rendered memory; letting the
+assistant LLM reason about it is simpler than re-ranking, and it
+preserves the option to revisit retrieval scoring in Week 4.
 
 **No similarity-threshold gate on the judge.** When the candidate has any
 top-K neighbors, the judge is always invoked. Simpler than picking a
@@ -211,8 +255,11 @@ versions.
   judge decides insert vs replace, replace as DELETE-then-INSERT). CLI
   gets cross-process persistence at `.chroma/`. See Results table for
   measured deltas.
-- **Week 3** — Typed memory: classifier node routes candidates to
-  fact / preference / episodic; type-specific retention metadata; type-aware
-  retrieval cues. Ship gate: improvement reflected in eval.
+- **Week 3** ✅ — Typed memory: judge classifies and gates `replace` on
+  same-type-and-same-facet; dedicated classifier on no-neighbor saves;
+  type rendered to the assistant as a `[type]` prefix; eval gains a
+  type-accuracy metric. `contradiction_update` jumps 57% → 86%;
+  `retrieval_relevance` recovers to 90%. Classifier under-fires on
+  preference vs episodic — a fine-tuning target for Week 4 or beyond.
 - **Week 4** — Decay / consolidation, Streamlit UI, hosted demo, README
   rewrite with final numbers, blog post. Ship gate: live demo URL.
