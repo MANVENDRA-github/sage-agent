@@ -112,7 +112,7 @@ async def run_case(case: dict) -> dict:
         await store.aput(
             ("memories", user_id),
             key=f"setup_{i}",
-            value={"content": mem["content"]},
+            value={"content": mem["content"], "type": mem.get("type", "fact")},
         )
     n_setup = len(setup_memories)
 
@@ -137,15 +137,37 @@ async def run_case(case: dict) -> dict:
         "n_setup": n_setup,
         "n_total_after": len(all_memories),
         "new_memories": [m["content"] for m in new_memories],
+        "new_memory_types": [m.get("type", "fact") for m in new_memories],
         "all_memories": [m["content"] for m in all_memories],
+        "all_memory_types": [m.get("type", "fact") for m in all_memories],
         "final_response": final_response,
     }
+
+
+CATEGORY_EXPECTED_TYPE = {
+    "should_save_fact": "fact",
+    "should_save_preference": "preference",
+    "should_save_episodic": "episodic",
+}
+
+
+def _expected_type(case: dict) -> str | None:
+    cat = case["category"]
+    if cat in CATEGORY_EXPECTED_TYPE:
+        return CATEGORY_EXPECTED_TYPE[cat]
+    if cat == "contradiction_update":
+        setup = case.get("setup_memories") or []
+        if setup:
+            return setup[0].get("type")
+    return None
 
 
 def score_case(case: dict, outcome: dict) -> dict:
     expected = case["expected"]
     new_contents = outcome["new_memories"]
     all_contents = outcome["all_memories"]
+    new_types = outcome.get("new_memory_types") or []
+    all_types = outcome.get("all_memory_types") or []
     response = outcome["final_response"]
     category = case["category"]
 
@@ -163,6 +185,16 @@ def score_case(case: dict, outcome: dict) -> dict:
         not response_required
         or _contains_any(response_required, response)
     )
+
+    expected_type = _expected_type(case)
+    if expected_type is None:
+        type_ok = None
+    elif category == "contradiction_update":
+        # The single remaining memory should carry the same type as the setup.
+        type_ok = bool(all_types) and all(t == expected_type for t in all_types)
+    else:
+        # should_save_*: the newly-saved memory should carry the expected type.
+        type_ok = bool(new_types) and all(t == expected_type for t in new_types)
 
     if category == "contradiction_update":
         # Pass = exactly one memory exists AND it carries the new value.
@@ -186,13 +218,25 @@ def score_case(case: dict, outcome: dict) -> dict:
         "predicted_save": predicted_save,
         "content_ok": content_ok,
         "response_ok": response_ok,
+        "expected_type": expected_type,
+        "type_ok": type_ok,
         "passed": passed,
     }
 
 
 def aggregate(scored: list[dict]) -> dict:
-    by_cat: dict[str, dict] = defaultdict(lambda: {"total": 0, "passed": 0, "errors": 0})
+    by_cat: dict[str, dict] = defaultdict(
+        lambda: {
+            "total": 0,
+            "passed": 0,
+            "errors": 0,
+            "type_eligible": 0,
+            "type_correct": 0,
+        }
+    )
     tp = fp = fn = tn = 0
+    type_eligible_total = 0
+    type_correct_total = 0
 
     for s in scored:
         cat = by_cat[s["category"]]
@@ -210,16 +254,30 @@ def aggregate(scored: list[dict]) -> dict:
             fp += 1
         else:
             tn += 1
+        if s.get("type_ok") is not None:
+            cat["type_eligible"] += 1
+            type_eligible_total += 1
+            if s["type_ok"]:
+                cat["type_correct"] += 1
+                type_correct_total += 1
 
     precision = tp / (tp + fp) if (tp + fp) else 0.0
     recall = tp / (tp + fn) if (tp + fn) else 0.0
     f1 = (2 * precision * recall / (precision + recall)) if (precision + recall) else 0.0
+    type_acc = (
+        type_correct_total / type_eligible_total if type_eligible_total else 0.0
+    )
 
     return {
         "by_category": {
             k: {
                 **v,
                 "pass_rate": (v["passed"] / v["total"]) if v["total"] else 0.0,
+                "type_accuracy": (
+                    v["type_correct"] / v["type_eligible"]
+                    if v["type_eligible"]
+                    else None
+                ),
             }
             for k, v in by_cat.items()
         },
@@ -229,24 +287,41 @@ def aggregate(scored: list[dict]) -> dict:
             "recall": round(recall, 3),
             "f1": round(f1, 3),
         },
+        "type_accuracy": {
+            "correct": type_correct_total,
+            "eligible": type_eligible_total,
+            "rate": round(type_acc, 3),
+        },
     }
 
 
 def print_summary(agg: dict) -> None:
-    print("\n" + "=" * 62)
-    print(f"{'Category':<28} {'Pass':>5} {'Total':>6} {'Rate':>7} {'Err':>5}")
-    print("-" * 62)
+    print("\n" + "=" * 76)
+    print(
+        f"{'Category':<28} {'Pass':>5} {'Total':>6} {'Rate':>7} {'Err':>5} "
+        f"{'TypeAcc':>9}"
+    )
+    print("-" * 76)
     for cat in sorted(agg["by_category"]):
         v = agg["by_category"][cat]
+        type_str = (
+            f"{v['type_accuracy']:>8.1%}"
+            if v["type_accuracy"] is not None
+            else "       —"
+        )
         print(
             f"{cat:<28} {v['passed']:>5} {v['total']:>6} "
-            f"{v['pass_rate']:>6.1%} {v['errors']:>5}"
+            f"{v['pass_rate']:>6.1%} {v['errors']:>5} {type_str:>9}"
         )
-    print("=" * 62)
+    print("=" * 76)
     sd = agg["save_decision"]
     print(
         f"Save-decision  P={sd['precision']:.3f}  R={sd['recall']:.3f}  F1={sd['f1']:.3f}  "
         f"(tp={sd['tp']} fp={sd['fp']} fn={sd['fn']} tn={sd['tn']})"
+    )
+    ta = agg["type_accuracy"]
+    print(
+        f"Type accuracy  {ta['rate']:.3f}  ({ta['correct']}/{ta['eligible']} eligible)"
     )
     print()
 
