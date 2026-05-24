@@ -9,22 +9,29 @@ natural response. The store_memory → call_model edge skips re-retrieval; the
 user's query hasn't changed mid-turn so the cached retrieved_memories on
 state is still correct.
 
-We hand-roll store_memory (rather than using ToolNode) because we need to
-inject `store` and `user_id` into the tool — InjectedToolArg only hides the
-arg from the LLM's schema; populating it is on us.
+Conflict resolution lives inside store_memory (not as a separate graph
+node) so the N tool_calls / N ToolMessages pairing the LLM expects stays
+intact. For each save, we semantic-search for the top-3 similar existing
+memories and — if any neighbors exist — ask an LLM judge to decide
+insert-vs-replace. Replace is implemented as DELETE-then-INSERT (not
+upsert) so that a contradiction_update case still counts as a save in the
+runner's save-decision metric.
 """
 
 from __future__ import annotations
 
 import asyncio
+import uuid
+from typing import Literal
 
 from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import END, START, StateGraph
 from langgraph.store.base import BaseStore
+from pydantic import BaseModel, Field, model_validator
 
 from sage_agent.model import get_model
-from sage_agent.prompts import SYSTEM_PROMPT
+from sage_agent.prompts import JUDGE_PROMPT, SYSTEM_PROMPT
 from sage_agent.state import State
 from sage_agent.store import make_store, memory_namespace
 from sage_agent.tools import save_memory
@@ -33,6 +40,7 @@ TOOLS = [save_memory]
 TOOLS_BY_NAME = {t.name: t for t in TOOLS}
 
 RETRIEVAL_K = 5
+CONFLICT_NEIGHBORS_K = 3
 
 
 def _user_id(config: RunnableConfig) -> str:
@@ -51,6 +59,46 @@ def _last_human_text(messages: list) -> str | None:
         if isinstance(msg, HumanMessage):
             return msg.content if isinstance(msg.content, str) else str(msg.content)
     return None
+
+
+class JudgeDecision(BaseModel):
+    """Insert-or-replace decision produced by the conflict-resolution judge."""
+
+    action: Literal["insert", "replace"] = Field(
+        description="`insert` for new info, `replace` to update an existing memory."
+    )
+    target_key: str | None = Field(
+        default=None,
+        description="Required when action='replace' — the key of the memory to replace.",
+    )
+    content: str = Field(
+        description="The memory content to store (judge may rewrite for clarity)."
+    )
+
+    @model_validator(mode="after")
+    def _replace_requires_target(self) -> "JudgeDecision":
+        if self.action == "replace" and not self.target_key:
+            raise ValueError("action='replace' requires target_key")
+        return self
+
+
+def _format_neighbors(neighbors: list[dict]) -> str:
+    return "\n".join(
+        f'- {{"key": "{n["key"]}", "content": "{n["content"]}"}}' for n in neighbors
+    )
+
+
+async def _judge_save(candidate: str, neighbors: list[dict]) -> JudgeDecision:
+    prompt = JUDGE_PROMPT.format(
+        candidate=candidate,
+        neighbors=_format_neighbors(neighbors),
+    )
+    judge = get_model().with_structured_output(JudgeDecision)
+    decision = await judge.ainvoke(prompt)
+    valid_keys = {n["key"] for n in neighbors}
+    if decision.action == "replace" and decision.target_key not in valid_keys:
+        return JudgeDecision(action="insert", target_key=None, content=candidate)
+    return decision
 
 
 async def retrieve_memories(state: State, config: RunnableConfig, store: BaseStore) -> dict:
@@ -79,15 +127,46 @@ async def call_model(state: State, config: RunnableConfig, store: BaseStore) -> 
 
 async def store_memory(state: State, config: RunnableConfig, store: BaseStore) -> dict:
     user_id = _user_id(config)
+    namespace = memory_namespace(user_id)
     last = state.messages[-1]
     tool_calls = getattr(last, "tool_calls", []) or []
 
     async def _run(tc: dict) -> ToolMessage:
-        tool = TOOLS_BY_NAME[tc["name"]]
-        result = await tool.ainvoke(
-            {**tc["args"], "user_id": user_id, "store": store}
+        candidate = tc["args"].get("content", "")
+        neighbors_items = await store.asearch(
+            namespace, query=candidate, limit=CONFLICT_NEIGHBORS_K
         )
-        return ToolMessage(content=str(result), tool_call_id=tc["id"], name=tc["name"])
+        neighbors = [
+            {"key": n.key, "content": n.value.get("content", "")} for n in neighbors_items
+        ]
+
+        if not neighbors:
+            new_id = str(uuid.uuid4())
+            await store.aput(namespace, key=new_id, value={"content": candidate})
+            content_msg = f"Saved memory {new_id}"
+        else:
+            try:
+                decision = await _judge_save(candidate, neighbors)
+            except Exception:
+                decision = JudgeDecision(action="insert", target_key=None, content=candidate)
+
+            if decision.action == "replace":
+                await store.adelete(namespace, key=decision.target_key)
+                new_id = str(uuid.uuid4())
+                await store.aput(
+                    namespace, key=new_id, value={"content": decision.content}
+                )
+                content_msg = (
+                    f"Replaced memory {decision.target_key} with new content"
+                )
+            else:
+                new_id = str(uuid.uuid4())
+                await store.aput(
+                    namespace, key=new_id, value={"content": decision.content}
+                )
+                content_msg = f"Saved memory {new_id}"
+
+        return ToolMessage(content=content_msg, tool_call_id=tc["id"], name=tc["name"])
 
     results = await asyncio.gather(*(_run(tc) for tc in tool_calls))
     return {"messages": list(results)}
