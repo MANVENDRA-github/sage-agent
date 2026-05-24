@@ -219,12 +219,36 @@ uv sync
 cp .env.example .env
 # edit .env and set OPENROUTER_API_KEY (free key at https://openrouter.ai/keys)
 
-# 3. Chat with the agent
+# 3a. Chat with the agent in the terminal
 uv run python -m sage_agent.cli --user-id alice
+
+# 3b. Or launch the Streamlit UI
+uv run streamlit run src/sage_agent/app.py
 ```
 
 CLI commands inside the REPL: `/new` (new thread, same user — memories
-persist), `/memories` (dump store for this user), `/quit`.
+persist), `/memories` (dump store for this user), `/quit`. The Streamlit UI
+shows the same memories panel in the sidebar, type-tagged, and persists
+across page reloads via `.chroma/`.
+
+## Deploying the UI (Streamlit Community Cloud)
+
+The `src/sage_agent/app.py` entry point is ready for Streamlit Cloud:
+
+1. Push the repo to GitHub (public or private with Cloud access).
+2. At [streamlit.io/cloud](https://streamlit.io/cloud), click **New app**,
+   point to this repo + branch, set the main file to
+   `src/sage_agent/app.py`.
+3. In **Advanced settings → Secrets**, add:
+   ```toml
+   OPENROUTER_API_KEY = "sk-or-v1-..."
+   ```
+4. Deploy. First boot downloads the `all-MiniLM-L6-v2` embedder (~3-5s);
+   subsequent loads are warm-cached by `@st.cache_resource`.
+
+Streamlit Cloud reads `pyproject.toml` natively — no `requirements.txt`
+needed. If you hit dep resolution issues, generate one with
+`uv export --format requirements-txt > requirements.txt` and commit it.
 
 ## Running the eval
 
