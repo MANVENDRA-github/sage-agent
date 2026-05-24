@@ -101,10 +101,12 @@ class ChromaStore(BaseStore):
                 pass
             return
         content = op.value.get("content", "")
+        mem_type = op.value.get("type", "fact")
         metadata = {
             **_ns_metadata(op.namespace),
             "key": op.key,
             "content": content,
+            "type": mem_type,
             "updated_at": _ts_now(),
         }
         self._collection.upsert(
@@ -122,7 +124,10 @@ class ChromaStore(BaseStore):
         md = res["metadatas"][0]
         ts = _parse_ts(md.get("updated_at"))
         return Item(
-            value={"content": md.get("content", "")},
+            value={
+                "content": md.get("content", ""),
+                "type": md.get("type", "fact"),
+            },
             key=md.get("key", op.key),
             namespace=op.namespace,
             created_at=ts,
@@ -147,7 +152,10 @@ class ChromaStore(BaseStore):
                     SearchItem(
                         namespace=op.namespace_prefix,
                         key=md.get("key", ""),
-                        value={"content": md.get("content", "")},
+                        value={
+                            "content": md.get("content", ""),
+                            "type": md.get("type", "fact"),
+                        },
                         created_at=ts,
                         updated_at=ts,
                         score=1.0 - float(dist),
@@ -164,7 +172,10 @@ class ChromaStore(BaseStore):
                 SearchItem(
                     namespace=op.namespace_prefix,
                     key=md.get("key", ""),
-                    value={"content": md.get("content", "")},
+                    value={
+                        "content": md.get("content", ""),
+                        "type": md.get("type", "fact"),
+                    },
                     created_at=ts,
                     updated_at=ts,
                     score=None,
