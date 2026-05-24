@@ -1,5 +1,8 @@
 # sage-agent
 
+> **Try it live:** [sage-agent.streamlit.app](https://sage-agent.streamlit.app/)
+> · Tell the agent something about you, reload the page, ask it back.
+
 ## What this is
 
 A memory-augmented conversational agent built on LangGraph, extending the
@@ -10,7 +13,8 @@ evaluation suite** that turns every "improvement" into a measurable delta
 instead of a vibe.
 
 The README leads with numbers, not features. Week 1 ships the baseline and
-the eval harness so weeks 2–4 can claim measurable wins against it.
+the eval harness so weeks 2–4 can claim measurable wins against it; Week 4
+puts the whole thing behind a Streamlit UI on the free tier.
 
 ## Results
 
@@ -285,5 +289,13 @@ versions.
   type-accuracy metric. `contradiction_update` jumps 57% → 86%;
   `retrieval_relevance` recovers to 90%. Classifier under-fires on
   preference vs episodic — a fine-tuning target for Week 4 or beyond.
-- **Week 4** — Decay / consolidation, Streamlit UI, hosted demo, README
-  rewrite with final numbers, blog post. Ship gate: live demo URL.
+- **Week 4** ✅ — Streamlit UI + hosted demo on
+  [Streamlit Community Cloud](https://sage-agent.streamlit.app/). Chat
+  interface backed by `build_graph()`, sidebar memories panel with `[type]`
+  badges, cached embedder via `@st.cache_resource`. README rewritten to
+  lead with the live URL. **Ship gate met:** live demo URL.
+- **Future (post-Week 4)** — Decay / consolidation (TTL on episodic
+  memories, periodic dedupe); classifier prompt tuning to recover the
+  6 preference/episodic mis-types; eval-runner Unicode normalization so
+  case_047's narrow-no-break-space stops false-failing; the one stubborn
+  contradiction_update fail (case_040 Camry→Tesla).
