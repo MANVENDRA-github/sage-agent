@@ -2,8 +2,9 @@
 
 Uses ChatOpenAI pointed at OpenRouter's OpenAI-compatible endpoint because
 LangChain's init_chat_model doesn't natively route to OpenRouter. The model
-slug is whatever OpenRouter exposes — defaulting to Gemini Flash on the free
-tier, which has the strongest tool-calling among free options.
+slug is whatever OpenRouter exposes — defaulting to openai/gpt-oss-120b on
+the free tier, which has the strongest tool-calling among current free
+options.
 """
 
 from __future__ import annotations
@@ -15,7 +16,7 @@ from langchain_openai import ChatOpenAI
 
 load_dotenv()
 
-DEFAULT_MODEL = "google/gemini-2.0-flash-exp:free"
+DEFAULT_MODEL = "openai/gpt-oss-120b:free"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 
 

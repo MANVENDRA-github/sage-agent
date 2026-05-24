@@ -16,18 +16,22 @@ the eval harness so weeks 2–4 can claim measurable wins against it.
 
 | Category               | Baseline | Week 2 (semantic + conflict) | Week 3 (typed) | Final |
 |------------------------|---------:|-----------------------------:|---------------:|------:|
-| `should_save_fact`     |       — |                            — |              — |     — |
-| `should_save_preference` |     — |                            — |              — |     — |
-| `should_save_episodic` |        — |                            — |              — |     — |
-| `should_not_save`      |        — |                            — |              — |     — |
-| `contradiction_update` |        — |                            — |              — |     — |
-| `retrieval_relevance`  |        — |                            — |              — |     — |
-| **Save-decision P / R / F1** | — / — / — | — / — / — | — / — / — | — / — / — |
+| `should_save_fact`     |  100.0% |                            — |              — |     — |
+| `should_save_preference` | 100.0% |                            — |              — |     — |
+| `should_save_episodic` |   80.0% |                            — |              — |     — |
+| `should_not_save`      |  100.0% |                            — |              — |     — |
+| `contradiction_update` |    0.0% |                            — |              — |     — |
+| `retrieval_relevance`  |   90.0% |                            — |              — |     — |
+| **Save-decision P / R / F1** | 1.000 / 0.967 / 0.983 | — / — / — | — / — / — | — / — / — |
 
-> Run `python -m tests.eval.runner` to populate the baseline column. Per the
-> design, `contradiction_update` and `retrieval_relevance` are expected to
-> score near zero at baseline — that's the headroom Week 2's work is meant
-> to consume.
+> Baseline run: `openai/gpt-oss-120b:free` via OpenRouter, 50 cases, in-memory
+> store, blind append, no semantic retrieval — see
+> `tests/eval/results/baseline_20260524T094912Z.json`. `contradiction_update`
+> sits at 0% by design (blind append can't update existing memories), which
+> is the headroom Week 2's conflict-resolution subgraph is meant to consume.
+> `retrieval_relevance` looks high at 90% only because the Phase 1 stub
+> returns *all* user memories — Week 2's properly-scoped top-k retrieval has
+> to match this number while also passing the negative cases the stub can't.
 
 ## Architecture
 
