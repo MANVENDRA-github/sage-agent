@@ -18,22 +18,44 @@ puts the whole thing behind a Streamlit UI on the free tier.
 
 ## Results
 
-| Category               | Baseline | Week 2 (semantic + conflict) | Week 3 (typed) | Final |
-|------------------------|---------:|-----------------------------:|---------------:|------:|
-| `should_save_fact`     |  100.0% |                       100.0% |         100.0% |     — |
-| `should_save_preference` | 100.0% |                     100.0% |         100.0% |     — |
-| `should_save_episodic` |   80.0% |                        80.0% |          80.0% |     — |
-| `should_not_save`      |  100.0% |                       100.0% |         100.0% |     — |
-| `contradiction_update` |    0.0% |                       57.1% |      **85.7%** |     — |
-| `retrieval_relevance`  |   90.0% |                        80.0% |      **90.0%** |     — |
+| Category               | Baseline | Week 2 (semantic + conflict) | Week 3 (typed + polish) | Final |
+|------------------------|---------:|-----------------------------:|------------------------:|------:|
+| `should_save_fact`     |  100.0% |                       100.0% |                  100.0% |     — |
+| `should_save_preference` | 100.0% |                     100.0% |                  100.0% |     — |
+| `should_save_episodic` |   80.0% |                        80.0% |                   80.0% |     — |
+| `should_not_save`      |  100.0% |                       100.0% |                  100.0% |     — |
+| `contradiction_update` |    0.0% |                       57.1% |              **100.0%** |     — |
+| `retrieval_relevance`  |  100.0% |                        90.0% |              **100.0%** |     — |
 | **Save-decision P / R / F1** | 1.000 / 0.967 / 0.983 | 1.000 / 0.967 / 0.983 | 1.000 / 0.967 / 0.983 | — / — / — |
-| **Type accuracy** |       n/a |                          n/a |      **80.0%** |     — |
+| **Type accuracy** |       n/a |                          n/a |              **76.7%** |     — |
+
+> **Polish pass headlines:** `contradiction_update` jumps 85.7% → **100%**
+> (case_040 Camry→Tesla, the long-time holdout, passes this run — though
+> Week 2's earlier attempt to fix it via judge-prompt tuning lost cases
+> 034 and 039, so we know the free-tier judge has some non-determinism on
+> these substitutions; one 100% run isn't a guarantee). `retrieval_relevance`
+> hits **100%** in baseline, Phase A, and Week 3 thanks to the Unicode
+> whitespace fix in the runner; Week 2 holds at 90% with case_043 as the
+> sole holdout (model occasionally asks for context instead of applying
+> the retrieved "User is vegetarian" memory).
+>
+> **What this polish pass changed:** (1) `_contains_*` in `runner.py` now
+> normalizes Unicode whitespace before substring matching; (2)
+> `CLASSIFIER_PROMPT` gained explicit preference/episodic guidance and
+> few-shots, but the free-tier model still calls borderline cases like
+> "graduated from IIT Delhi in 2018" episodic (temporal anchor) and "does
+> not drink coffee" fact (negative statement) — type accuracy ticked down
+> 80% → 76.7% (one fact lost, pref/episodic count unchanged). The wins on
+> the two flagship metrics dwarf the type-accuracy wobble. (3)
+> `tests/eval/rescore.py` lets older runs pick up score-rule changes
+> without re-running the LLM.
 
 > **Baseline** (`baseline_20260524T094912Z.json`): `openai/gpt-oss-120b:free`
 > via OpenRouter, 50 cases, in-memory store, blind append, dump-all retrieval.
 > `contradiction_update` sits at 0% by design (blind append can't update
-> existing memories), and `retrieval_relevance` looks high at 90% only
-> because the stub returns *all* user memories.
+> existing memories). `retrieval_relevance` is 100% post-polish — the stub
+> returns *all* user memories so the answer is always in context; that's
+> why Week 2's properly-scoped top-`k` retrieval has to fight to match it.
 >
 > **Week 2** (`week2_20260524T105957Z.json`): Chroma + `all-MiniLM-L6-v2` for
 > properly-scoped top-`k=5` semantic retrieval, plus an LLM-judge conflict
@@ -42,29 +64,26 @@ puts the whole thing behind a Streamlit UI on the free tier.
 > 7 same-facet updates now collapse the prior memory instead of appending).
 > Save-decision F1 holds at 0.983, which is the point of the
 > DELETE-then-INSERT pattern — `replace` still counts as a save.
-> `retrieval_relevance` slipped one case (case_043 — model asks for context
-> instead of applying the retrieved "User is vegetarian" memory; flaky
-> across re-runs at temperature 0 on the free tier).
+> `retrieval_relevance` slips one case from baseline (case_043 — model
+> asks for context instead of applying the retrieved "User is vegetarian"
+> memory; flaky across re-runs at temperature 0 on the free tier).
 >
-> **Week 3** (`week3_20260524T115043Z.json`): Typed memory. Every save
-> carries a `type` (fact / preference / episodic) — assigned by the
-> conflict-resolution judge when neighbors exist, or by a small dedicated
-> classifier when they don't. Type surfaces in the rendered memory list as
-> a `[type]` prefix so the assistant can reason about which memory applies,
-> and gates `replace` in the judge: cross-type replacements are downgraded
-> to `insert` by a post-validator. Headlines:
-> **`contradiction_update` 57.1% → 85.7%** (the type-aware judge correctly
-> handles cases 035 Bangalore→Mumbai and 036 Acme→Globex that Week 2's
-> non-typed judge mis-routed as inserts); **`retrieval_relevance` recovers
-> to 90%** (case_043 passes again — type tags help the assistant treat the
-> retrieved memory as binding); **type accuracy 80%** (24/30 eligible: 100%
-> on facts and contradiction_update, 62.5% on preference, 40% on episodic).
-> The classifier misses are mostly subjective — "dislikes cilantro"
-> labeled `fact` rather than `preference`, "loved reading Project Hail
-> Mary" labeled `preference` rather than `episodic` — defensible reads
-> that disagree with the eval's category. Only remaining
-> `contradiction_update` fail is case_040 (Camry → Tesla); judge picks
-> insert despite same-facet hint. Save-decision F1 holds at 0.983.
+> **Week 3** (`week3_20260524T161027Z.json`): Typed memory + polish pass.
+> Every save carries a `type` (fact / preference / episodic) — assigned
+> by the conflict-resolution judge when neighbors exist, or by a small
+> dedicated classifier when they don't. Type surfaces in the rendered
+> memory list as a `[type]` prefix so the assistant can reason about
+> which memory applies, and gates `replace` in the judge: cross-type
+> replacements are downgraded to `insert` by a post-validator. Headlines:
+> **`contradiction_update` 57.1% → 100%** (all 7 same-facet updates now
+> collapse correctly, including the long-stubborn case_040 Camry→Tesla);
+> **`retrieval_relevance` 90% → 100%** (case_043 passes again on this
+> run; case_047 recovered by the runner's Unicode whitespace normalization);
+> **type accuracy 76.7%** (23/30 eligible). The classifier remains fuzzy
+> on borderline cases — "graduated from IIT Delhi in 2018" goes episodic
+> on its temporal anchor, "does not drink coffee" goes fact on the
+> negative-statement framing — and prompt tuning didn't reliably move
+> that needle on the free-tier model. Save-decision F1 holds at 0.983.
 
 ## Architecture
 
@@ -270,9 +289,18 @@ uv run python -m tests.eval.runner --category should_save_fact
 uv run python -m tests.eval.runner
 ```
 
-Each run writes `tests/eval/results/baseline_<UTC>.json` and prints a
+Each run writes `tests/eval/results/<label>_<UTC>.json` and prints a
 summary table. Re-label with `--label week2` etc. when running improved
 versions.
+
+**Re-scoring offline.** When scoring rules change (e.g. the Week 4 Unicode
+whitespace fix) but the agent's outputs haven't, `tests/eval/rescore.py`
+re-applies `score_case` and `aggregate` to a stored results JSON without
+hitting the LLM:
+
+```bash
+uv run python -m tests.eval.rescore tests/eval/results/baseline_<UTC>.json
+```
 
 ## Roadmap
 
@@ -286,16 +314,25 @@ versions.
 - **Week 3** ✅ — Typed memory: judge classifies and gates `replace` on
   same-type-and-same-facet; dedicated classifier on no-neighbor saves;
   type rendered to the assistant as a `[type]` prefix; eval gains a
-  type-accuracy metric. `contradiction_update` jumps 57% → 86%;
-  `retrieval_relevance` recovers to 90%. Classifier under-fires on
-  preference vs episodic — a fine-tuning target for Week 4 or beyond.
+  type-accuracy metric. After the Week 4 polish pass (Unicode normalization
+  in the runner + classifier prompt tuning + a fresh full eval),
+  `contradiction_update` reaches **100%** and `retrieval_relevance`
+  reaches **100%**. Type accuracy lands at 76.7%; the free-tier model
+  remains fuzzy on borderline preference-vs-fact and episodic-vs-fact
+  cases (e.g. "graduated in 2018", "does not drink coffee") and prompt
+  tuning didn't reliably move that needle.
 - **Week 4** ✅ — Streamlit UI + hosted demo on
   [Streamlit Community Cloud](https://sage-agent.streamlit.app/). Chat
   interface backed by `build_graph()`, sidebar memories panel with `[type]`
   badges, cached embedder via `@st.cache_resource`. README rewritten to
   lead with the live URL. **Ship gate met:** live demo URL.
-- **Future (post-Week 4)** — Decay / consolidation (TTL on episodic
-  memories, periodic dedupe); classifier prompt tuning to recover the
-  6 preference/episodic mis-types; eval-runner Unicode normalization so
-  case_047's narrow-no-break-space stops false-failing; the one stubborn
-  contradiction_update fail (case_040 Camry→Tesla).
+- **Week 4 polish (post-deploy)** ✅ — Eval Unicode normalization
+  (recovers case_047 across every run); classifier prompt tuning with
+  explicit preference/episodic guidance and few-shots; `rescore.py`
+  utility for applying score-rule changes to stored runs without LLM
+  calls. case_040 Camry→Tesla left as a documented limit of the free-tier
+  judge (Week 2 tried tuning the judge here and lost cases 034 and 039 —
+  net negative trade).
+- **Future** — Decay / consolidation (TTL on episodic memories, periodic
+  dedupe); blog post; second-opinion eval with a different model
+  (Claude / GPT) to cross-check the free-tier numbers.
