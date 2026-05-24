@@ -3,10 +3,14 @@
 SYSTEM_PROMPT runs each assistant turn — explicitly lists what to save vs
 not save (without that the LLM over-saves and should_not_save tanks).
 
-JUDGE_PROMPT runs on the save path: given a candidate memory plus the top-k
-similar existing memories, the judge decides whether the candidate is a new
-fact (insert) or supersedes one of the neighbors (replace). Drives the
-contradiction_update category from 0% to much-better.
+JUDGE_PROMPT runs on the save path when the candidate has neighbors: the
+judge picks insert vs replace AND classifies the memory as fact / preference
+/ episodic in one structured-output call. Drives the contradiction_update
+category and the type_accuracy metric.
+
+CLASSIFIER_PROMPT runs on the save path when there are no neighbors: a
+small dedicated classifier assigns the type. Cheaper than always invoking
+the full judge with an empty neighbors list.
 """
 
 SYSTEM_PROMPT = """\
@@ -43,8 +47,19 @@ memories already say.
 
 JUDGE_PROMPT = """\
 You are a memory-curation judge. The assistant wants to save a new memory
-about a user. You decide whether it is genuinely new ("insert") or whether
-it contradicts/supersedes an existing memory ("replace").
+about a user. You decide three things in one structured response:
+1. The candidate's `type`: fact / preference / episodic.
+2. Whether to `insert` it as new or `replace` an existing memory.
+3. If replace, the `target_key` and a consolidated `content` string.
+
+Type definitions:
+- "fact": stable identity-level info (name, age, current location, current
+  job, family, contact info). Updateable but slow-changing.
+- "preference": stable likes/dislikes/habits (light mode, vegetarian,
+  prefers Python). Flippable.
+- "episodic": notable one-time events with temporal context (a trip, a
+  birthday, an upcoming move, "I turned 29 last week"). Additive — new
+  events don't supersede old events.
 
 CANDIDATE memory the assistant wants to save:
 {candidate}
@@ -52,38 +67,57 @@ CANDIDATE memory the assistant wants to save:
 EXISTING similar memories for this user (top-k by semantic similarity):
 {neighbors}
 
-Decide:
-- "insert" — the candidate is independent information. Different facet, new
-  topic, or additive detail that doesn't contradict any existing memory.
-- "replace" — the candidate updates, contradicts, or strictly supersedes
-  one of the existing memories. Return that memory's `target_key` and a
-  consolidated `content` string that reflects the new state of the world.
+Decision rules:
+- `replace` ONLY when the candidate and a specific neighbor share BOTH the
+  same `type` AND describe the same facet (current city, current job,
+  current preference for some specific thing). Cross-type replacement is
+  invalid — pick `insert` instead.
+- For episodic candidates, default to `insert`. Events accumulate; a new
+  birthday memory does not supersede the prior year's birthday.
+- On replace, return a consolidated `content` reflecting the new state.
 
 Examples:
 
 CANDIDATE: "User now uses light mode."
-EXISTING: [{{"key": "k1", "content": "User prefers dark mode."}}]
-DECISION: replace, target_key="k1", content="User prefers light mode."
-(The user's display-mode preference changed — same facet, new value.)
+EXISTING: [{{"key": "k1", "type": "preference", "content": "User prefers dark mode."}}]
+DECISION: type=preference, action=replace, target_key="k1", content="User prefers light mode."
+(Same type, same facet — preference flip.)
 
 CANDIDATE: "User's sister is named Priya."
-EXISTING: [{{"key": "k1", "content": "User's name is Aman."}}]
-DECISION: insert, content="User's sister is named Priya."
-(Different facet — user's own name vs sister's name. Both should be kept.)
+EXISTING: [{{"key": "k1", "type": "fact", "content": "User's name is Aman."}}]
+DECISION: type=fact, action=insert, content="User's sister is named Priya."
+(Different facet — own name vs sister's name. Keep both.)
 
 CANDIDATE: "User turned 29 last week."
-EXISTING: [{{"key": "k1", "content": "User is 28 years old."}}]
-DECISION: replace, target_key="k1", content="User is 29 years old."
-(Age update — same fact, new value.)
+EXISTING: [{{"key": "k1", "type": "fact", "content": "User is 28 years old."}}]
+DECISION: type=fact, action=replace, target_key="k1", content="User is 29 years old."
+(Age update — same fact, new value. Note: "turned 29" sounds episodic, but
+the durable fact is the new age; prefer the fact framing on replace.)
+
+CANDIDATE: "User went to Paris last summer."
+EXISTING: [{{"key": "k1", "type": "episodic", "content": "User went to Tokyo in 2024."}}]
+DECISION: type=episodic, action=insert, content="User went to Paris last summer."
+(Episodic events accumulate; the Tokyo trip doesn't get overwritten.)
 
 CANDIDATE: "User moved to Mumbai."
-EXISTING: [{{"key": "k1", "content": "User works at Acme Corp."}}]
-DECISION: insert, content="User lives in Mumbai."
+EXISTING: [{{"key": "k1", "type": "fact", "content": "User works at Acme Corp."}}]
+DECISION: type=fact, action=insert, content="User lives in Mumbai."
 (City and employer are different facets; replacing employer with city would
 lose information.)
+"""
 
-Choose `replace` only when the candidate and a specific existing memory
-describe the *same* facet of the user (the same job, the same location, the
-same preference). Otherwise choose `insert`.
+
+CLASSIFIER_PROMPT = """\
+Classify the following user-memory as one of: fact / preference / episodic.
+
+- "fact": stable identity-level info (name, age, current location, current
+  job, family, contact info).
+- "preference": stable likes / dislikes / habits / tools they prefer.
+- "episodic": notable one-time events with temporal context (a trip, a
+  birthday, "I turned 29 last week", "I'm flying to Berlin next Tuesday").
+
+MEMORY: {candidate}
+
+Respond with only the type label.
 """
 
