@@ -44,13 +44,14 @@ def _print_memories(store, user_id: str) -> None:
         print(f"  {i}. {m['content']}")
 
 
-async def _run(user_id: str) -> None:
-    store = make_store()
+async def _run(user_id: str, persist_dir: str | None) -> None:
+    store = make_store(persist_dir=persist_dir)
     checkpointer = MemorySaver()
     graph = build_graph(checkpointer=checkpointer, store=store)
     thread_id = str(uuid.uuid4())
 
-    print(f"sage-agent | user_id={user_id} | thread={thread_id[:8]}")
+    where = persist_dir or "in-memory"
+    print(f"sage-agent | user_id={user_id} | thread={thread_id[:8]} | store={where}")
     print("Commands: /new  /memories  /quit\n")
 
     while True:
@@ -82,8 +83,14 @@ async def _run(user_id: str) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(prog="sage-agent")
     parser.add_argument("--user-id", default="default", help="User identifier for memory scoping.")
+    parser.add_argument(
+        "--persist-dir",
+        default=".chroma/",
+        help="Chroma persistence directory. Pass empty string for in-memory only.",
+    )
     args = parser.parse_args()
-    asyncio.run(_run(args.user_id))
+    persist_dir = args.persist_dir or None
+    asyncio.run(_run(args.user_id, persist_dir))
 
 
 if __name__ == "__main__":

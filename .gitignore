@@ -59,3 +59,9 @@ Thumbs.db
 
 # Claude Code harness state
 .claude/
+
+# Chroma persistence directory (CLI default)
+.chroma/
+
+# Local Streamlit secrets (Cloud uses the Secrets UI; this is local-only)
+.streamlit/secrets.toml
