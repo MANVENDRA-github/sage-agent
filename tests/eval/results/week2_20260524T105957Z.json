@@ -10,37 +10,55 @@
         "total": 10,
         "passed": 10,
         "errors": 0,
-        "pass_rate": 1.0
+        "type_eligible": 0,
+        "type_correct": 0,
+        "pass_rate": 1.0,
+        "type_accuracy": null
       },
       "should_save_preference": {
         "total": 8,
         "passed": 8,
         "errors": 0,
-        "pass_rate": 1.0
+        "type_eligible": 0,
+        "type_correct": 0,
+        "pass_rate": 1.0,
+        "type_accuracy": null
       },
       "should_save_episodic": {
         "total": 5,
         "passed": 4,
         "errors": 0,
-        "pass_rate": 0.8
+        "type_eligible": 0,
+        "type_correct": 0,
+        "pass_rate": 0.8,
+        "type_accuracy": null
       },
       "should_not_save": {
         "total": 10,
         "passed": 10,
         "errors": 0,
-        "pass_rate": 1.0
+        "type_eligible": 0,
+        "type_correct": 0,
+        "pass_rate": 1.0,
+        "type_accuracy": null
       },
       "contradiction_update": {
         "total": 7,
         "passed": 4,
         "errors": 0,
-        "pass_rate": 0.5714285714285714
+        "type_eligible": 0,
+        "type_correct": 0,
+        "pass_rate": 0.5714285714285714,
+        "type_accuracy": null
       },
       "retrieval_relevance": {
         "total": 10,
-        "passed": 8,
+        "passed": 9,
         "errors": 0,
-        "pass_rate": 0.8
+        "type_eligible": 0,
+        "type_correct": 0,
+        "pass_rate": 0.9,
+        "type_accuracy": null
       }
     },
     "save_decision": {
@@ -51,6 +69,11 @@
       "precision": 1.0,
       "recall": 0.967,
       "f1": 0.983
+    },
+    "type_accuracy": {
+      "correct": 0,
+      "eligible": 0,
+      "rate": 0.0
     }
   },
   "cases": [
@@ -62,14 +85,18 @@
       "new_memories": [
         "User's name is Aman"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User's name is Aman"
       ],
+      "all_memory_types": null,
       "final_response": "Nice to meet you, Aman! How can I help you today?",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -80,14 +107,18 @@
       "new_memories": [
         "User lives in Bangalore, India"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User lives in Bangalore, India"
       ],
+      "all_memory_types": null,
       "final_response": "Got it! I\u2019ve noted that you\u2019re based in Bangalore, India. Let me know if there\u2019s anything specific you\u2019d like to discuss or any local context I should keep in mind.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -98,14 +129,18 @@
       "new_memories": [
         "User works as a backend engineer at Acme Corp."
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User works as a backend engineer at Acme Corp."
       ],
+      "all_memory_types": null,
       "final_response": "Got it! I\u2019ll keep that in mind for any future discussions. Let me know if there\u2019s anything specific you\u2019d like to talk about regarding your role or projects.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -116,14 +151,18 @@
       "new_memories": [
         "User graduated from IIT Delhi in 2018"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User graduated from IIT Delhi in 2018"
       ],
+      "all_memory_types": null,
       "final_response": "Got it! \ud83c\udf93 If you\u2019d like to discuss anything related to your IIT Delhi experience\u2014career paths, projects, further studies, or anything else\u2014just let me know!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -134,14 +173,18 @@
       "new_memories": [
         "User's birthday is on March 15th"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User's birthday is on March 15th"
       ],
+      "all_memory_types": null,
       "final_response": "Got it\u2014your birthday is on March\u202f15th. \ud83c\udf89 If you\u2019d like any ideas for celebrating or reminders as the date approaches, just let me know!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -152,14 +195,18 @@
       "new_memories": [
         "User has two younger brothers"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User has two younger brothers"
       ],
+      "all_memory_types": null,
       "final_response": "Got it! I\u2019ll remember that you have two younger brothers. If there\u2019s anything you\u2019d like to share about them or anything else you need help with, just let me know!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -170,14 +217,18 @@
       "new_memories": [
         "User's phone number is 555-867-5309"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User's phone number is 555-867-5309"
       ],
+      "all_memory_types": null,
       "final_response": "Got it! I\u2019ve saved your phone number. Let me know if there\u2019s anything else you\u2019d like me to remember or help with.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -188,14 +239,18 @@
       "new_memories": [
         "User is 28 years old"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User is 28 years old"
       ],
+      "all_memory_types": null,
       "final_response": "Got it\u2014thanks for sharing! If there\u2019s anything you\u2019d like to discuss or any help you need, just let me know.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -206,14 +261,18 @@
       "new_memories": [
         "User drives a silver Toyota Camry"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User drives a silver Toyota Camry"
       ],
+      "all_memory_types": null,
       "final_response": "Got it! I\u2019ll remember that you drive a silver Toyota Camry. \ud83d\ude97",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -224,14 +283,18 @@
       "new_memories": [
         "User's email address is aman@example.com"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User's email address is aman@example.com"
       ],
+      "all_memory_types": null,
       "final_response": "Got it! I\u2019ve saved your email address. Let me know if there\u2019s anything else you\u2019d like me to note or help with.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -242,14 +305,18 @@
       "new_memories": [
         "User prefers dark mode in all apps"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User prefers dark mode in all apps"
       ],
+      "all_memory_types": null,
       "final_response": "Got it! I\u2019ll keep that in mind and make sure any recommendations or instructions I give you are suited for dark\u2011mode environments. If there\u2019s anything specific you\u2019d like help with\u2014like setting up dark mode on a particular app or finding dark\u2011theme resources\u2014just let me know!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "preference",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -260,14 +327,18 @@
       "new_memories": [
         "User dislikes cilantro"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User dislikes cilantro"
       ],
+      "all_memory_types": null,
       "final_response": "Got it\u2014cilantro is a no\u2011go for you! If you ever need a recipe or a dish suggestion that avoids cilantro (or any other ingredient you don\u2019t like), just let me know.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "preference",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -278,14 +349,18 @@
       "new_memories": [
         "User prefers Python over JavaScript for backend work"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User prefers Python over JavaScript for backend work"
       ],
+      "all_memory_types": null,
       "final_response": "Got it! I\u2019ll keep that in mind\u2014Python it is for any backend\u2011related discussions or recommendations. If you ever want to explore libraries, frameworks, or best practices in Python, just let me know!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "preference",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -296,14 +371,18 @@
       "new_memories": [
         "User does their best focused work in the early mornings"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User does their best focused work in the early mornings"
       ],
+      "all_memory_types": null,
       "final_response": "Got it\u2014early mornings are your prime time for focused work. If you\u2019d like, I can help you plan a morning routine, suggest productivity techniques, or set up reminders to make the most of that window. Let me know what would be most useful for you!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "preference",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -314,14 +393,18 @@
       "new_memories": [
         "User is a huge fan of sci-fi novels, especially Ted Chiang"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User is a huge fan of sci-fi novels, especially Ted Chiang"
       ],
+      "all_memory_types": null,
       "final_response": "That\u2019s awesome! Ted\u202fChiang\u2019s stories are such a perfect blend of thought\u2011provoking ideas and beautiful prose. Do you have a favorite Chiang story or collection? And are there any other sci\u2011fi authors or books you\u2019ve been enjoying lately?",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "preference",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -332,14 +415,18 @@
       "new_memories": [
         "User does not drink coffee, only green tea"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User does not drink coffee, only green tea"
       ],
+      "all_memory_types": null,
       "final_response": "Got it! I'll keep that in mind\u2014no coffee, just green tea. If you ever need recommendations for tea blends or anything else, just let me know.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "preference",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -350,14 +437,18 @@
       "new_memories": [
         "User prefers vim over vscode for editing"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User prefers vim over vscode for editing"
       ],
+      "all_memory_types": null,
       "final_response": "Got it! I\u2019ll keep that in mind for any future coding or editing discussions. If there\u2019s anything else you\u2019d like me to remember, just let me know.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "preference",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -368,14 +459,18 @@
       "new_memories": [
         "User is vegetarian and does not eat meat or fish"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User is vegetarian and does not eat meat or fish"
       ],
+      "all_memory_types": null,
       "final_response": "Got it! I\u2019ll keep that in mind\u2014no meat or fish in any food suggestions or recipes we discuss. If you ever want ideas for vegetarian meals or alternatives, just let me know!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "preference",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -386,14 +481,18 @@
       "new_memories": [
         "User was promoted to senior engineer"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User was promoted to senior engineer"
       ],
+      "all_memory_types": null,
       "final_response": "Congratulations on the promotion! \ud83c\udf89 That\u2019s a fantastic milestone. How are you planning to celebrate, or is there anything specific you\u2019d like to discuss about stepping into the senior engineer role?",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "episodic",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -404,14 +503,18 @@
       "new_memories": [
         "User is traveling to Tokyo next Tuesday for a week-long trip"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User is traveling to Tokyo next Tuesday for a week-long trip"
       ],
+      "all_memory_types": null,
       "final_response": "That sounds exciting! \ud83c\udf8c\u2708\ufe0f  \nDo you need any help planning the trip\u2014like suggestions for things to see and do in Tokyo, tips on transportation, restaurant recommendations, or maybe a packing checklist? Let me know what would be most useful for you.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "episodic",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -420,12 +523,16 @@
       "n_setup": 0,
       "n_total_after": 0,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [],
+      "all_memory_types": null,
       "final_response": "I\u2019m sorry to hear that. One\u2011on\u2011ones can be especially stressful when they don\u2019t go as smoothly as we\u2019d like. Do you want to talk about what happened, or is there something specific you\u2019re trying to figure out\u2014like how to follow up, address any feedback, or manage the relationship moving forward?",
       "expected_save": true,
       "predicted_save": false,
       "content_ok": false,
       "response_ok": true,
+      "expected_type": "episodic",
+      "type_ok": null,
       "passed": false
     },
     {
@@ -436,14 +543,18 @@
       "new_memories": [
         "User loved reading Project Hail Mary"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User loved reading Project Hail Mary"
       ],
+      "all_memory_types": null,
       "final_response": "That\u2019s awesome! Andy Weir really knows how to blend hard science with a gripping story. Did any particular part or character stand out to you?",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "episodic",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -454,14 +565,18 @@
       "new_memories": [
         "User is taking a vacation from June 15 to June 25"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User is taking a vacation from June 15 to June 25"
       ],
+      "all_memory_types": null,
       "final_response": "Got it! I\u2019ve noted that you\u2019ll be on vacation from June\u202f15\u202fthrough\u202fJune\u202f25. Let me know if you need any help planning the trip, managing work tasks before you go, or anything else related to your time off.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "episodic",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -470,12 +585,16 @@
       "n_setup": 0,
       "n_total_after": 0,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [],
+      "all_memory_types": null,
       "final_response": "The capital of France is **Paris**.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
       "passed": true
     },
     {
@@ -484,12 +603,16 @@
       "n_setup": 0,
       "n_total_after": 0,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [],
+      "all_memory_types": null,
       "final_response": "Hey! I\u2019m doing great, thanks for asking. How about you?",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
       "passed": true
     },
     {
@@ -498,12 +621,16 @@
       "n_setup": 0,
       "n_total_after": 0,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [],
+      "all_memory_types": null,
       "final_response": "Sure! Recursion is a programming technique where a function calls **itself** in order to solve a problem. The key idea is to break a complex problem down into smaller, more manageable sub\u2011problems that look just like the original one. Here\u2019s how it works step\u2011by\u2011step:\n\n1. **Base case** \u2013 a condition that stops the recursion.  \n   Every recursive function needs at least one base case; otherwise, it would call itself forever and eventually cause a stack overflow.\n\n2. **Recursive case** \u2013 the part where the function calls itself with a *smaller* or *simpler* version of the original input.  \n   Each recursive call moves the problem closer to the base case.\n\n3. **Call stack** \u2013 each time the function calls itself, a new \u201cframe\u201d is pushed onto the call stack, holding the function\u2019s local variables and where to return after the call finishes. When a base case is reached, the stack starts unwinding, returning values back up the chain.\n\n### Classic Example: Factorial\n\nThe factorial of a non\u2011negative integer\u202f`n` (written `n!`) is the product of all positive integers \u2264\u202f`n`.\n\n- **Mathematical definition**  \n  - `0! = 1` (base case)  \n  - `n! = n \u00d7 (n\u20111)!` for `n > 0` (recursive case)\n\n- **Recursive code (Python)**\n\n```python\ndef factorial(n):\n    # Base case\n    if n == 0:\n        return 1\n    # Recursive case\n    return n * factorial(n - 1)\n```\n\nWhen you call `factorial(4)`, the calls unfold like this:\n\n```\nfactorial(4) \u2192 4 * factorial(3)\n               \u2192 4 * (3 * factorial(2))\n               \u2192 4 * (3 * (2 * factorial(1)))\n               \u2192 4 * (3 * (2 * (1 * factorial(0))))\n               \u2192 4 * (3 * (2 * (1 * 1)))   # base case reached\n               \u2192 24\n```\n\n### Visualizing Recursion\n\nThink of recursion like a set of nested Russian dolls:\n\n- The **outermost doll** is the original call.\n- Each **inner doll** is a recursive call with a smaller problem.\n- The **smallest doll** is the base case, which stops the nesting.\n- After the smallest doll is opened, you start putting the dolls back together (unwinding the stack).\n\n### When to Use Recursion\n\n- Problems that naturally break into similar sub\u2011problems (e.g., tree traversals, divide\u2011and\u2011conquer algorithms like quicksort/mergesort).\n- When a solution is easier to express recursively than iteratively.\n\n### Things to Watch Out For\n\n| Issue | Why it matters | How to avoid it |\n|-------|----------------|-----------------|\n| **Missing base case** | Leads to infinite recursion \u2192 stack overflow | Always define at least one clear terminating condition. |\n| **Too deep recursion** | Python\u2019s default recursion limit is ~1000; deep recursions crash. | Use tail\u2011recursion (if the language optimizes it) or convert to an iterative solution. |\n| **Repeated work** | E.g., naive Fibonacci recursion recomputes the same values many times. | Use memoization or an iterative DP approach. |\n\n### Tail Recursion (Advanced)\n\nSome languages (e.g., Scheme, Haskell, Scala) can optimize *tail\u2011recursive* functions, where the recursive call is the last operation in the function. This allows the compiler/interpreter to reuse the same stack frame, effectively turning recursion into iteration and avoiding stack overflow.\n\n```python\n# Not tail\u2011recursive (needs extra multiplication after the call)\ndef fact(n):\n    if n == 0:\n        return 1\n    return n * fact(n-1)\n\n# Tail\u2011recursive version using an accumulator\ndef fact_tail(n, acc=1):\n    if n == 0:\n        return acc\n    return fact_tail(n-1, acc * n)\n```\n\nPython doesn\u2019t perform tail\u2011call optimization, but the pattern is useful when translating to languages that do.\n\n---\n\n**In short:** Recursion solves a problem by having a function call itself with a simpler input, moving toward a base case that stops the calls. The call stack handles the bookkeeping, and once the base case is hit, the results propagate back up. Use it when it makes the logic clearer, but be mindful of base cases and recursion depth.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
       "passed": true
     },
     {
@@ -512,12 +639,16 @@
       "n_setup": 0,
       "n_total_after": 0,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [],
+      "all_memory_types": null,
       "final_response": "234\u202f\u00d7\u202f17\u202f=\u202f3,978.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
       "passed": true
     },
     {
@@ -526,12 +657,16 @@
       "n_setup": 0,
       "n_total_after": 0,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [],
+      "all_memory_types": null,
       "final_response": "Why don\u2019t scientists trust atoms?  \n\nBecause they make up everything!",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
       "passed": true
     },
     {
@@ -540,12 +675,16 @@
       "n_setup": 0,
       "n_total_after": 0,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [],
+      "all_memory_types": null,
       "final_response": "You\u2019re welcome! I\u2019m glad it helped. If you have any more questions or need further assistance, just let me know.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
       "passed": true
     },
     {
@@ -554,12 +693,16 @@
       "n_setup": 0,
       "n_total_after": 0,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [],
+      "all_memory_types": null,
       "final_response": "Got it! If there\u2019s anything you\u2019d like to dive into or any question you have, just let me know. I'm here to help.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
       "passed": true
     },
     {
@@ -568,12 +711,16 @@
       "n_setup": 0,
       "n_total_after": 0,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [],
+      "all_memory_types": null,
       "final_response": "Here\u2019s a simple, idiomatic Python function that takes a string and returns a new string with the characters in reverse order:\n\n```python\ndef reverse_string(s: str) -> str:\n    \"\"\"\n    Return a new string with the characters of `s` reversed.\n\n    Parameters\n    ----------\n    s : str\n        The input string to reverse.\n\n    Returns\n    -------\n    str\n        The reversed string.\n    \"\"\"\n    # Option 1: using slicing (most concise)\n    return s[::-1]\n\n    # Option 2: using the built\u2011in reversed() and join()\n    # return ''.join(reversed(s))\n\n    # Option 3: manual loop (illustrative)\n    # reversed_chars = []\n    # for ch in s:\n    #     reversed_chars.insert(0, ch)   # prepend each character\n    # return ''.join(reversed_chars)\n\n\n# Example usage\nif __name__ == \"__main__\":\n    original = \"Hello, world!\"\n    print(f\"Original:  {original}\")\n    print(f\"Reversed:  {reverse_string(original)}\")\n```\n\n**Explanation**\n\n- `s[::-1]` is Python\u2019s slice syntax: start at the end of the string and step backwards by 1, producing a reversed copy.\n- The alternative using `reversed()` shows how to achieve the same result with an iterator, which can be useful if you prefer an explicit approach.\n- The manual loop version demonstrates the underlying logic but is less efficient; it\u2019s included for educational purposes.\n\nFeel free to pick whichever implementation you like\u2014most Python codebases use the slicing version for its brevity and speed.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
       "passed": true
     },
     {
@@ -582,12 +729,16 @@
       "n_setup": 0,
       "n_total_after": 0,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [],
+      "all_memory_types": null,
       "final_response": "Tokyo is in Japan Standard Time (JST), which is\u202fUTC\u202f+\u202f9 hours.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
       "passed": true
     },
     {
@@ -596,12 +747,16 @@
       "n_setup": 0,
       "n_total_after": 0,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [],
+      "all_memory_types": null,
       "final_response": "The first President of the United States was **George Washington**, who served from 1789 to 1797.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
       "passed": true
     },
     {
@@ -612,14 +767,18 @@
       "new_memories": [
         "User's name is Raj."
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User's name is Raj."
       ],
+      "all_memory_types": null,
       "final_response": "Got it\u2014thanks for letting me know, Raj! I\u2019ve updated my notes with your correct name. How can I assist you today?",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -630,15 +789,19 @@
       "new_memories": [
         "User now lives in Mumbai"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User lives in Bangalore.",
         "User now lives in Mumbai"
       ],
+      "all_memory_types": null,
       "final_response": "Congrats on the move and the new job! How are you finding Mumbai so far? If there's anything you need\u2014tips on settling in, commuting, local spots, or anything work\u2011related\u2014just let me know!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": null,
       "passed": false
     },
     {
@@ -649,15 +812,19 @@
       "new_memories": [
         "User works at Globex"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User works at Acme Corp.",
         "User works at Globex"
       ],
+      "all_memory_types": null,
       "final_response": "Got it\u2014thanks for the update! I\u2019ve noted that you\u2019re now working at Globex instead of Acme. If there\u2019s anything specific you\u2019d like to discuss about your new role or projects there, just let me know!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": null,
       "passed": false
     },
     {
@@ -668,14 +835,18 @@
       "new_memories": [
         "User prefers light mode."
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User prefers light mode."
       ],
+      "all_memory_types": null,
       "final_response": "Got it\u2014I'll keep things in light mode for you from now on. If there's anything else you'd like to adjust, just let me know!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "preference",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -686,14 +857,18 @@
       "new_memories": [
         "User likes cilantro."
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User likes cilantro."
       ],
+      "all_memory_types": null,
       "final_response": "That\u2019s a fun twist\u2014cilantro can be a love\u2011or\u2011hate ingredient! I\u2019ll keep note that you\u2019ve started enjoying it now. Let me know if there\u2019s anything cilantro\u2011related you\u2019d like to explore, like recipes or tips for using it.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "preference",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -704,14 +879,18 @@
       "new_memories": [
         "User is 29 years old."
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User is 29 years old."
       ],
+      "all_memory_types": null,
       "final_response": "Got it\u2014happy belated birthday! \ud83c\udf89 If there's anything special you'd like to talk about or plan now that you're 29, just let me know!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": null,
       "passed": true
     },
     {
@@ -722,15 +901,19 @@
       "new_memories": [
         "User now drives a Tesla Model 3"
       ],
+      "new_memory_types": null,
       "all_memories": [
         "User drives a silver Toyota Camry.",
         "User now drives a Tesla Model 3"
       ],
+      "all_memory_types": null,
       "final_response": "Got it! I\u2019ve updated my notes\u2014you're now driving a Tesla Model\u202f3. Let me know if there\u2019s anything you\u2019d like to discuss about your new car!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": null,
       "passed": false
     },
     {
@@ -739,14 +922,18 @@
       "n_setup": 1,
       "n_total_after": 1,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [
         "User's name is Aman."
       ],
+      "all_memory_types": null,
       "final_response": "Your name is Aman.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
       "passed": true
     },
     {
@@ -755,14 +942,18 @@
       "n_setup": 1,
       "n_total_after": 1,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [
         "User prefers Python over JavaScript for backend work."
       ],
+      "all_memory_types": null,
       "final_response": "Since you\u2019ve mentioned that you prefer Python over JavaScript for backend work, Python would be the natural choice. It offers a clean syntax, a rich ecosystem of libraries and frameworks (like Flask or Django), and strong community support, making it well\u2011suited for building robust backend services. If you have any specific requirements or constraints, let me know and I can tailor the recommendation further!",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
       "passed": true
     },
     {
@@ -771,14 +962,18 @@
       "n_setup": 1,
       "n_total_after": 1,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [
         "User is vegetarian."
       ],
+      "all_memory_types": null,
       "final_response": "Sure! To give you the best suggestion, could you let me know which city or neighborhood you\u2019ll be dining in tonight?",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": false,
+      "expected_type": null,
+      "type_ok": null,
       "passed": false
     },
     {
@@ -787,14 +982,18 @@
       "n_setup": 1,
       "n_total_after": 1,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [
         "User lives in Bangalore."
       ],
+      "all_memory_types": null,
       "final_response": "You live in Bangalore.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
       "passed": true
     },
     {
@@ -803,14 +1002,18 @@
       "n_setup": 1,
       "n_total_after": 1,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [
         "User works at Acme Corp as a backend engineer."
       ],
+      "all_memory_types": null,
       "final_response": "You work as a backend engineer at Acme\u202fCorp.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
       "passed": true
     },
     {
@@ -819,14 +1022,18 @@
       "n_setup": 1,
       "n_total_after": 1,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [
         "User dislikes cilantro."
       ],
+      "all_memory_types": null,
       "final_response": "Here\u2019s a quick, flavorful Mexican dish that\u2019s perfect for a week\u2011night dinner: **Chicken\u202fEnchilada Skillet**. It\u2019s all the comfort of classic enchiladas but comes together in one pan, so there\u2019s minimal cleanup.\n\n---\n\n### Ingredients (serves 4)\n\n| Item | Amount |\n|------|--------|\n| Boneless, skinless chicken thighs or breasts, cut into bite\u2011size pieces | 1\u202flb (\u2248\u202f450\u202fg) |\n| Olive oil | 2\u202ftsp |\n| Onion, finely chopped | 1 medium |\n| Garlic, minced | 2 cloves |\n| Red bell pepper, diced | 1 |\n| Corn kernels (fresh, frozen, or canned, drained) | 1 cup |\n| Black beans, rinsed and drained | 1 cup |\n| Enchilada sauce (red) | 1\u202f\u00bd\u202fcups (store\u2011bought or homemade) |\n| Diced tomatoes (canned, with juices) | 1\u202fcup |\n| Ground cumin | 1\u202ftsp |\n| Smoked paprika | 1\u202ftsp |\n| Chili powder | \u00bd\u202ftsp (adjust to heat preference) |\n| Salt & freshly ground black pepper | to taste |\n| Shredded Mexican\u2011style cheese (cheddar, Monterey Jack, or a blend) | 1\u202fcup |\n| Fresh cilantro, chopped (optional) | 2\u202ftbsp |\n| Lime wedges | for serving |\n| Warm corn tortillas or tortilla chips | for serving |\n\n---\n\n### Instructions\n\n1. **Prep the chicken**  \n   Pat the chicken dry, season with a pinch of salt, pepper, and half the cumin.  \n\n2. **Sear**  \n   Heat the olive oil in a large skillet over medium\u2011high heat. Add the chicken and cook, stirring occasionally, until browned (about 5\u20116\u202fmin). It doesn\u2019t need to be fully cooked through; it will finish in the sauce. Transfer to a plate.\n\n3. **Saut\u00e9 aromatics**  \n   In the same skillet, add a little more oil if needed. Toss in the onion and bell pepper; saut\u00e9 3\u20114\u202fmin until softened. Add the garlic and cook another 30\u202fseconds until fragrant.\n\n4. **Build the sauce**  \n   Stir in the corn, black beans, diced tomatoes (with juices), the remaining cumin, smoked paprika, chili powder, and a pinch of salt. Cook 2\u202fmin, then pour in the enchilada sauce. Bring to a gentle simmer.\n\n5. **Combine**  \n   Return the chicken (and any juices) to the skillet. Reduce heat to low, cover, and let everything simmer for 8\u201110\u202fmin, or until the chicken is cooked through and the flavors have melded.\n\n6. **Finish**  \n   Sprinkle the shredded cheese over the top, cover again, and let it melt (about 2\u202fmin). If you like a little extra heat, stir in a dash of hot sauce now.\n\n7. **Serve**  \n   Garnish with fresh cilantro and a squeeze of lime. Serve straight from the skillet with warm corn tortillas or crunchy tortilla chips on the side.\n\n---\n\n### Why this works\n\n- **Speed:** All the components cook in one pan, so you\u2019re looking at ~30\u202fminutes total.  \n- **Flexibility:** Swap chicken for beef, pork, or a plant\u2011based protein; use any beans you have on hand.  \n- **Flavor depth:** The combination of cumin, smoked paprika, and chili powder gives a smoky, mildly spicy backbone without overwhelming heat.  \n- **Customizable heat:** Adjust the chili powder or add a chopped jalape\u00f1o if you like it spicier.\n\nEnjoy your Mexican\u2011inspired dinner! If you\u2019d like a side dish, a quick cilantro\u2011lime rice or a simple avocado\u2011tomato salad pairs beautifully. Bon app\u00e9tit!",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
       "passed": true
     },
     {
@@ -835,15 +1042,19 @@
       "n_setup": 1,
       "n_total_after": 1,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [
         "User's birthday is March 15."
       ],
+      "all_memory_types": null,
       "final_response": "Your birthday is on March\u202f15.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
-      "response_ok": false,
-      "passed": false
+      "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
+      "passed": true
     },
     {
       "id": "case_048",
@@ -851,14 +1062,18 @@
       "n_setup": 1,
       "n_total_after": 1,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [
         "User drives a silver Toyota Camry."
       ],
+      "all_memory_types": null,
       "final_response": "You drive a silver Toyota\u202fCamry.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
       "passed": true
     },
     {
@@ -867,14 +1082,18 @@
       "n_setup": 1,
       "n_total_after": 1,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [
         "User has two younger brothers."
       ],
+      "all_memory_types": null,
       "final_response": "You have two younger brothers, so you have **two siblings**.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
       "passed": true
     },
     {
@@ -883,14 +1102,18 @@
       "n_setup": 1,
       "n_total_after": 1,
       "new_memories": [],
+      "new_memory_types": null,
       "all_memories": [
         "User does their best focused work in the early mornings."
       ],
+      "all_memory_types": null,
       "final_response": "Based on what I know about your work habits, your most focused, high\u2011quality output tends to happen in the early mornings.\u202fThat\u2019s the ideal window for a deep\u2011work block.\n\n**Suggested schedule**\n\n| Time slot | Why it works |\n|-----------|--------------|\n| **6:00\u202f\u2013\u202f8:30\u202fam** (or whatever early\u2011morning window you normally start) | Your natural peak in focus and energy, minimal distractions, and the day\u2019s \u201cfresh\u2011start\u201d momentum. |\n| **Optional short buffer** (8:30\u202f\u2013\u202f9:00\u202fam) | Light admin, email check\u2011in, or a quick break to transition out of deep work. |\n\nIf you need a longer session, you can split it:\n\n- **First deep\u2011work block:** 6:00\u202f\u2013\u202f8:30\u202fam  \n- **Break / light tasks:** 8:30\u202f\u2013\u202f9:00\u202fam  \n- **Second deep\u2011work block:** 9:00\u202f\u2013\u202f11:00\u202fam (if you can sustain focus)\n\n**Tips to protect the slot**\n\n1. **Turn off notifications** (phone, chat, email) before you start.  \n2. **Set a clear goal** for the block (e.g., \u201cwrite 1,000 words of the report\u201d or \u201ccomplete feature X\u201d).  \n3. **Use a timer** (Pomodoro\u2011style 50\u202fmin work / 10\u202fmin break works well for many people).  \n4. **Tell teammates** you\u2019re in a focus window so they know not to interrupt unless it\u2019s urgent.\n\nIf your schedule ever shifts (e.g., meetings that can\u2019t be moved), try to keep the **earliest possible uninterrupted window** for deep work, as that aligns with your strongest focus period. Let me know if you have any constraints (meetings, family duties, etc.) and we can fine\u2011tune the timing!",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
       "response_ok": true,
+      "expected_type": null,
+      "type_ok": null,
       "passed": true
     }
   ]
