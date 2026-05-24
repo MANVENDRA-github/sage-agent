@@ -1,22 +1,24 @@
-"""Baseline ReAct memory agent.
+"""Memory agent graph.
 
-Graph shape mirrors the upstream langchain-ai/memory-agent template:
-    call_model → (conditional) → store_memory → call_model → END
+Graph shape:
+    START → retrieve_memories → call_model → (conditional) → store_memory → call_model → END
 
-The conditional routes on whether the model emitted a tool call. After a
-save the graph loops back to call_model so the model can produce a natural
-response to the user.
+The conditional routes on whether the model emitted a save_memory tool call.
+After a save the graph loops back to call_model so the model can produce a
+natural response. The store_memory → call_model edge skips re-retrieval; the
+user's query hasn't changed mid-turn so the cached retrieved_memories on
+state is still correct.
 
 We hand-roll store_memory (rather than using ToolNode) because we need to
-inject both `store` and `user_id` into the tool. InjectedToolArg only hides
-the arg from the LLM's schema; populating it is on us.
+inject `store` and `user_id` into the tool — InjectedToolArg only hides the
+arg from the LLM's schema; populating it is on us.
 """
 
 from __future__ import annotations
 
 import asyncio
 
-from langchain_core.messages import SystemMessage, ToolMessage
+from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import END, START, StateGraph
 from langgraph.store.base import BaseStore
@@ -24,11 +26,13 @@ from langgraph.store.base import BaseStore
 from sage_agent.model import get_model
 from sage_agent.prompts import SYSTEM_PROMPT
 from sage_agent.state import State
-from sage_agent.store import list_memories, make_store
+from sage_agent.store import make_store, memory_namespace
 from sage_agent.tools import save_memory
 
 TOOLS = [save_memory]
 TOOLS_BY_NAME = {t.name: t for t in TOOLS}
+
+RETRIEVAL_K = 5
 
 
 def _user_id(config: RunnableConfig) -> str:
@@ -42,10 +46,30 @@ def _format_user_info(memories: list[dict]) -> str:
     return "\n".join(f"- {m['content']}" for m in memories)
 
 
-async def call_model(state: State, config: RunnableConfig, store: BaseStore) -> dict:
+def _last_human_text(messages: list) -> str | None:
+    for msg in reversed(messages):
+        if isinstance(msg, HumanMessage):
+            return msg.content if isinstance(msg.content, str) else str(msg.content)
+    return None
+
+
+async def retrieve_memories(state: State, config: RunnableConfig, store: BaseStore) -> dict:
+    query = _last_human_text(state.messages)
+    if not query:
+        return {"retrieved_memories": []}
     user_id = _user_id(config)
-    memories = list_memories(store, user_id)
-    system_prompt = SYSTEM_PROMPT.format(user_info=_format_user_info(memories))
+    items = await store.asearch(memory_namespace(user_id), query=query, limit=RETRIEVAL_K)
+    return {
+        "retrieved_memories": [
+            {"key": item.key, **item.value} for item in items
+        ]
+    }
+
+
+async def call_model(state: State, config: RunnableConfig, store: BaseStore) -> dict:
+    system_prompt = SYSTEM_PROMPT.format(
+        user_info=_format_user_info(state.retrieved_memories)
+    )
     messages = [SystemMessage(content=system_prompt), *state.messages]
 
     model = get_model().bind_tools(TOOLS)
@@ -79,9 +103,11 @@ def route_after_model(state: State) -> str:
 
 def build_graph(*, checkpointer=None, store: BaseStore | None = None):
     builder = StateGraph(State)
+    builder.add_node("retrieve_memories", retrieve_memories)
     builder.add_node("call_model", call_model)
     builder.add_node("store_memory", store_memory)
-    builder.add_edge(START, "call_model")
+    builder.add_edge(START, "retrieve_memories")
+    builder.add_edge("retrieve_memories", "call_model")
     builder.add_conditional_edges(
         "call_model", route_after_model, {"store_memory": "store_memory", END: END}
     )
