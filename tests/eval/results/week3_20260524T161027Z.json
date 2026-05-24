@@ -1,9 +1,9 @@
 {
   "label": "week3",
-  "timestamp_utc": "20260524T115043Z",
+  "timestamp_utc": "20260524T161027Z",
   "cases_path": "D:\\sage-agent\\tests\\eval\\cases.json",
   "n_cases": 50,
-  "elapsed_seconds": 556.14,
+  "elapsed_seconds": 2107.38,
   "aggregate": {
     "by_category": {
       "should_save_fact": {
@@ -11,9 +11,9 @@
         "passed": 10,
         "errors": 0,
         "type_eligible": 10,
-        "type_correct": 10,
+        "type_correct": 9,
         "pass_rate": 1.0,
-        "type_accuracy": 1.0
+        "type_accuracy": 0.9
       },
       "should_save_preference": {
         "total": 8,
@@ -44,20 +44,20 @@
       },
       "contradiction_update": {
         "total": 7,
-        "passed": 6,
+        "passed": 7,
         "errors": 0,
         "type_eligible": 7,
         "type_correct": 7,
-        "pass_rate": 0.8571428571428571,
+        "pass_rate": 1.0,
         "type_accuracy": 1.0
       },
       "retrieval_relevance": {
         "total": 10,
-        "passed": 9,
+        "passed": 10,
         "errors": 0,
         "type_eligible": 0,
         "type_correct": 0,
-        "pass_rate": 0.9,
+        "pass_rate": 1.0,
         "type_accuracy": null
       }
     },
@@ -71,9 +71,9 @@
       "f1": 0.983
     },
     "type_accuracy": {
-      "correct": 24,
+      "correct": 23,
       "eligible": 30,
-      "rate": 0.8
+      "rate": 0.767
     }
   },
   "cases": [
@@ -120,7 +120,7 @@
       "all_memory_types": [
         "fact"
       ],
-      "final_response": "Got it! I\u2019ve noted that you\u2019re based in Bangalore, India. Let me know if there\u2019s anything specific you\u2019d like to discuss or any local insights you\u2019re interested in!",
+      "final_response": "Got it! I\u2019ve noted that you live in Bangalore, India. Let me know if there\u2019s anything specific you\u2019d like to discuss or any help you need.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
@@ -146,7 +146,7 @@
       "all_memory_types": [
         "fact"
       ],
-      "final_response": "Got it! If you need any help related to backend development, tech stacks, or anything else at Acme Corp, just let me know.",
+      "final_response": "Got it! Thanks for sharing. If there's anything specific you'd like to discuss about your role, projects, or anything else, just let me know.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
@@ -164,21 +164,21 @@
         "User graduated from IIT Delhi in 2018"
       ],
       "new_memory_types": [
-        "fact"
+        "episodic"
       ],
       "all_memories": [
         "User graduated from IIT Delhi in 2018"
       ],
       "all_memory_types": [
-        "fact"
+        "episodic"
       ],
-      "final_response": "Got it! \ud83c\udf93 If you\u2019d like to talk about your time at IIT Delhi, your field of study, or what you\u2019ve been up to since graduating, just let me know!",
+      "final_response": "Got it! \ud83c\udf93 Congratulations on graduating from IIT Delhi in 2018. If there's anything you\u2019d like to discuss\u2014career moves, further studies, projects, or anything else\u2014just let me know!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
       "expected_type": "fact",
-      "type_ok": true,
+      "type_ok": false,
       "passed": true
     },
     {
@@ -198,7 +198,7 @@
       "all_memory_types": [
         "fact"
       ],
-      "final_response": "Got it! I\u2019ve noted that your birthday is on March\u202f15th. \ud83c\udf89 If you ever need ideas for celebrations, gift suggestions, or anything else related to your special day, just let me know!",
+      "final_response": "Got it\u2014your birthday is on March\u202f15th! \ud83c\udf89 If you ever need ideas for celebrating or a reminder as the date approaches, just let me know.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
@@ -224,7 +224,7 @@
       "all_memory_types": [
         "fact"
       ],
-      "final_response": "Got it! It\u2019s always interesting having younger siblings around. If there\u2019s anything specific you\u2019d like to talk about regarding them\u2014family dynamics, activities you enjoy together, or anything else\u2014just let me know!",
+      "final_response": "Got it! It\u2019s great to know you have two younger brothers. If there\u2019s anything specific you\u2019d like to talk about regarding them\u2014or anything else\u2014I\u2019m here to help!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
@@ -276,7 +276,7 @@
       "all_memory_types": [
         "fact"
       ],
-      "final_response": "Got it\u2014thanks for sharing! If there\u2019s anything you\u2019d like to discuss or need help with, just let me know.",
+      "final_response": "Got it\u2014thanks for letting me know! If there\u2019s anything specific you\u2019d like to talk about or any help you need, just let me know.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
@@ -302,7 +302,7 @@
       "all_memory_types": [
         "fact"
       ],
-      "final_response": "Got it! I\u2019ve noted that you drive a silver Toyota Camry. Let me know if there\u2019s anything else you\u2019d like to share or discuss.",
+      "final_response": "Got it! I\u2019ve noted that you drive a silver Toyota Camry. Let me know if there\u2019s anything else you\u2019d like me to remember or help with.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
@@ -354,7 +354,7 @@
       "all_memory_types": [
         "preference"
       ],
-      "final_response": "Got it! I\u2019ll keep that in mind and make sure any recommendations or instructions I give you assume you\u2019re using dark\u2011mode interfaces. If there\u2019s anything else you\u2019d like me to remember, just let me know!",
+      "final_response": "Got it! I\u2019ll keep that in mind and make sure any recommendations or instructions I give you assume you\u2019re using dark mode. If there\u2019s anything else you\u2019d like me to remember, just let me know!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
@@ -369,24 +369,24 @@
       "n_setup": 0,
       "n_total_after": 1,
       "new_memories": [
-        "User dislikes cilantro"
+        "User dislikes cilantro, finds it tastes like soap"
       ],
       "new_memory_types": [
-        "fact"
+        "preference"
       ],
       "all_memories": [
-        "User dislikes cilantro"
+        "User dislikes cilantro, finds it tastes like soap"
       ],
       "all_memory_types": [
-        "fact"
+        "preference"
       ],
-      "final_response": "Got it\u2014cilantro is a no\u2011go for you! If you ever need recipe ideas or restaurant suggestions that avoid it, just let me know.",
+      "final_response": "Got it\u2014cilantro is a no\u2011go for you! If you ever need recipe ideas or restaurant suggestions that avoid cilantro, just let me know.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
       "expected_type": "preference",
-      "type_ok": false,
+      "type_ok": true,
       "passed": true
     },
     {
@@ -398,21 +398,21 @@
         "User prefers Python over JavaScript for backend work"
       ],
       "new_memory_types": [
-        "preference"
+        "fact"
       ],
       "all_memories": [
         "User prefers Python over JavaScript for backend work"
       ],
       "all_memory_types": [
-        "preference"
+        "fact"
       ],
-      "final_response": "Got it! I\u2019ll keep in mind that you prefer using Python over JavaScript for backend development. If you ever need help with Python\u2011related backend topics\u2014whether it\u2019s frameworks, APIs, databases, or deployment\u2014just let me know!",
+      "final_response": "Got it! I\u2019ll keep in mind that you prefer using Python over JavaScript for backend development. If you ever need recommendations, code snippets, or best\u2011practice tips for Python\u2011based backends, just let me know!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
       "expected_type": "preference",
-      "type_ok": true,
+      "type_ok": false,
       "passed": true
     },
     {
@@ -421,24 +421,24 @@
       "n_setup": 0,
       "n_total_after": 1,
       "new_memories": [
-        "User does best focused work in early mornings"
+        "User does best focused work in early mornings."
       ],
       "new_memory_types": [
-        "preference"
+        "fact"
       ],
       "all_memories": [
-        "User does best focused work in early mornings"
+        "User does best focused work in early mornings."
       ],
       "all_memory_types": [
-        "preference"
+        "fact"
       ],
-      "final_response": "Got it! I\u2019ll keep that in mind and try to schedule any deep\u2011thinking or detail\u2011heavy tasks for early mornings when you\u2019re at your most focused. If you ever need help planning your day or setting up reminders for those prime work hours, just let me know.",
+      "final_response": "Got it! I\u2019ll keep that in mind when we plan anything that requires focused attention. Let me know if there\u2019s anything specific you\u2019d like to schedule or work on during those early\u2011morning hours.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
       "expected_type": "preference",
-      "type_ok": true,
+      "type_ok": false,
       "passed": true
     },
     {
@@ -450,21 +450,21 @@
         "User is a huge fan of sci-fi novels, especially Ted Chiang"
       ],
       "new_memory_types": [
-        "fact"
+        "preference"
       ],
       "all_memories": [
         "User is a huge fan of sci-fi novels, especially Ted Chiang"
       ],
       "all_memory_types": [
-        "fact"
+        "preference"
       ],
-      "final_response": "Got it! I\u2019ll keep that in mind\u2014if you ever want recommendations, discussion points, or anything related to sci\u2011fi (especially Ted\u202fChiang\u2019s work), just let me know!",
+      "final_response": "That's awesome! Ted\u202fChiang\u2019s stories are such a perfect blend of thought\u2011provoking ideas and beautiful prose. Do you have a favorite Chiang story or collection? And are there any other sci\u2011fi authors or books you\u2019ve been enjoying lately?",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
       "expected_type": "preference",
-      "type_ok": false,
+      "type_ok": true,
       "passed": true
     },
     {
@@ -473,18 +473,18 @@
       "n_setup": 0,
       "n_total_after": 1,
       "new_memories": [
-        "User does not drink coffee, only green tea"
+        "User does not drink coffee and only drinks green tea"
       ],
       "new_memory_types": [
         "fact"
       ],
       "all_memories": [
-        "User does not drink coffee, only green tea"
+        "User does not drink coffee and only drinks green tea"
       ],
       "all_memory_types": [
         "fact"
       ],
-      "final_response": "Got it! I'll keep that in mind\u2014green tea it is. If you ever need recommendations for tea varieties or anything else, just let me know!",
+      "final_response": "Got it! I'll keep that in mind\u2014green tea it is, no coffee. If you ever need recommendations for tea blends or anything else, just let me know!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
@@ -536,7 +536,7 @@
       "all_memory_types": [
         "preference"
       ],
-      "final_response": "Got it! I\u2019ll keep that in mind for any food\u2011related suggestions or recipes. If there\u2019s anything specific you\u2019d like help with\u2014meal ideas, restaurant recommendations, nutrition tips, etc.\u2014just let me know!",
+      "final_response": "Got it! I\u2019ll keep that in mind\u2014no meat or fish in any suggestions or recipes we discuss. If you ever want ideas for vegetarian meals, snacks, or anything else, just let me know!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
@@ -562,7 +562,7 @@
       "all_memory_types": [
         "fact"
       ],
-      "final_response": "Congratulations on the promotion! \ud83c\udf89 That\u2019s a fantastic milestone. How are you feeling about the new role, and do you have any plans to celebrate?",
+      "final_response": "Congratulations on the promotion! \ud83c\udf89 Becoming a senior engineer is a fantastic milestone\u2014well deserved. How are you feeling about the new role?",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
@@ -577,18 +577,18 @@
       "n_setup": 0,
       "n_total_after": 1,
       "new_memories": [
-        "User is traveling to Tokyo next Tuesday for a week-long trip."
+        "User is traveling to Tokyo next Tuesday for a week-long trip"
       ],
       "new_memory_types": [
         "episodic"
       ],
       "all_memories": [
-        "User is traveling to Tokyo next Tuesday for a week-long trip."
+        "User is traveling to Tokyo next Tuesday for a week-long trip"
       ],
       "all_memory_types": [
         "episodic"
       ],
-      "final_response": "That sounds exciting! A week in Tokyo gives you plenty of time to explore both the city\u2019s iconic sights and some off\u2011the\u2011beaten\u2011path neighborhoods. Here are a few suggestions to help you make the most of your trip:\n\n### 1. Must\u2011see attractions (classic Tokyo)\n| Area | Highlights | Approx. time |\n|------|------------|--------------|\n| **Shibuya** | Shibuya Crossing, Hachik\u014d Statue, Center Gai | 2\u20113\u202fh |\n| **Shinjuku** | Tokyo Metropolitan Government Observatory (free view), Omoide Yoko\u2011cho, Kabukich\u014d | 3\u20114\u202fh |\n| **Asakusa** | Senso\u2011ji Temple, Nakamise\u2011d\u014dri shopping street | 2\u20113\u202fh |\n| **Ginza** | Upscale shopping, Kabukiza Theatre (catch a short Kabuki act) | 2\u20113\u202fh |\n| **Roppongi** | Mori Art Museum, Tokyo City View (Roppongi Hills) | 2\u20113\u202fh |\n\n### 2. Unique experiences\n- **Tsukiji Outer Market** \u2013 fresh sushi breakfast or street\u2011food tasting.\n- **TeamLab Borderless / Planets** \u2013 immersive digital art (book tickets in advance).\n- **Sumida River cruise** \u2013 a relaxing way to see the skyline from the water.\n- **Yanaka Ginza** \u2013 a nostalgic, low\u2011key shopping lane that survived the war.\n- **Karaoke** \u2013 try a private booth in Shinjuku or Shibuya for a fun night.\n\n### 3. Day\u2011trip ideas (if you want to venture outside the city)\n| Destination | Travel time (by train) | Highlights |\n|------------|------------------------|------------|\n| **Nikko** | ~2\u202fh (JR/Tobu) | UNESCO shrines, waterfalls, nature |\n| **Kamakura** | ~1\u202fh (JR Yokosuka Line) | Great Buddha, temples, beach |\n| **Hakone** | ~1.5\u202fh (Odakyu Romancecar) | Hot springs, views of Mt.\u202fFuji, Open\u2011Air Museum |\n| **Yokohama** | ~30\u202fmin (JR) | Chinatown, Minato Mirai, Cup Noodles Museum |\n\n### 4. Food & drink recommendations\n- **Sushi** \u2013 Sushi\u2011Da (Ginza) or Midori (Shibuya) for quality without the ultra\u2011high price.\n- **Ramen** \u2013 Ichiran (Shibuya) for solo dining, or Ramen Street in Tokyo Station.\n- **Tempura** \u2013 Tempura Kondo (Ginza) \u2013 a Michelin\u2011starred spot, book early.\n- **Izakaya** \u2013 Uoshin Nogizaka (near Roppongi) for a lively atmosphere.\n- **Dessert** \u2013 Try a matcha\u2011flavored treat at **Ginza\u202fSakura** or a fluffy **Taiyaki** from a street stall.\n\n### 5. Practical tips\n| Topic | Advice |\n|-------|--------|\n| **Transport** | Get a **Suica** or **Pasmo** prepaid IC card (usable on trains, subways, buses, and many stores). |\n| **Wi\u2011Fi** | Rent a pocket Wi\u2011Fi device or buy a short\u2011term SIM (e.g., from\u202fb-mobile). |\n| **Cash** | Many places still prefer cash; ATMs at 7\u2011Eleven accept foreign cards. |\n| **Language** | Basic Japanese greetings go a long way: \u201cKonnichiwa\u201d (hello), \u201cArigat\u014d gozaimasu\u201d (thank you). |\n| **Etiquette** | Speak softly on public transport, avoid eating while walking, and remember to remove shoes when entering traditional inns (ryokan) or some temples. |\n| **Time zone** | Tokyo is UTC\u202f+9. If you\u2019re jet\u2011lagged, try to get sunlight in the morning and stay awake until a normal local bedtime. |\n\n### 6. Sample 7\u2011day itinerary (flexible)\n\n| Day | Morning | Afternoon | Evening |\n|-----|---------|-----------|---------|\n| **1** | Arrive, settle into hotel, get Suica | Explore Shibuya & Hachik\u014d | Dinner in Shibuya (yakitori) |\n| **2** | Tsukiji Outer Market (breakfast) | Asakusa \u2013 Senso\u2011ji, Nakamise | River cruise & night view from Tokyo Skytree |\n| **3** | Meiji Shrine & Harajuku (Takeshita\u2011d\u014dri) | Omotesand\u014d shopping | Shinjuku Golden Gai bar hopping |\n| **4** | Day trip to Nikko (temples, waterfalls) | Return to Tokyo | Light dinner near hotel |\n| **5** | TeamLab Borderless (reserve tickets) | Odaiba \u2013 Palette Town, beach walk | Odaiba night lights, dinner at a waterfront restaurant |\n| **6** | Day trip to Hakone (hot springs, Mt.\u202fFuji view) | Return, relax at an onsen\u2011style sent\u014d | Sushi dinner in Ginza |\n| **7** | Free morning \u2013 last\u2011minute shopping or park (Ueno) | Pack, check\u2011out | Head to airport (allow 2\u20113\u202fh for security) |\n\nFeel free to let me know if you\u2019d like deeper details on any of these\u2014e.g., restaurant reservations, specific train routes, or alternative day\u2011trip options. Have an amazing time in Tokyo!",
+      "final_response": "That sounds exciting! Do you need any help planning your itinerary, finding restaurants, figuring out transportation, or anything else for your week in Tokyo?",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
@@ -606,7 +606,7 @@
       "new_memory_types": [],
       "all_memories": [],
       "all_memory_types": [],
-      "final_response": "I\u2019m sorry to hear that\u2014it sounds like a rough start to the day. Do you want to talk about what happened, or would you prefer some strategies for handling the aftermath (like processing the feedback, planning a follow\u2011up, or just decompressing)?",
+      "final_response": "I\u2019m sorry to hear that\u2014it sounds like a stressful start to the day. Do you want to talk about what happened, or would you prefer some strategies for handling tough conversations like that?",
       "expected_save": true,
       "predicted_save": false,
       "content_ok": false,
@@ -624,15 +624,15 @@
         "User loved reading Project Hail Mary"
       ],
       "new_memory_types": [
-        "preference"
+        "fact"
       ],
       "all_memories": [
         "User loved reading Project Hail Mary"
       ],
       "all_memory_types": [
-        "preference"
+        "fact"
       ],
-      "final_response": "That\u2019s great!\u202fAndy Weir really knows how to blend hard science with a gripping story. If you\u2019re looking for something in a similar vein\u2014science\u2011heavy, high\u2011stakes, and a bit humorous\u2014here are a few suggestions:\n\n| Book | Why It Might Appeal to You |\n|------|----------------------------|\n| **\u201cThe Martian\u201d** by Andy\u202fWeir | If you haven\u2019t read it yet, it\u2019s the predecessor that started the whole \u201cspace\u2011survival meets humor\u201d formula. |\n| **\u201cArtemis\u201d** by Andy\u202fWeir | Another of Weir\u2019s novels, set on the Moon with a heist\u2011like plot and plenty of engineering problem\u2011solving. |\n| **\u201cSeveneves\u201d** by Neal\u202fStephenson | A massive, hard\u2011science epic about humanity\u2019s fight for survival after a catastrophic event. |\n| **\u201cThe Calculating Stars\u201d** by Mary\u202fRobinette\u202fKowal | Alternate\u2011history space\u2011race novel with strong characters and realistic engineering challenges. |\n| **\u201cRed Mars\u201d** by Kim\u202fStanley\u202fRobinson | The first book of a trilogy that explores colonizing Mars in meticulous scientific detail. |\n| **\u201cThe Dark Forest\u201d** (Remembrance of Earth\u2019s Past #2) by Liu\u202fCixin | If you liked the cosmic scale and the \u201cwhat\u2011if\u201d scenarios, this sequel to *The Three\u2011Body Problem* ramps up the stakes. |\n| **\u201cAn Absolutely Remarkable Thing\u201d** by Hank\u202fGreen | A more contemporary, Earth\u2011bound take on fame, alien contact, and the power of social media, with a witty voice. |\n\nDo any of those sound interesting, or is there a particular element of *Project\u202fHail\u202fMary* you\u2019d like more of (e.g., the humor, the problem\u2011solving, the alien interaction)? I can fine\u2011tune the recommendations!",
+      "final_response": "That\u2019s awesome! Andy Weir really knows how to blend hard science with a gripping story. What part of *Project Hail\u202fMary* stood out to you the most?",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
@@ -647,13 +647,13 @@
       "n_setup": 0,
       "n_total_after": 1,
       "new_memories": [
-        "User is taking a vacation from June 15 to June 25"
+        "User is taking vacation from June 15 to June 25"
       ],
       "new_memory_types": [
         "episodic"
       ],
       "all_memories": [
-        "User is taking a vacation from June 15 to June 25"
+        "User is taking vacation from June 15 to June 25"
       ],
       "all_memory_types": [
         "episodic"
@@ -712,7 +712,7 @@
       "new_memory_types": [],
       "all_memories": [],
       "all_memory_types": [],
-      "final_response": "Sure! Recursion is a programming technique where a function calls **itself** in order to solve a problem. The key idea is to break a complex problem down into smaller, more manageable sub\u2011problems that look just like the original one. Here\u2019s how it works step\u2011by\u2011step:\n\n1. **Base case** \u2013\u202fThe condition that stops the recursion.  \n   Every recursive function needs at least one base case; otherwise, it would call itself forever and eventually cause a stack overflow.\n\n2. **Recursive case** \u2013\u202fThe part where the function calls itself with a **smaller or simpler** version of the original input.  \n   Each recursive call moves the problem closer to the base case.\n\n3. **Call stack** \u2013\u202fWhen a function calls itself, the current state (its local variables, where it should return to, etc.) is pushed onto the call stack. When a call reaches the base case and returns, the stack \u201cpops\u201d back to the previous call, which can then finish its work.\n\n### Classic Example: Factorial\n\nThe factorial of a non\u2011negative integer\u202f`n` (written `n!`) is the product of all positive integers \u2264\u202f`n`.\n\n- **Mathematical definition**  \n  - `0! = 1` (base case)  \n  - `n! = n \u00d7 (n\u20111)!` for `n > 0` (recursive case)\n\n- **Recursive code (Python)**\n\n```python\ndef factorial(n):\n    # Base case\n    if n == 0:\n        return 1\n    # Recursive case\n    return n * factorial(n - 1)\n```\n\nWhen you call `factorial(4)`, the calls unfold like this:\n\n```\nfactorial(4) \u2192 4 * factorial(3)\nfactorial(3) \u2192 3 * factorial(2)\nfactorial(2) \u2192 2 * factorial(1)\nfactorial(1) \u2192 1 * factorial(0)\nfactorial(0) \u2192 1   \u2190 base case\n```\n\nThen the stack unwinds:\n\n```\nfactorial(1) returns 1 * 1 = 1\nfactorial(2) returns 2 * 1 = 2\nfactorial(3) returns 3 * 2 = 6\nfactorial(4) returns 4 * 6 = 24\n```\n\n### Visualizing Recursion\n\nThink of recursion like a set of nested Russian dolls. Each doll (function call) contains a smaller doll inside it, and you keep opening them until you reach the tiniest doll (the base case). Then you start putting the dolls back together, one by one, until the original doll is whole again.\n\n### When to Use Recursion\n\n- Problems that naturally break into similar sub\u2011problems (e.g., tree traversals, divide\u2011and\u2011conquer algorithms like quicksort/mergesort, the Fibonacci sequence, combinatorial generation).\n- When a clean, readable solution is more valuable than raw performance. Recursive code is often easier to understand and maintain.\n\n### Pitfalls to Watch Out For\n\n| Issue | Why it Happens | How to Avoid |\n|-------|----------------|--------------|\n| **Missing base case** | Leads to infinite recursion \u2192 stack overflow | Always define at least one condition that stops recursion. |\n| **Too deep recursion** | Call stack exceeds language limits (e.g., Python\u2019s default recursion depth \u2248 1000) | Use tail\u2011recursion (if the language optimizes it) or convert to an iterative solution. |\n| **Repeated work** | E.g., na\u00efve Fibonacci recomputes the same values many times | Use memoization or dynamic programming. |\n\n### Tail Recursion (Advanced)\n\nSome languages (like Scheme, Haskell, or modern C++) can optimize *tail\u2011recursive* functions, where the recursive call is the **last** operation. This allows the compiler/interpreter to reuse the current stack frame instead of creating a new one, effectively turning recursion into iteration and avoiding stack overflow.\n\n```python\n# Not tail\u2011recursive (needs extra multiplication after the call)\ndef fact(n):\n    if n == 0:\n        return 1\n    return n * fact(n-1)\n\n# Tail\u2011recursive version (requires an accumulator)\ndef fact_tail(n, acc=1):\n    if n == 0:\n        return acc\n    return fact_tail(n-1, acc * n)\n```\n\nPython doesn\u2019t perform tail\u2011call optimization, but languages that do can handle very deep recursions efficiently.\n\n---\n\n**In short:** Recursion solves a problem by having a function call itself with a simpler input, moving toward a base case that stops the calls. The call stack keeps track of each pending call, and once the base case is hit, the results propagate back up the stack. Use it when the problem naturally fits a \u201cdivide into similar sub\u2011problems\u201d pattern, but be mindful of base cases and recursion depth.",
+      "final_response": "Sure! Recursion is a programming technique where a function calls **itself** in order to solve a problem. The key idea is to break a complex problem down into smaller, more manageable sub\u2011problems that have the same structure as the original one.\n\n### How Recursion Works\n\n1. **Base Case**  \n   This is the condition that stops the recursion. Without a base case, the function would keep calling itself forever (or until the call stack overflows). The base case returns a simple, direct answer.\n\n2. **Recursive Case**  \n   This is where the function calls itself with a **smaller or simpler** version of the original input. Each recursive call moves the problem closer to the base case.\n\n3. **Combining Results**  \n   After the recursive call returns, the function typically does a little extra work (e.g., combines the result with something else) and then returns the final answer.\n\n### Visual Example: Factorial\n\nThe factorial of a non\u2011negative integer\u202f`n` (written `n!`) is the product of all positive integers up to `n`.\n\n- **Mathematical definition**  \n  - `0! = 1` (base case)  \n  - `n! = n \u00d7 (n\u20111)!` for `n > 0` (recursive case)\n\n- **Recursive code (Python)**\n\n```python\ndef factorial(n):\n    # Base case\n    if n == 0:\n        return 1\n    # Recursive case\n    else:\n        return n * factorial(n - 1)\n```\n\n**How it runs for `factorial(3)`**\n\n```\nfactorial(3) \u2192 3 * factorial(2)\n               \u2192 3 * (2 * factorial(1))\n               \u2192 3 * (2 * (1 * factorial(0)))\n               \u2192 3 * (2 * (1 * 1))\n               \u2192 6\n```\n\nEach call waits for the result of the next, deeper call until the base case (`factorial(0)`) returns `1`. Then the stack \u201cunwinds,\u201d multiplying the results back up.\n\n### When to Use Recursion\n\n- Problems that naturally break into similar sub\u2011problems (e.g., tree traversals, divide\u2011and\u2011conquer algorithms like quicksort/mergesort).\n- When a solution is easier to express recursively than iteratively.\n- When you need to explore all possible configurations (e.g., backtracking, generating permutations).\n\n### Things to Watch Out For\n\n| Issue | Why it matters | How to avoid it |\n|-------|----------------|-----------------|\n| **Missing base case** | Leads to infinite recursion \u2192 stack overflow | Always define a clear stopping condition. |\n| **Too deep recursion** | Some languages have limited call\u2011stack depth (e.g., Python ~1000 frames). | Use tail recursion (if the language optimizes it) or convert to an iterative solution. |\n| **Repeated work** | Na\u00efve recursion can recompute the same sub\u2011problems (e.g., Fibonacci). | Apply memoization or dynamic programming. |\n\n### Tail Recursion (Advanced)\n\nSome languages (like Scheme, Haskell, or modern C++) can optimize *tail\u2011recursive* functions, where the recursive call is the **last** operation. This turns recursion into a loop under the hood, avoiding stack growth.\n\n```python\n# Not tail\u2011recursive (needs extra multiplication after the call)\ndef fact(n):\n    if n == 0:\n        return 1\n    return n * fact(n-1)\n\n# Tail\u2011recursive version (requires an accumulator)\ndef fact_tail(n, acc=1):\n    if n == 0:\n        return acc\n    return fact_tail(n-1, acc * n)\n```\n\nPython doesn\u2019t perform tail\u2011call optimization, but languages that do can handle very deep recursions efficiently.\n\n### Quick Recap\n\n1. **Base case** stops recursion.  \n2. **Recursive case** calls the same function with a simpler input.  \n3. The call stack builds up, then unwinds, combining results.  \n\nRecursion is a powerful tool\u2014just remember to define a base case and keep an eye on depth! If you have a specific problem you\u2019d like to see solved recursively, let me know and I can walk through it.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
@@ -784,7 +784,7 @@
       "new_memory_types": [],
       "all_memories": [],
       "all_memory_types": [],
-      "final_response": "Is there anything specific you\u2019d like to talk about or ask? I'm here to help!",
+      "final_response": "Sure thing! What would you like to talk about or work on today?",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
@@ -802,7 +802,7 @@
       "new_memory_types": [],
       "all_memories": [],
       "all_memory_types": [],
-      "final_response": "Here\u2019s a simple, idiomatic way to reverse a string in Python:\n\n```python\ndef reverse_string(s: str) -> str:\n    \"\"\"\n    Return a new string that is the reverse of the input string `s`.\n\n    Parameters\n    ----------\n    s : str\n        The string to reverse.\n\n    Returns\n    -------\n    str\n        The reversed string.\n    \"\"\"\n    # Using slicing with a step of -1\n    return s[::-1]\n\n\n# Example usage\nif __name__ == \"__main__\":\n    original = \"Hello, world!\"\n    reversed_str = reverse_string(original)\n    print(f\"Original: {original}\")\n    print(f\"Reversed: {reversed_str}\")\n```\n\n**Explanation**\n\n- `s[::-1]` is a slice that starts from the end of the string and moves backward one character at a time, effectively reversing it.\n- The function works for any string, including empty strings and Unicode characters.",
+      "final_response": "Here\u2019s a simple, idiomatic Python function that takes a string and returns a new string with the characters in reverse order:\n\n```python\ndef reverse_string(s: str) -> str:\n    \"\"\"\n    Return a new string with the characters of `s` reversed.\n\n    Parameters\n    ----------\n    s : str\n        The input string to reverse.\n\n    Returns\n    -------\n    str\n        The reversed string.\n    \"\"\"\n    # Option 1: using slicing (most concise)\n    return s[::-1]\n\n    # Option 2: using the built\u2011in reversed() and join()\n    # return ''.join(reversed(s))\n\n    # Option 3: manual loop (illustrative)\n    # reversed_chars = []\n    # for ch in s:\n    #     reversed_chars.insert(0, ch)   # prepend each character\n    # return ''.join(reversed_chars)\n\n\n# Example usage\nif __name__ == \"__main__\":\n    original = \"Hello, world!\"\n    print(f\"Original:  {original}\")\n    print(f\"Reversed:  {reverse_string(original)}\")\n```\n\n**Explanation**\n\n- `s[::-1]` is Python\u2019s slice syntax: start at the end of the string and step backwards by 1, producing a reversed copy.\n- The alternative using `reversed()` creates an iterator over the characters in reverse order, which we then join back into a string.\n- The manual loop shows the underlying logic but is less efficient and generally unnecessary in Python.\n\nPick whichever implementation you prefer; the slicing version is the most concise and idiomatic.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
@@ -838,7 +838,7 @@
       "new_memory_types": [],
       "all_memories": [],
       "all_memory_types": [],
-      "final_response": "The first President of the United States was **George Washington**, who served from 1789 to 1797.",
+      "final_response": "The first president of the United States was **George Washington**, who took office on April\u202f30,\u202f1789.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
@@ -890,7 +890,7 @@
       "all_memory_types": [
         "fact"
       ],
-      "final_response": "Congrats on the big move! How are you finding Mumbai so far, and what\u2019s the new role you\u2019ll be starting?",
+      "final_response": "Congrats on the move and the new job! How are you finding Mumbai so far? If there\u2019s anything you need help with\u2014settling in, exploring the city, or anything work\u2011related\u2014just let me know.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
@@ -916,7 +916,7 @@
       "all_memory_types": [
         "fact"
       ],
-      "final_response": "Got it\u2014thanks for the update! I\u2019ve noted that you\u2019re now working at Globex. How\u2019s the transition been so far?",
+      "final_response": "Got it\u2014thanks for the update! I\u2019ve noted that you\u2019re now working at Globex instead of Acme. How\u2019s the transition been so far?",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
@@ -968,7 +968,7 @@
       "all_memory_types": [
         "preference"
       ],
-      "final_response": "Got it\u2014your taste has shifted, and you now enjoy cilantro! If you\u2019d like any recipes or tips that feature it, just let me know.",
+      "final_response": "That\u2019s a fun twist! Cilantro can be a love\u2011or\u2011hate ingredient, so it\u2019s great to hear you\u2019ve come around to enjoying it. If you ever need a recipe or a tip for using cilantro in a new dish, just let me know!",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
@@ -994,7 +994,7 @@
       "all_memory_types": [
         "fact"
       ],
-      "final_response": "Got it\u2014happy belated birthday! \ud83c\udf89 If there's anything special you\u2019d like to talk about or plan now that you\u2019re 29, just let me know!",
+      "final_response": "Got it\u2014happy belated birthday! \ud83c\udf89 I\u2019ve updated my notes to reflect that you\u2019re now 29 years old.",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
@@ -1007,29 +1007,27 @@
       "id": "case_040",
       "category": "contradiction_update",
       "n_setup": 1,
-      "n_total_after": 2,
+      "n_total_after": 1,
       "new_memories": [
-        "User drives a Tesla Model 3"
+        "User drives a Tesla Model 3."
       ],
       "new_memory_types": [
         "fact"
       ],
       "all_memories": [
-        "User drives a silver Toyota Camry.",
-        "User drives a Tesla Model 3"
+        "User drives a Tesla Model 3."
       ],
       "all_memory_types": [
-        "fact",
         "fact"
       ],
-      "final_response": "Got it\u2014congratulations on the upgrade! So you\u2019ve swapped the silver Camry for a Tesla Model\u202f3. How are you liking the switch so far?",
+      "final_response": "Got it! I\u2019ve updated my notes\u2014you're now driving a Tesla Model\u202f3. How are you liking the switch from the Camry?",
       "expected_save": true,
       "predicted_save": true,
       "content_ok": true,
       "response_ok": true,
       "expected_type": "fact",
       "type_ok": true,
-      "passed": false
+      "passed": true
     },
     {
       "id": "case_041",
@@ -1066,7 +1064,7 @@
       "all_memory_types": [
         "preference"
       ],
-      "final_response": "Since you\u2019ve mentioned that you prefer Python for backend work, I\u2019d recommend using Python for your script. It\u2019s a great fit for rapid development, has a rich ecosystem of libraries, and integrates well with most backend frameworks. If you have any specific requirements or constraints, let me know and I can fine\u2011tune the recommendation!",
+      "final_response": "Since you\u2019ve mentioned that you prefer Python for backend work, I\u2019d recommend using Python for your script. It\u2019s a great fit for rapid development, has a rich ecosystem of libraries, and integrates well with most backend frameworks. If you have any specific requirements or constraints (e.g., performance needs, existing infrastructure), let me know and I can fine\u2011tune the recommendation.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
@@ -1088,7 +1086,7 @@
       "all_memory_types": [
         "preference"
       ],
-      "final_response": "Sure! To give you a spot you\u2019ll love, could you let me know:\n\n1. Which city or neighborhood you\u2019re looking to dine in?  \n2. Any cuisine preferences or dietary restrictions (e.g., vegetarian, gluten\u2011free, etc.)?  \n3. The vibe you\u2019re after\u2014casual, romantic, family\u2011friendly, lively bar\u2011scene, etc.?  \n\nWith those details I can suggest the perfect dinner spot for tonight.",
+      "final_response": "Sure! To give you the best suggestion, could you let me know:\n\n1. Which city or neighborhood you\u2019ll be dining in?  \n2. Any particular cuisine you\u2019re in the mood for (e.g., Italian, Thai, Mexican, etc.)?  \n\nI\u2019ll keep in mind that you\u2019re vegetarian when I pick a spot.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
@@ -1154,7 +1152,7 @@
       "all_memory_types": [
         "preference"
       ],
-      "final_response": "Here\u2019s a quick, flavorful Mexican\u2011style dinner you can pull together in about an hour: **Chicken\u202fTinga Tacos**. It\u2019s a smoky, slightly spicy shredded\u2011chicken filling that\u2019s perfect for tacos, burritos, or even a hearty bowl.\n\n---\n\n### \ud83c\udf7d\ufe0f Chicken\u202fTinga Tacos\n\n#### Ingredients (serves 4)\n\n| Category | Ingredients |\n|----------|-------------|\n| **Protein** | 1\u202flb (\u2248\u202f450\u202fg) boneless, skinless chicken thighs (or breasts) |\n| **Base sauce** | 1\u202flarge onion, thinly sliced <br> 2\u20113\u202fgarlic cloves, minced <br> 2\u202f\u2013\u202f3\u202fchipotle peppers in adobo sauce, finely chopped (adjust to heat preference) <br> 1\u202f\u00bd\u202ftbsp adobo sauce from the chipotle can <br> 1\u202fcup (240\u202fml) canned crushed tomatoes (or tomato sauce) |\n| **Seasonings** | 1\u202ftsp dried oregano (Mexican or regular) <br> \u00bd\u202ftsp ground cumin <br> \u00bd\u202ftsp smoked paprika (optional) <br> Salt & pepper to taste |\n| **Liquid** | \u00bd\u202fcup (120\u202fml) chicken broth (or water) |\n| **For serving** | Small corn or flour tortillas (8\u201110) <br> Fresh cilantro, chopped (optional) <br> Diced white onion <br> Crumbled queso fresco or cotija <br> Lime wedges <br> Avocado slices or guacamole <br> Salsa verde or your favorite salsa |\n\n#### Steps\n\n1. **Cook the chicken**  \n   - Place the chicken in a medium saucepan, cover with water (or broth) and add a pinch of salt.  \n   - Bring to a gentle boil, then reduce to a simmer and cook 15\u201120\u202fmin, until the meat is fully cooked and easily shreds.  \n   - Remove, let cool slightly, and shred with two forks. Set aside the cooking liquid.\n\n2. **Saut\u00e9 aromatics**  \n   - In a large skillet, heat 1\u20112\u202ftbsp oil over medium heat. Add the sliced onion and cook 5\u20116\u202fmin, stirring occasionally, until softened and lightly caramelized.  \n   - Add the minced garlic and cook another 30\u202fseconds.\n\n3. **Build the tinga sauce**  \n   - Stir in the chopped chipotle peppers, adobo sauce, crushed tomatoes, oregano, cumin, smoked paprika, salt, and pepper.  \n   - Pour in about \u00bc\u202fcup of the reserved chicken cooking liquid (add more later if you like a saucier consistency).  \n   - Simmer 5\u202fmin, allowing the flavors to meld.\n\n4. **Combine chicken & sauce**  \n   - Add the shredded chicken to the skillet, mixing well to coat every strand.  \n   - Reduce heat to low and let it simmer 10\u201112\u202fmin, stirring occasionally. If the mixture looks dry, splash in a bit more of the reserved broth until you reach a nice, slightly saucy texture. Taste and adjust seasoning (extra salt, pepper, or a dash more chipotle if you want heat).\n\n5. **Warm the tortillas**  \n   - Heat a dry skillet over medium\u2011high heat. Warm each tortilla for ~30\u202fseconds per side, or wrap a stack in a damp paper towel and microwave 30\u201145\u202fseconds.\n\n6. **Assemble & serve**  \n   - Spoon a generous portion of chicken tinga onto each tortilla. Top with diced onion, cilantro, crumbled cheese, avocado, and a squeeze of lime. Add salsa to taste.\n\n#### Quick tips & variations\n\n- **Protein swap**: Use shredded pork shoulder, beef, or even roasted cauliflower for a vegetarian version.  \n- **Spice level**: Reduce chipotle peppers for milder tacos, or add a splash of your favorite hot sauce for extra kick.  \n- **Make\u2011ahead**: The tinga sauce freezes well. Cook the chicken, store the shredded meat separately, and freeze the sauce in portioned containers. Reheat, combine, and you have a ready\u2011to\u2011serve meal in minutes.  \n- **Meal\u2011prep**: Portion the tinga into containers with rice, beans, and a side of roasted veggies for lunches later in the week.\n\nEnjoy your Mexican\u2011inspired dinner! If you\u2019d like a side dish suggestion (like Mexican street corn or a simple black\u2011bean salad), just let me know. Bon app\u00e9tit!",
+      "final_response": "Here\u2019s a tasty, relatively quick Mexican\u2011style dinner you can pull together tonight: **Chicken\u202ftinga tacos**. They\u2019re flavorful, easy to make, and you can customize the toppings to suit whatever you have on hand.\n\n---\n\n## Chicken\u202fTinga Tacos\n\n### Ingredients (serves 4)\n\n| Category | Ingredients |\n|----------|-------------|\n| **Protein** | 2\u202flb (\u2248\u202f900\u202fg) boneless, skinless chicken thighs (or breasts) |\n| **Sauce** | 1\u202flarge onion, thinly sliced<br>2\u202fgarlic cloves, minced<br>1\u20112\u202fchipotle peppers in adobo sauce, finely chopped (adjust to heat preference)<br>1\u202f\u00bd\u202ftbsp adobo sauce from the chipotle can<br>1\u202fcup (240\u202fml) canned diced tomatoes (or crushed tomatoes)<br>1\u202ftbsp tomato paste<br>1\u202ftsp dried oregano<br>\u00bd\u202ftsp ground cumin<br>\u00bd\u202ftsp smoked paprika (optional)<br>Salt & pepper to taste |\n| **Cooking liquid** | \u00bd\u202fcup (120\u202fml) chicken broth (or water) |\n| **Tortillas** | 8\u201110 small corn or flour tortillas |\n| **Toppings** | Fresh cilantro (optional, but you can omit if you dislike it)<br>Finely diced white onion<br>Crumbled queso fresco or feta<br>Avocado slices or guacamole<br>Lime wedges<br>Pickled red onions or jalape\u00f1os (optional) |\n| **Optional sides** | Mexican rice, black beans, or a simple salad |\n\n### Steps\n\n1. **Prep the chicken**  \n   - Season the chicken pieces with salt and pepper.  \n   - In a large skillet or Dutch oven, heat 1\u20112\u202ftbsp oil over medium\u2011high heat. Sear the chicken until browned on both sides (about 3\u20114\u202fmin per side). It doesn\u2019t need to be cooked through; you\u2019ll finish it in the sauce.\n\n2. **Build the tinga sauce**  \n   - Reduce heat to medium. Add the sliced onion to the same pan and saut\u00e9 until softened, ~4\u202fmin.  \n   - Stir in the minced garlic and cook 30\u202fseconds more.  \n   - Add the chopped chipotle peppers, adobo sauce, diced tomatoes, tomato paste, oregano, cumin, smoked paprika, and a pinch of salt. Mix well.\n\n3. **Simmer**  \n   - Pour in the chicken broth, bring the mixture to a gentle boil, then lower the heat.  \n   - Return the seared chicken to the pan, nestling it into the sauce. Cover and simmer 15\u201120\u202fmin, or until the chicken is tender and shreds easily.\n\n4. **Shred the chicken**  \n   - Remove the chicken pieces, shred them with two forks, and return the shredded meat to the sauce. Stir to coat everything evenly. Let it cook uncovered for another 5\u202fmin so the flavors meld and the sauce thickens slightly. Taste and adjust salt or heat (add more chipotle if you like it spicier).\n\n5. **Warm the tortillas**  \n   - Heat a dry skillet over medium heat. Warm each tortilla for ~30\u202fseconds per side, or wrap a stack in a damp paper towel and microwave for 30\u201145\u202fseconds.\n\n6. **Assemble the tacos**  \n   - Spoon a generous amount of chicken tinga onto each tortilla. Top with diced onion, cilantro (if you enjoy it), crumbled cheese, avocado, and a squeeze of lime. Add any extra pickled veggies or hot sauce you like.\n\n7. **Serve**  \n   - Serve the tacos with Mexican rice and black beans on the side, if desired. Enjoy with a cold cerveza, agua fresca, or your favorite non\u2011alcoholic drink.\n\n### Tips & Variations\n\n- **Make it vegetarian:** Substitute the chicken with shredded jackfruit, roasted cauliflower, or a mix of black beans and corn. The sauce works just as well.  \n- **Adjust the heat:** Use fewer chipotle peppers or swap them for a milder poblano pepper if you prefer less spice.  \n- **Batch\u2011cook:** This recipe freezes nicely. Portion the cooked tinga into airtight containers and store for up to 3\u202fmonths; just reheat and serve with fresh tortillas later.  \n- **Quick shortcut:** If you\u2019re short on time, you can use a rotisserie chicken\u2014shred it and simmer it in the sauce for 10\u202fmin to absorb the flavors.\n\n---\n\n**Enjoy your Mexican night!** Let me know if you\u2019d like a side\u2011dish suggestion, a different protein option, or a dessert to round out the meal.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
@@ -1176,14 +1174,14 @@
       "all_memory_types": [
         "fact"
       ],
-      "final_response": "Your birthday is on March\u202f15. Happy early celebrations!",
+      "final_response": "Your birthday is on March\u202f15.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,
-      "response_ok": false,
+      "response_ok": true,
       "expected_type": null,
       "type_ok": null,
-      "passed": false
+      "passed": true
     },
     {
       "id": "case_048",
@@ -1242,7 +1240,7 @@
       "all_memory_types": [
         "preference"
       ],
-      "final_response": "Based on what I know about your work habits, you\u2019re most productive in the early mornings.\u202fThat\u2019s the ideal time to schedule a deep\u2011work block\u2014when you can tackle your most demanding tasks with minimal distractions. \n\n**Suggested approach**\n\n1. **Pick a consistent start time** (e.g., 7\u202fam\u20139\u202fam or 8\u202fam\u201310\u202fam) that aligns with when you feel most alert.  \n2. **Protect the block**: turn off notifications, close unrelated tabs, and let colleagues know you\u2019re in focus mode.  \n3. **Limit the duration** to 60\u201390\u202fminutes if you\u2019re just starting out; you can extend it as you get accustomed.  \n4. **Follow with a short break** (5\u201310\u202fminutes) before moving on to lighter tasks or meetings.  \n\nIf your schedule ever forces you to work later in the day, try to keep the deep\u2011work slot at least 2\u20133\u202fhours before any major meetings so you still have a clear mental window. Let me know if you need help fitting this into a specific weekly calendar!",
+      "final_response": "Based on what I know about your work habits, you\u2019re most productive in the early mornings.\u202fThat\u2019s the ideal time to schedule a deep\u2011work block\u2014when you can tackle your most demanding tasks with minimal distractions. \n\nIf you can, aim for a 90\u2011 to\u202f120\u2011minute window starting shortly after you begin your day (e.g., 7\u202f\u2013\u202f9\u202fam). Pair it with a brief \u201cwarm\u2011up\u201d routine (quick review of goals, a short stretch, or a cup of coffee) so you transition smoothly into focused mode. \n\nIf your schedule is tight, you could also carve out a second, shorter deep\u2011work slot later in the day (perhaps an hour in the early afternoon) for tasks that require less creative energy. But the primary, longest block should be in those early\u2011morning hours when you\u2019re at your sharpest.",
       "expected_save": false,
       "predicted_save": false,
       "content_ok": true,

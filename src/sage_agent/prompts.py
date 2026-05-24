@@ -110,11 +110,33 @@ lose information.)
 CLASSIFIER_PROMPT = """\
 Classify the following user-memory as one of: fact / preference / episodic.
 
-- "fact": stable identity-level info (name, age, current location, current
-  job, family, contact info).
-- "preference": stable likes / dislikes / habits / tools they prefer.
-- "episodic": notable one-time events with temporal context (a trip, a
-  birthday, "I turned 29 last week", "I'm flying to Berlin next Tuesday").
+- "fact": stable identity-level info — name, age, current location, current
+  job, family relationships, contact info, ongoing role / status.
+- "preference": likes, dislikes, habits, choices, taste. Includes positive
+  ("loves", "prefers", "is a fan of") AND negative ("dislikes", "doesn't",
+  "avoids", "can't stand") wording. Anything framed as the user's
+  long-running taste or habit, not a one-time event.
+- "episodic": notable one-time events anchored to a moment in time — past
+  ("got promoted last month", "got married in 2023", "had a great time at
+  the Bali trip"), present ("just finished reading X"), or future ("flying
+  to Berlin next Tuesday"). Anything with a verb in a completed or
+  scheduled aspect is episodic, even if the verb is "loved" or "enjoyed".
+
+Quick rules:
+- "User dislikes / hates / avoids X" → preference (stable taste).
+- "User is a fan of / loves / prefers X" (general, no event) → preference.
+- "User loved / enjoyed X" (specific past experience) → episodic.
+- "User was promoted / got married / moved to Y last month" → episodic.
+- "User works at X / lives in Y / is N years old" → fact (current state).
+
+Examples:
+- "User dislikes cilantro." → preference
+- "User is a huge sci-fi fan, especially Ted Chiang." → preference
+- "User does not drink coffee, only green tea." → preference
+- "User was promoted to senior engineer." → episodic
+- "User loved reading Project Hail Mary." → episodic
+- "User's name is Aman." → fact
+- "User lives in Bangalore." → fact
 
 MEMORY: {candidate}
 

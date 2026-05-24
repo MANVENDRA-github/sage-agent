@@ -27,6 +27,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import re
 import sys
 import time
 import traceback
@@ -39,6 +40,17 @@ from langchain_core.messages import HumanMessage
 
 from sage_agent.graph import build_graph
 from sage_agent.store import list_memories, make_store
+
+# Collapse any Unicode whitespace (incl. U+202F NARROW NO-BREAK SPACE that
+# gpt-oss-120b emits between "March" and "15") to single ASCII space before
+# substring matching. Before this, response_contains=["March 15"] would
+# false-fail when the model output "March 15" — same content, different
+# byte.
+_WS_RE = re.compile(r"\s+")
+
+
+def _normalize(s: str) -> str:
+    return _WS_RE.sub(" ", s).lower()
 
 EVAL_DIR = Path(__file__).resolve().parent
 DEFAULT_CASES = EVAL_DIR / "cases.json"
@@ -92,13 +104,13 @@ def validate_cases(cases: list[dict]) -> list[str]:
 
 
 def _contains_all(needles: list[str], haystack: str) -> bool:
-    h = haystack.lower()
-    return all(n.lower() in h for n in needles)
+    h = _normalize(haystack)
+    return all(_normalize(n) in h for n in needles)
 
 
 def _contains_any(needles: list[str], haystack: str) -> bool:
-    h = haystack.lower()
-    return any(n.lower() in h for n in needles)
+    h = _normalize(haystack)
+    return any(_normalize(n) in h for n in needles)
 
 
 async def run_case(case: dict) -> dict:
@@ -166,8 +178,11 @@ def score_case(case: dict, outcome: dict) -> dict:
     expected = case["expected"]
     new_contents = outcome["new_memories"]
     all_contents = outcome["all_memories"]
-    new_types = outcome.get("new_memory_types") or []
-    all_types = outcome.get("all_memory_types") or []
+    # None marks "types not captured by this run" (pre-Week 3); empty list
+    # means types were captured but nothing was saved.
+    new_types = outcome.get("new_memory_types")
+    all_types = outcome.get("all_memory_types")
+    types_captured = new_types is not None or all_types is not None
     response = outcome["final_response"]
     category = case["category"]
 
@@ -187,7 +202,7 @@ def score_case(case: dict, outcome: dict) -> dict:
     )
 
     expected_type = _expected_type(case)
-    if expected_type is None:
+    if expected_type is None or not types_captured:
         type_ok = None
     elif category == "contradiction_update":
         # The single remaining memory should carry the same type as the setup.
