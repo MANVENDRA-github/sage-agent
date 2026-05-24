@@ -62,3 +62,6 @@ Thumbs.db
 
 # Chroma persistence directory (CLI default)
 .chroma/
+
+# Local Streamlit secrets (Cloud uses the Secrets UI; this is local-only)
+.streamlit/secrets.toml
