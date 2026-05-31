@@ -130,12 +130,25 @@ async def run_case(case: dict) -> dict:
 
     final_response = ""
     messages: list[Any] = []
+    # Tool calls the model emitted, per user turn (Phase 4: action-selection
+    # eval reads these). Additive — score_case/aggregate ignore these keys, so
+    # the existing memory-outcome scoring is unchanged.
+    tool_calls_per_turn: list[list[str]] = []
     for turn in case["conversation"]:
         if turn["role"] != "user":
             continue
+        start = len(messages)
         messages.append(HumanMessage(content=turn["content"]))
         result = await graph.ainvoke({"messages": messages}, config=config)
         messages = list(result["messages"])
+        # Only the messages produced this turn (everything after the human
+        # message we just appended at index `start`).
+        turn_calls = [
+            tc.get("name", "?")
+            for msg in messages[start:]
+            for tc in (getattr(msg, "tool_calls", None) or [])
+        ]
+        tool_calls_per_turn.append(turn_calls)
         for msg in reversed(messages):
             if getattr(msg, "type", None) == "ai" and not getattr(msg, "tool_calls", None):
                 final_response = msg.content or ""
@@ -153,6 +166,8 @@ async def run_case(case: dict) -> dict:
         "all_memories": [m["content"] for m in all_memories],
         "all_memory_types": [m.get("type", "fact") for m in all_memories],
         "final_response": final_response,
+        "tool_calls_per_turn": tool_calls_per_turn,
+        "tool_calls": [name for turn in tool_calls_per_turn for name in turn],
     }
 
 

@@ -1,0 +1,144 @@
+[
+  {
+    "id": "act_001",
+    "category": "should_search_memory",
+    "setup_memories": [{"content": "User's name is Aman.", "type": "fact"}],
+    "conversation": [{"role": "user", "content": "Quick question — what's my name again?"}],
+    "expected_tools": ["search_memory"]
+  },
+  {
+    "id": "act_002",
+    "category": "should_search_memory",
+    "setup_memories": [{"content": "User prefers Python over JavaScript.", "type": "preference"}],
+    "conversation": [{"role": "user", "content": "Which programming language do I prefer?"}],
+    "expected_tools": ["search_memory"]
+  },
+  {
+    "id": "act_003",
+    "category": "should_search_memory",
+    "setup_memories": [{"content": "User lives in Mumbai.", "type": "fact"}],
+    "conversation": [{"role": "user", "content": "Where do I live, do you remember?"}],
+    "expected_tools": ["search_memory"]
+  },
+  {
+    "id": "act_004",
+    "category": "should_search_memory",
+    "setup_memories": [{"content": "User has a dog named Rex.", "type": "fact"}],
+    "conversation": [{"role": "user", "content": "What's my dog's name?"}],
+    "expected_tools": ["search_memory"],
+    "note": "Near-miss: a 'what's my X' question must hit memory, not web_search."
+  },
+  {
+    "id": "act_005",
+    "category": "should_web_search",
+    "conversation": [{"role": "user", "content": "What's the weather in London right now?"}],
+    "expected_tools": ["web_search"]
+  },
+  {
+    "id": "act_006",
+    "category": "should_web_search",
+    "conversation": [{"role": "user", "content": "What is the current price of Bitcoin in US dollars?"}],
+    "expected_tools": ["web_search"]
+  },
+  {
+    "id": "act_007",
+    "category": "should_web_search",
+    "conversation": [{"role": "user", "content": "What are today's top news headlines?"}],
+    "expected_tools": ["web_search"]
+  },
+  {
+    "id": "act_008",
+    "category": "should_web_search",
+    "conversation": [{"role": "user", "content": "What's the current temperature in Tokyo at the moment?"}],
+    "expected_tools": ["web_search"]
+  },
+  {
+    "id": "act_009",
+    "category": "should_manage_goal",
+    "conversation": [{"role": "user", "content": "I want to learn to play the guitar this year."}],
+    "expected_tools": ["manage_goal"]
+  },
+  {
+    "id": "act_010",
+    "category": "should_manage_goal",
+    "conversation": [{"role": "user", "content": "My goal is to read 20 books in 2026."}],
+    "expected_tools": ["manage_goal"]
+  },
+  {
+    "id": "act_011",
+    "category": "should_manage_goal",
+    "setup_memories": [{"content": "Run a marathon", "type": "goal"}],
+    "conversation": [{"role": "user", "content": "What goals am I working toward right now?"}],
+    "expected_tools": ["manage_goal"]
+  },
+  {
+    "id": "act_012",
+    "category": "should_manage_goal",
+    "setup_memories": [{"content": "Finish writing my novel", "type": "goal"}],
+    "conversation": [{"role": "user", "content": "Great news — I finished writing my novel! Please mark that goal as done."}],
+    "expected_tools": ["manage_goal"]
+  },
+  {
+    "id": "act_013",
+    "category": "should_manage_goal",
+    "conversation": [{"role": "user", "content": "I really want to run a marathon someday."}],
+    "expected_tools": ["manage_goal"],
+    "note": "Near-miss: an aim/intention should route to manage_goal, NOT save_memory."
+  },
+  {
+    "id": "act_014",
+    "category": "should_save_memory",
+    "conversation": [{"role": "user", "content": "By the way, I'm vegetarian."}],
+    "expected_tools": ["save_memory"]
+  },
+  {
+    "id": "act_015",
+    "category": "should_save_memory",
+    "conversation": [{"role": "user", "content": "Just so you know, my birthday is on March 3rd."}],
+    "expected_tools": ["save_memory"]
+  },
+  {
+    "id": "act_016",
+    "category": "should_save_memory",
+    "conversation": [{"role": "user", "content": "I work as a data scientist at Acme Corp."}],
+    "expected_tools": ["save_memory"]
+  },
+  {
+    "id": "act_017",
+    "category": "should_save_memory",
+    "conversation": [{"role": "user", "content": "I moved to Berlin recently."}],
+    "expected_tools": ["save_memory"]
+  },
+  {
+    "id": "act_018",
+    "category": "should_no_tool",
+    "conversation": [{"role": "user", "content": "What is 2 + 2?"}],
+    "expected_tools": []
+  },
+  {
+    "id": "act_019",
+    "category": "should_no_tool",
+    "conversation": [{"role": "user", "content": "What's the capital of France?"}],
+    "expected_tools": []
+  },
+  {
+    "id": "act_020",
+    "category": "should_no_tool",
+    "conversation": [{"role": "user", "content": "Explain what recursion is in one sentence."}],
+    "expected_tools": []
+  },
+  {
+    "id": "act_021",
+    "category": "should_no_tool",
+    "conversation": [{"role": "user", "content": "What year did World War II end?"}],
+    "expected_tools": [],
+    "note": "Near-miss: a well-known historical fact should be answered directly, NOT web_searched."
+  },
+  {
+    "id": "act_022",
+    "category": "should_no_tool",
+    "conversation": [{"role": "user", "content": "What is the capital of Australia?"}],
+    "expected_tools": [],
+    "note": "Near-miss: model knows this; should answer directly, not web_search."
+  }
+]

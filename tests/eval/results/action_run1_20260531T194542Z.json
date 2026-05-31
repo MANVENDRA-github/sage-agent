@@ -1,0 +1,534 @@
+{
+  "label": "action",
+  "run_index": 1,
+  "timestamp_utc": "20260531T194542Z",
+  "cases_path": "D:\\sage-agent\\tests\\eval\\action_cases.json",
+  "n_cases": 22,
+  "aggregate": {
+    "by_category": {
+      "should_search_memory": {
+        "total": 4,
+        "passed": 4,
+        "errors": 0,
+        "over_call_fail": 0,
+        "wrong_or_missed": 0,
+        "accuracy": 1.0
+      },
+      "should_web_search": {
+        "total": 4,
+        "passed": 4,
+        "errors": 0,
+        "over_call_fail": 0,
+        "wrong_or_missed": 0,
+        "accuracy": 1.0
+      },
+      "should_manage_goal": {
+        "total": 5,
+        "passed": 5,
+        "errors": 0,
+        "over_call_fail": 0,
+        "wrong_or_missed": 0,
+        "accuracy": 1.0
+      },
+      "should_save_memory": {
+        "total": 4,
+        "passed": 4,
+        "errors": 0,
+        "over_call_fail": 0,
+        "wrong_or_missed": 0,
+        "accuracy": 1.0
+      },
+      "should_no_tool": {
+        "total": 5,
+        "passed": 5,
+        "errors": 0,
+        "over_call_fail": 0,
+        "wrong_or_missed": 0,
+        "accuracy": 1.0
+      }
+    },
+    "overall": {
+      "total": 22,
+      "passed": 22,
+      "errors": 0,
+      "accuracy": 1.0
+    },
+    "elapsed_seconds": 216.47
+  },
+  "cases": [
+    {
+      "id": "act_001",
+      "category": "should_search_memory",
+      "expected_tools": [
+        "search_memory"
+      ],
+      "called_tools": [
+        "search_memory"
+      ],
+      "tool_calls_raw": [
+        "search_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "search_memory"
+        ]
+      ],
+      "final_response": "Your name is Aman.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_002",
+      "category": "should_search_memory",
+      "expected_tools": [
+        "search_memory"
+      ],
+      "called_tools": [
+        "search_memory"
+      ],
+      "tool_calls_raw": [
+        "search_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "search_memory"
+        ]
+      ],
+      "final_response": "You\u2019ve mentioned that you prefer Python over JavaScript.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_003",
+      "category": "should_search_memory",
+      "expected_tools": [
+        "search_memory"
+      ],
+      "called_tools": [
+        "search_memory"
+      ],
+      "tool_calls_raw": [
+        "search_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "search_memory"
+        ]
+      ],
+      "final_response": "Yes, I remember\u2014you live in Mumbai.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_004",
+      "category": "should_search_memory",
+      "expected_tools": [
+        "search_memory"
+      ],
+      "called_tools": [
+        "search_memory"
+      ],
+      "tool_calls_raw": [
+        "search_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "search_memory"
+        ]
+      ],
+      "final_response": "Your dog\u2019s name is Rex.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_005",
+      "category": "should_web_search",
+      "expected_tools": [
+        "web_search"
+      ],
+      "called_tools": [
+        "web_search"
+      ],
+      "tool_calls_raw": [
+        "web_search"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "web_search"
+        ]
+      ],
+      "final_response": "The current weather in London is **partly cloudy with a temperature around 14\u202f\u00b0C (57\u202f\u00b0F), light winds from the west, and a low chance of rain**. (This reflects the latest reports from major weather services.)",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_006",
+      "category": "should_web_search",
+      "expected_tools": [
+        "web_search"
+      ],
+      "called_tools": [
+        "web_search"
+      ],
+      "tool_calls_raw": [
+        "web_search"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "web_search"
+        ]
+      ],
+      "final_response": "As of the latest data, Bitcoin is trading at **approximately\u202f$73,756\u202fUSD** per BTC. (Prices can change rapidly, so you may want to check a live ticker like CoinMarketCap or CoinDesk for the most up\u2011to\u2011date figure.)",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_007",
+      "category": "should_web_search",
+      "expected_tools": [
+        "web_search"
+      ],
+      "called_tools": [
+        "web_search"
+      ],
+      "tool_calls_raw": [
+        "web_search",
+        "web_search"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "web_search",
+          "web_search"
+        ]
+      ],
+      "final_response": "Here are some of the biggest stories that are making headlines today (May\u202f31\u202f2026):\n\n| Region / Topic | Headline (brief) | Why it matters |\n|----------------|------------------|----------------|\n| **International \u2013 Nuclear safety** | *IAEA warns that Russia\u2019s attack on the Zaporizhzhia nuclear plant is \u201clike playing with fire.\u201d* | The International Atomic Energy Agency says the strike could cause a catastrophic release of radiation and escalates tensions in the Russia\u2011Ukraine conflict. |\n| **Somalia \u2013 Politics** | *Constitutional crisis erupts as the Somali presidential election results are disputed.* | Competing claims to the presidency have sparked protests and a deadly clash between armed forces and demonstrators, threatening regional stability. |\n| **India \u2013 Sports** | *IPL 2026 Final: Gujarat Titans defeat Royal Challengers Bangalore, set a 156\u2011run target.* | The Indian Premier League\u2019s championship game drew record TV ratings and highlighted emerging Indian cricket talent. |\n| **United States \u2013 Economy** | *U.S. consumer confidence slips to a three\u2011month low amid higher interest rates.* | Slower spending could delay the Federal Reserve\u2019s plan to cut rates, affecting markets worldwide. |\n| **Europe \u2013 Climate** | *EU agrees on a \u20ac200\u202fbillion \u201cGreen Recovery\u201d fund to accelerate renewable\u2011energy projects.* | The package aims to meet the 2030 climate targets and create millions of green jobs across member states. |\n| **Tech \u2013 AI** | *Major AI firms announce joint \u201cResponsible AI\u201d standards after regulator pressure.* | The move is intended to curb deep\u2011fake misuse and improve transparency in large\u2011language\u2011model deployments. |\n| **Health \u2013 Pandemic watch** | *WHO declares the H5N8 avian\u2011influenza outbreak \u201chigh risk\u201d after new human cases in Southeast Asia.* | Early containment measures are being rolled out to prevent a wider flu pandemic. |\n\n**What to watch next**\n\n1. **Zaporizhzhia plant** \u2013 Expect further diplomatic talks and possible UN resolutions; any escalation could impact energy markets.  \n2. **Somalia\u2019s election** \u2013 International observers may intervene; look for updates on possible sanctions or peace\u2011keeping missions.  \n3. **U.S. consumer confidence** \u2013 Keep an eye on upcoming jobs\u2011report releases; they\u2019ll shape the Fed\u2019s next policy move.  \n\nIf you\u2019d like more detail on any of these stories\u2014or a deeper dive into a specific region\u2014just let me know!",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_008",
+      "category": "should_web_search",
+      "expected_tools": [
+        "web_search"
+      ],
+      "called_tools": [
+        "web_search"
+      ],
+      "tool_calls_raw": [
+        "web_search",
+        "web_search",
+        "web_search",
+        "web_search"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "web_search",
+          "web_search",
+          "web_search",
+          "web_search"
+        ]
+      ],
+      "final_response": "The latest data I could find shows that Tokyo is currently **mostly cloudy with a temperature of about\u202f83\u202f\u00b0F (\u224828\u202f\u00b0C)**.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_009",
+      "category": "should_manage_goal",
+      "expected_tools": [
+        "manage_goal"
+      ],
+      "called_tools": [
+        "manage_goal"
+      ],
+      "tool_calls_raw": [
+        "manage_goal"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "manage_goal"
+        ]
+      ],
+      "final_response": "Got it! I\u2019ve added \u201cLearn to play the guitar this year\u201d to your goals and marked it as active. Let me know if you\u2019d like tips on getting started, practice schedules, or anything else related to your guitar journey. \ud83c\udfb8",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_010",
+      "category": "should_manage_goal",
+      "expected_tools": [
+        "manage_goal"
+      ],
+      "called_tools": [
+        "manage_goal"
+      ],
+      "tool_calls_raw": [
+        "manage_goal"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "manage_goal"
+        ]
+      ],
+      "final_response": "Got it! I\u2019ve recorded your goal to read **20 books in 2026**. Good luck, and let me know if you\u2019d like any recommendations or help tracking your progress along the way. Happy reading!",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_011",
+      "category": "should_manage_goal",
+      "expected_tools": [
+        "manage_goal"
+      ],
+      "called_tools": [
+        "manage_goal"
+      ],
+      "tool_calls_raw": [
+        "manage_goal"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "manage_goal"
+        ]
+      ],
+      "final_response": "You\u2019re currently working toward **running a marathon** (still active). Let me know if you\u2019d like to add any new goals, update its status, or discuss training plans!",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_012",
+      "category": "should_manage_goal",
+      "expected_tools": [
+        "manage_goal"
+      ],
+      "called_tools": [
+        "manage_goal"
+      ],
+      "tool_calls_raw": [
+        "manage_goal"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "manage_goal"
+        ]
+      ],
+      "final_response": "Congratulations on finishing your novel! \ud83c\udf89 That's a huge accomplishment. If you\u2019d like any help with next steps\u2014editing, finding beta readers, publishing options, or just celebrating the milestone\u2014let me know!",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_013",
+      "category": "should_manage_goal",
+      "expected_tools": [
+        "manage_goal"
+      ],
+      "called_tools": [
+        "manage_goal"
+      ],
+      "tool_calls_raw": [
+        "manage_goal"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "manage_goal"
+        ]
+      ],
+      "final_response": "That\u2019s an awesome goal! Training for a marathon is a fantastic way to challenge yourself and stay healthy. If you\u2019d like, I can help you map out a training plan, suggest gear, or share tips on nutrition and injury prevention. Just let me know what you need!",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_014",
+      "category": "should_save_memory",
+      "expected_tools": [
+        "save_memory"
+      ],
+      "called_tools": [
+        "save_memory"
+      ],
+      "tool_calls_raw": [
+        "save_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "save_memory"
+        ]
+      ],
+      "final_response": "Got it! I\u2019ll keep that in mind for any food\u2011related suggestions or recipes. \ud83c\udf31",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_015",
+      "category": "should_save_memory",
+      "expected_tools": [
+        "save_memory"
+      ],
+      "called_tools": [
+        "save_memory"
+      ],
+      "tool_calls_raw": [
+        "save_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "save_memory"
+        ]
+      ],
+      "final_response": "Got it! I\u2019ve noted that your birthday is on March\u202f3rd. \ud83c\udf89 If you ever want to plan something special or need a reminder, just let me know!",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_016",
+      "category": "should_save_memory",
+      "expected_tools": [
+        "save_memory"
+      ],
+      "called_tools": [
+        "save_memory"
+      ],
+      "tool_calls_raw": [
+        "save_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "save_memory"
+        ]
+      ],
+      "final_response": "Got it! I\u2019ve noted that you work as a data scientist at Acme Corp. Let me know if there\u2019s anything specific you\u2019d like to discuss or need help with.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_017",
+      "category": "should_save_memory",
+      "expected_tools": [
+        "save_memory"
+      ],
+      "called_tools": [
+        "save_memory"
+      ],
+      "tool_calls_raw": [
+        "save_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "save_memory"
+        ]
+      ],
+      "final_response": "Got it! I\u2019ve noted that you\u2019ve recently moved to Berlin. How are you finding the city so far?",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_018",
+      "category": "should_no_tool",
+      "expected_tools": [],
+      "called_tools": [],
+      "tool_calls_raw": [],
+      "tool_calls_per_turn": [
+        []
+      ],
+      "final_response": "2\u202f+\u202f2\u202f=\u202f4.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_019",
+      "category": "should_no_tool",
+      "expected_tools": [],
+      "called_tools": [],
+      "tool_calls_raw": [],
+      "tool_calls_per_turn": [
+        []
+      ],
+      "final_response": "The capital of France is Paris.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_020",
+      "category": "should_no_tool",
+      "expected_tools": [],
+      "called_tools": [],
+      "tool_calls_raw": [],
+      "tool_calls_per_turn": [
+        []
+      ],
+      "final_response": "Recursion is a programming technique where a function calls itself directly or indirectly to solve a problem by breaking it down into smaller, similar sub\u2011problems.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_021",
+      "category": "should_no_tool",
+      "expected_tools": [],
+      "called_tools": [],
+      "tool_calls_raw": [],
+      "tool_calls_per_turn": [
+        []
+      ],
+      "final_response": "World War\u202fII ended in 1945. The war in Europe concluded with Germany\u2019s unconditional surrender on May\u202f8, 1945 (V\u2011E Day), and the war in the Pacific ended after Japan\u2019s surrender on September\u202f2, 1945 (V\u2011J Day).",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_022",
+      "category": "should_no_tool",
+      "expected_tools": [],
+      "called_tools": [],
+      "tool_calls_raw": [],
+      "tool_calls_per_turn": [
+        []
+      ],
+      "final_response": "The capital of Australia is **Canberra**.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    }
+  ]
+}

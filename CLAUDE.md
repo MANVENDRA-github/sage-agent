@@ -66,16 +66,19 @@ numbers from `tests/eval/results/week3_20260524T161027Z.json`:
 
 A second track on top of the shipped memory system: convert the fixed
 retrieve → respond → save pipeline into a model-driven **ReAct loop** and grow
-the agent's tool set. Five feature phases plus an eval wrap (5+1):
+the agent's tool set. The original plan was five feature phases plus an eval
+wrap (5+1); the eval wrap was **brought forward to Phase 4** (now that there
+are four tools, measuring tool *choice* matters more than decay), so decay and
+reflection renumber to Phases 5–6.
 
 | Phase | Scope | Status |
 |------:|-------|--------|
 | Phase 1 | ReAct loop + `search_memory` tool. Retrieval becomes a tool the model *chooses* to call (forced `retrieve_memories` node removed); `search_memory` + `save_memory` both bound; model ⇄ tools loop with a per-turn 5-step cap; save still does conflict-resolution + type classification + DELETE-then-INSERT. | ✅ commit `d586607` — branch `agentic-phase-1` |
 | Phase 2 | `web_search` tool — keyless DuckDuckGo (`ddgs`) external lookup alongside memory; bound as a third tool on the same retry-once-then-graceful dispatch path; `SYSTEM_PROMPT` routes web_search (current/external) vs search_memory (about the user) vs neither (direct knowledge). | ✅ commit `1529767` — branch `agentic-phase-2` |
-| Phase 3 | Goals — a `manage_goal` tool (set / list / update) + a `goal` memory type stored in the same Chroma store with `status` + `created_at`; reached ONLY via manage_goal, never the save_memory auto-classifier; update reuses DELETE-then-INSERT. | **[CURRENT]** — branch `agentic-phase-3` |
-| Phase 4 | Decay / consolidation — TTL on episodic memories, periodic dedupe. | planned |
-| Phase 5 | Reflection / auto-summarization of accumulated memories. | planned |
-| +1 | Eval re-baseline — re-measure the 50-case suite against the agentic agent. Retrieval is now model-driven, so the Week 3 numbers no longer describe this graph; the suite is deliberately untouched until here. | planned |
+| Phase 3 | Goals — a `manage_goal` tool (set / list / update) + a `goal` memory type stored in the same Chroma store with `status` + `created_at`; reached ONLY via manage_goal, never the save_memory auto-classifier; update reuses DELETE-then-INSERT. | ✅ commit `97aa425` — branch `agentic-phase-3` |
+| Phase 4 | Action-selection eval (eval wrap, brought forward). `runner.run_case` now captures per-turn tool calls (additive — memory scoring untouched); a NEW `tests/eval/action_cases.json` (~22 cases) + `tests/eval/action_runner.py` score tool-choice accuracy (pass = called the expected tool AND didn't over-call); the 50-case memory suite is re-baselined against the agentic graph. | **[CURRENT]** — branch `agentic-phase-4` |
+| Phase 5 | Decay / consolidation — TTL on episodic memories, periodic dedupe. | planned |
+| Phase 6 | Reflection / auto-summarization of accumulated memories. | planned |
 
 **Phase 1 — graph shape (replaces the fixed pipeline):**
 
@@ -162,8 +165,83 @@ START → start_turn → call_model → (route_after_model) ⇄ tools → END
   it's stripped on the final step like the others).
 
 **Scope discipline:** Phase 3 adds ONLY goals. Decay / consolidation and
-reflection (Phases 4–5) and the eval wrap are NOT built; Phase 3 does not add
+reflection (Phases 5–6) and the eval wrap are NOT built; Phase 3 does not add
 TTL / dedupe / summarization and does not touch `tests/eval/`.
+
+**Phase 4 — action-selection eval (current):**
+
+- The memory eval (`runner.py`) scores memory OUTCOMES (save decision, type,
+  retrieval, contradiction) — never which TOOL the model chose. With four tools
+  now bound, tool *choice* is the new capability, so Phase 4 measures it.
+- **Tool-call capture (additive).** `runner.run_case` now records the tool-call
+  names the model emitted per user turn (`tool_calls_per_turn` + flat
+  `tool_calls` in the outcome). `score_case` / `aggregate` are byte-for-byte
+  unchanged, so the 50-case memory scoring is untouched; the result JSONs just
+  gain two extra observational fields.
+- **New action suite.** `tests/eval/action_cases.json` holds ~22 single-turn
+  cases across five categories — `should_search_memory`, `should_web_search`,
+  `should_manage_goal`, `should_save_memory`, `should_no_tool` — each with an
+  `expected_tools` list, plus a few near-misses (an aim that must route to
+  manage_goal not save_memory; a known fact that must NOT be web_searched).
+  `list`/`update` goal cases seed a `type:"goal"` memory via `setup_memories`
+  (the runner's setup path passes type through).
+- **`tests/eval/action_runner.py`** reuses `runner.run_case` and scores, per
+  case, `passed = (called_tools == expected_tools)` — i.e. hit the expected
+  tool AND did not over-call. It reports per-category + overall accuracy, splits
+  failures into over-call vs wrong/missed, and `--runs N` runs the whole suite
+  N times to report an accuracy RANGE (free-tier tool selection is
+  non-deterministic). Cases are separate from the 50, so the memory suite stays
+  runnable exactly as before (`python -m tests.eval.runner`).
+- **Re-baseline.** The 50-case memory suite is re-run on the agentic graph
+  (`--label phase4`); retrieval is model-driven now, so these numbers — not the
+  Week 3 ones — describe this graph. See the Results subsection below.
+
+**Scope discipline:** Phase 4 adds ONLY the action-selection eval + a
+re-baseline. No decay / consolidation / reflection; the agent code
+(`src/sage_agent/`) is unchanged except the additive tool-call capture in the
+runner. The existing 50 cases and their scoring are untouched.
+
+**Phase 4 — Results** (real runs, 2026-05-31, free-tier `openai/gpt-oss-120b:free`):
+
+*Action-selection* — `python -m tests.eval.action_runner --runs 3` (22 cases),
+files `action_run{1,2,3}_*.json`:
+
+| run | overall | over-calls | errors |
+|----:|--------:|-----------:|-------:|
+| 1 | 22/22 = 100% | 0 | 0 |
+| 2 | 22/22 = 100% | 0 | 0 |
+| 3 | 22/22 = 100% | 0 | 0 |
+
+**Range: 100% – 100% (mean 100%).** Per category (identical all three runs):
+search_memory 4/4, web_search 4/4, manage_goal 5/5, save_memory 4/4,
+no_tool 5/5 — including the near-misses (an aim routed to `manage_goal` not
+`save_memory`; "what year did WWII end" / "capital of Australia" answered
+directly, NOT web-searched). Read honestly: 100% means tool routing on these
+clear-cut cases is within the model's competence — not that routing is
+infallible. The metric's standing value is regression detection and catching
+**over-calling** (the OverCall column) as the toolset grows; harder/ambiguous
+cases can be added to push it below ceiling.
+
+*50-case memory re-baseline* — `python -m tests.eval.runner --label phase4`
+(agentic graph), file `phase4_20260531T194151Z.json`:
+
+| category | pass | type acc |
+|---|---|---|
+| contradiction_update | 6/7 = 85.7% | 85.7% |
+| retrieval_relevance | 10/10 = 100% | — |
+| should_not_save | 10/10 = 100% | — |
+| should_save_episodic | 4/5 = 80.0% | 60.0% |
+| should_save_fact | 10/10 = 100% | 90.0% |
+| should_save_preference | 8/8 = 100% | 87.5% |
+
+**Save-decision P=1.000 R=0.967 F1=0.983** (tp=29 fp=0 fn=1 tn=20).
+**Type accuracy 0.833 (25/30).** Versus Week 3 + polish: save-decision F1 holds
+at **0.983**; `retrieval_relevance` stays **100%** even though retrieval is now
+model-driven (the model reliably *chooses* `search_memory`); type accuracy is
+**up** (76.7% → 83.3%); `contradiction_update` 85.7% sits in the documented
+non-deterministic band (case_040 Camry→Tesla flips across re-runs); the lone
+save FN (R=0.967) is the long-standing case_021 episodic holdout. Net: the
+agentic graph holds the memory numbers while adding model-driven tool choice.
 
 ## Roadmap (all phases complete)
 
