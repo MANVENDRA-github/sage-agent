@@ -1,6 +1,6 @@
-"""Memory + web tools the LLM can call.
+"""Memory + web + goal tools the LLM can call.
 
-Three tools are bound to the model and drive the ReAct loop:
+Four tools are bound to the model and drive the ReAct loop:
 
 - ``save_memory(content)`` — record a new fact / preference / event about the
   user. The *schema* of this tool is what the model sees; the real save
@@ -16,16 +16,23 @@ Three tools are bound to the model and drive the ReAct loop:
   provide and aren't in memory (Phase 2). Wraps the keyless DuckDuckGo
   ``ddgs`` library and returns a short readable summary of the top results.
   It needs no store or user_id, so it has no ``InjectedToolArg``s.
+- ``manage_goal(action, ...)`` — set / list / update the user's personal goals
+  (Phase 3). Goals live in the SAME store as ``type="goal"`` memories with a
+  ``status`` and ``created_at``. This is the ONLY path that writes a goal-type
+  memory; save_memory's fact/preference/episodic auto-classifier never emits
+  "goal". ``update`` reuses the same DELETE-then-INSERT pattern as a save
+  replace, so a status change does not duplicate the goal.
 
 Retrieval is model-driven now: there is no forced retrieve step. The model
-calls ``search_memory`` / ``web_search`` when it judges that recall or an
-external lookup would help.
+calls ``search_memory`` / ``web_search`` / ``manage_goal`` when it judges that
+recall, an external lookup, or goal-tracking would help.
 """
 
 from __future__ import annotations
 
 import asyncio
 import uuid
+from datetime import datetime, timezone
 from typing import Annotated
 
 from ddgs import DDGS
@@ -33,7 +40,7 @@ from ddgs.exceptions import DDGSException
 from langchain_core.tools import InjectedToolArg, tool
 from langgraph.store.base import BaseStore
 
-from sage_agent.store import memory_namespace
+from sage_agent.store import list_memories, memory_namespace
 
 # Top-k for a model-issued recall. Mirrors the old forced-retrieve RETRIEVAL_K.
 SEARCH_LIMIT = 5
@@ -41,6 +48,13 @@ SEARCH_LIMIT = 5
 # Web search: how many results to summarise and how long each snippet may be.
 WEB_SEARCH_MAX_RESULTS = 3
 WEB_SNIPPET_CHARS = 200
+
+# Goals are stored as this memory type. Reached ONLY via manage_goal — never by
+# save_memory's auto-classifier (which is constrained to fact/preference/episodic).
+GOAL_TYPE = "goal"
+# How many neighbours to pull before filtering to goal-type when matching the
+# goal an update refers to.
+GOAL_MATCH_LIMIT = 10
 
 
 @tool
@@ -137,3 +151,99 @@ async def web_search(query: str) -> str:
         url = (item.get("href") or "").strip()
         lines.append(f"{i}. {title}\n   {snippet}\n   {url}")
     return f"Top web results for {query!r}:\n" + "\n".join(lines)
+
+
+def _now_iso() -> str:
+    """UTC timestamp in ISO-8601 — same format the store stamps on every put."""
+    return datetime.now(timezone.utc).isoformat()
+
+
+@tool
+async def manage_goal(
+    action: str,
+    *,
+    user_id: Annotated[str, InjectedToolArg],
+    store: Annotated[BaseStore, InjectedToolArg],
+    goal: str = "",
+    status: str = "",
+    new_goal: str = "",
+) -> str:
+    """Track the user's personal goals (aims / intentions they want to pursue).
+
+    This is the ONLY way a goal is recorded — do not use save_memory for goals.
+
+    Args:
+        action: One of "set", "list", "update".
+            - "set": record a NEW goal the user states. Put the goal text in
+              `goal`. It is stored with status "active".
+            - "list": return all of the user's goals with their statuses.
+              No other arguments needed.
+            - "update": change an existing goal. Use `goal` to describe WHICH
+              goal (matched to the closest existing one), `status` for the new
+              status (e.g. "done", "active", "abandoned"), and optionally
+              `new_goal` to reword the goal text.
+        goal: The goal text (for "set") or which goal to match (for "update").
+        status: The new status (for "update"), e.g. "done".
+        new_goal: Optional new wording for the goal text (for "update").
+    """
+    namespace = memory_namespace(user_id)
+    act = (action or "").strip().lower()
+
+    if act == "list":
+        goals = [m for m in list_memories(store, user_id) if m.get("type") == GOAL_TYPE]
+        if not goals:
+            return "The user has no goals tracked yet."
+        lines = [
+            f"- {g.get('content', '')} [status: {g.get('status', 'active')}]"
+            for g in goals
+        ]
+        return "Current goals:\n" + "\n".join(lines)
+
+    if act == "set":
+        text = (goal or new_goal or "").strip()
+        if not text:
+            return "No goal text was provided to set."
+        new_id = str(uuid.uuid4())
+        await store.aput(
+            namespace,
+            key=new_id,
+            value={
+                "content": text,
+                "type": GOAL_TYPE,
+                "status": "active",
+                "created_at": _now_iso(),
+            },
+        )
+        return f"Goal set: {text!r} (status=active)."
+
+    if act == "update":
+        match_text = (goal or new_goal or "").strip()
+        if not match_text:
+            return "No goal was specified to update."
+        # Reuse the existing semantic search, then keep only goal-type hits.
+        candidates = await store.asearch(
+            namespace, query=match_text, limit=GOAL_MATCH_LIMIT
+        )
+        goal_hits = [c for c in candidates if c.value.get("type") == GOAL_TYPE]
+        if not goal_hits:
+            return f"No matching goal was found for {match_text!r} to update."
+        target = goal_hits[0]  # highest-scored goal
+        old = target.value
+        new_status = (status or "").strip().lower() or old.get("status", "active")
+        new_content = (new_goal or "").strip() or old.get("content", "")
+        # DELETE-then-INSERT (same pattern as a save replace) — a new UUID, so
+        # the goal is updated in place rather than duplicated. Preserve the
+        # original creation timestamp across the update.
+        await store.adelete(namespace, key=target.key)
+        new_id = str(uuid.uuid4())
+        value = {"content": new_content, "type": GOAL_TYPE, "status": new_status}
+        created = old.get("created_at")
+        if created is not None:
+            value["created_at"] = created
+        await store.aput(namespace, key=new_id, value=value)
+        return f"Goal updated: {new_content!r} (status={new_status})."
+
+    return (
+        f"Unknown manage_goal action {action!r}. "
+        "Use action='set', 'list', or 'update'."
+    )

@@ -1,12 +1,13 @@
 """Prompts for the memory agent.
 
-SYSTEM_PROMPT runs each assistant turn. It advertises the three tools
-(search_memory + save_memory + web_search) and explicitly lists what to save
-vs not save (without that the LLM over-saves and should_not_save tanks) and
-WHEN to reach for web_search vs search_memory vs neither (without that the LLM
-over-calls web_search). Retrieval is model-driven now — there is no forced
-retrieve step and no {user_info} block; the model calls search_memory to
-recall, and results come back as ToolMessages it reads inline.
+SYSTEM_PROMPT runs each assistant turn. It advertises the four tools
+(search_memory + save_memory + web_search + manage_goal) and explicitly lists
+what to save vs not save (without that the LLM over-saves and should_not_save
+tanks), WHEN to reach for web_search vs search_memory vs neither (without that
+the LLM over-calls web_search), and WHEN to route aims/intentions to
+manage_goal instead of save_memory. Retrieval is model-driven now — there is
+no forced retrieve step and no {user_info} block; the model calls
+search_memory to recall, and results come back as ToolMessages it reads inline.
 
 JUDGE_PROMPT runs on the save path when the candidate has neighbors: the
 judge picks insert vs replace AND classifies the memory as fact / preference
@@ -34,12 +35,24 @@ You have three tools and may call them whenever they help:
 - web_search(query): look up CURRENT or EXTERNAL information from the public web
   — news, current events, weather, prices, sports results, recent facts, or
   anything past your training cutoff.
+- manage_goal(action, ...): track the user's personal goals (aims/intentions
+  they want to pursue). action="set" records a NEW goal the user states;
+  action="list" reviews their current goals and statuses; action="update"
+  changes a goal's status (e.g. mark it done) or wording when they report
+  progress or completion. Goals go here, NOT into save_memory.
 
 Choosing a tool (pick the lightest that answers the question):
 - The question is about the USER (their name, preferences, past events, things
   they told you) → use search_memory, NOT web_search.
 - The question needs a current or external fact the user did NOT give you and
   that isn't about the user → use web_search.
+- The user states an aim or intention ("I want to …", "my goal is …", "I'm
+  trying to …", "I plan to …") → manage_goal(action="set"). Do NOT store it
+  with save_memory.
+- The user asks about their goals, or following up on a goal would help →
+  manage_goal(action="list").
+- The user reports progress on or finishing a goal ("I did it", "I finished
+  X", "I gave up on Y") → manage_goal(action="update") with the new status.
 - You already know the answer from your own general knowledge (e.g. "what is
   2+2", "capital of France", a definition, simple reasoning) → just answer
   directly, call NO tool. Do not web_search things you already know.
@@ -55,6 +68,7 @@ DO NOT save:
 - Instructions you should follow ("explain recursion", "summarise this")
 - Facts about other people or general world knowledge
 - Things you already know about the user from prior memories
+- Goals, aims, or intentions the user wants to pursue (use manage_goal instead)
 
 When you do save, write the memory as a short third-person statement, e.g.
 "User's name is Aman" or "User prefers Python over JavaScript".

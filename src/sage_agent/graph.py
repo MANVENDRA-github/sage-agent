@@ -3,9 +3,10 @@
 Graph shape:
     START → start_turn → call_model → (route_after_model) ⇄ tools → END
 
-The model drives everything. ``call_model`` is bound with three tools —
-``search_memory`` (recall), ``save_memory`` (write), and ``web_search``
-(external lookup, Phase 2). On each hop:
+The model drives everything. ``call_model`` is bound with four tools —
+``search_memory`` (recall), ``save_memory`` (write), ``web_search``
+(external lookup, Phase 2), and ``manage_goal`` (goal tracking, Phase 3).
+On each hop:
 
 - if the model emits tool calls → ``tools`` executes them and loops back to
   ``call_model`` so the model can read the results and continue;
@@ -49,12 +50,18 @@ from sage_agent.model import get_model
 from sage_agent.prompts import CLASSIFIER_PROMPT, JUDGE_PROMPT, SYSTEM_PROMPT
 from sage_agent.state import State
 from sage_agent.store import make_store, memory_namespace
-from sage_agent.tools import save_memory, search_memory, web_search
+from sage_agent.tools import manage_goal, save_memory, search_memory, web_search
 
-MemoryType = Literal["fact", "preference", "episodic"]
-DEFAULT_TYPE: MemoryType = "fact"
+# Full set of memory types that may be STORED. "goal" is added by the
+# manage_goal tool ONLY (Phase 3) — never by save_memory's auto-classifier.
+MemoryType = Literal["fact", "preference", "episodic", "goal"]
+# The auto-classifier and conflict judge may ONLY ever assign these three.
+# "goal" is deliberately excluded here so save_memory can never label ordinary
+# chit-chat as a goal: goals are reachable exclusively through manage_goal.
+ClassifiableType = Literal["fact", "preference", "episodic"]
+DEFAULT_TYPE: ClassifiableType = "fact"
 
-TOOLS = [search_memory, save_memory, web_search]
+TOOLS = [search_memory, save_memory, web_search, manage_goal]
 TOOLS_BY_NAME = {t.name: t for t in TOOLS}
 
 CONFLICT_NEIGHBORS_K = 3
@@ -71,7 +78,7 @@ def _user_id(config: RunnableConfig) -> str:
 class JudgeDecision(BaseModel):
     """Type + insert-or-replace decision produced by the conflict-resolution judge."""
 
-    type: MemoryType = Field(
+    type: ClassifiableType = Field(
         description="Memory type: fact / preference / episodic."
     )
     action: Literal["insert", "replace"] = Field(
@@ -95,7 +102,7 @@ class JudgeDecision(BaseModel):
 class _ClassifierResponse(BaseModel):
     """Type-only response for the no-neighbor save path."""
 
-    type: MemoryType
+    type: ClassifiableType
 
 
 def _format_neighbors(neighbors: list[dict]) -> str:
@@ -127,7 +134,7 @@ async def _judge_save(candidate: str, neighbors: list[dict]) -> JudgeDecision:
     return decision
 
 
-async def _classify_save(candidate: str) -> MemoryType:
+async def _classify_save(candidate: str) -> ClassifiableType:
     prompt = CLASSIFIER_PROMPT.format(candidate=candidate)
     classifier = get_model().with_structured_output(_ClassifierResponse)
     try:
@@ -251,6 +258,27 @@ async def _handle_web_search(tc: dict) -> str:
     return await web_search.ainvoke({"query": query})
 
 
+async def _handle_manage_goal(tc: dict, *, user_id: str, store: BaseStore) -> str:
+    """Execute one manage_goal call by invoking the actual tool.
+
+    manage_goal does all its own store work (set / list / update with the
+    DELETE-then-INSERT pattern reused from a save replace). user_id and store
+    are InjectedToolArgs the model never supplies, so we pass them explicitly;
+    the model-provided action / goal / status / new_goal are forwarded as-is.
+    """
+    args = tc.get("args") or {}
+    return await manage_goal.ainvoke(
+        {
+            "action": args.get("action", ""),
+            "goal": args.get("goal", ""),
+            "status": args.get("status", ""),
+            "new_goal": args.get("new_goal", ""),
+            "user_id": user_id,
+            "store": store,
+        }
+    )
+
+
 async def _execute_tool_call(
     tc: dict, *, user_id: str, namespace: tuple[str, str], store: BaseStore
 ) -> ToolMessage:
@@ -274,6 +302,8 @@ async def _execute_tool_call(
                 content = await _handle_search(tc, user_id=user_id, store=store)
             elif name == "web_search":
                 content = await _handle_web_search(tc)
+            elif name == "manage_goal":
+                content = await _handle_manage_goal(tc, user_id=user_id, store=store)
             else:
                 raise ValueError(f"unknown tool {name!r}")
             return ToolMessage(content=content, tool_call_id=tool_call_id, name=name)

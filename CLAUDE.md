@@ -71,8 +71,8 @@ the agent's tool set. Five feature phases plus an eval wrap (5+1):
 | Phase | Scope | Status |
 |------:|-------|--------|
 | Phase 1 | ReAct loop + `search_memory` tool. Retrieval becomes a tool the model *chooses* to call (forced `retrieve_memories` node removed); `search_memory` + `save_memory` both bound; model ⇄ tools loop with a per-turn 5-step cap; save still does conflict-resolution + type classification + DELETE-then-INSERT. | ✅ commit `d586607` — branch `agentic-phase-1` |
-| Phase 2 | `web_search` tool — keyless DuckDuckGo (`ddgs`) external lookup alongside memory; bound as a third tool on the same retry-once-then-graceful dispatch path; `SYSTEM_PROMPT` routes web_search (current/external) vs search_memory (about the user) vs neither (direct knowledge). | **[CURRENT]** — branch `agentic-phase-2` |
-| Phase 3 | Goals — a `manage_goal` tool + goal tracking. | planned |
+| Phase 2 | `web_search` tool — keyless DuckDuckGo (`ddgs`) external lookup alongside memory; bound as a third tool on the same retry-once-then-graceful dispatch path; `SYSTEM_PROMPT` routes web_search (current/external) vs search_memory (about the user) vs neither (direct knowledge). | ✅ commit `1529767` — branch `agentic-phase-2` |
+| Phase 3 | Goals — a `manage_goal` tool (set / list / update) + a `goal` memory type stored in the same Chroma store with `status` + `created_at`; reached ONLY via manage_goal, never the save_memory auto-classifier; update reuses DELETE-then-INSERT. | **[CURRENT]** — branch `agentic-phase-3` |
 | Phase 4 | Decay / consolidation — TTL on episodic memories, periodic dedupe. | planned |
 | Phase 5 | Reflection / auto-summarization of accumulated memories. | planned |
 | +1 | Eval re-baseline — re-measure the 50-case suite against the agentic agent. Retrieval is now model-driven, so the Week 3 numbers no longer describe this graph; the suite is deliberately untouched until here. | planned |
@@ -126,9 +126,44 @@ START → start_turn → call_model → (route_after_model) ⇄ tools → END
   curb over-calling web_search. The 5-step cap is unchanged (web_search is in
   `TOOLS`, so it's stripped on the final step like the others).
 
-**Scope discipline:** Phase 2 adds ONLY `web_search`. Goals / decay /
-reflection (Phases 3–5) and the eval wrap are NOT built; Phase 2 does not add
-`manage_goal` / TTL / summarization and does not touch `tests/eval/`.
+**Phase 3 — `manage_goal` + `goal` memory type (current):**
+
+- No new dependency. Goals are stored in the SAME Chroma store as memories of
+  `type="goal"`, with two extra value fields: `status` (active / done /
+  abandoned / …) and `created_at`.
+- **Classifier isolation (the load-bearing care).** `MemoryType` is extended to
+  `["fact", "preference", "episodic", "goal"]`, but a separate narrow
+  `ClassifiableType = Literal["fact", "preference", "episodic"]` is what
+  `JudgeDecision.type`, `_ClassifierResponse.type`, and `_classify_save` use —
+  so save_memory's auto-classifier/judge **cannot** emit `goal`. Goals are
+  reachable ONLY through `manage_goal`. (Bonus: because the judge can only
+  output the three classifiable types, its cross-type-replace downgrade means
+  save_memory can never replace/delete a goal-type neighbour either.)
+- **Store passthrough.** `ChromaStore` previously dropped every value key except
+  `content` / `type` / `updated_at`. It now additively carries optional
+  `status` / `created_at` through `_put` → metadata and back via a
+  `_value_from_md(md)` helper used by `_get` and both `_search` branches.
+  Backward compatible: non-goal memories never set these, so their value is
+  unchanged. `list_memories` surfaces them via `**item.value`.
+- **`tools.manage_goal(action, *, user_id, store, goal, status, new_goal)`** —
+  `set` writes a new `goal`-type memory (`status="active"` + `created_at`);
+  `list` reuses `list_memories` filtered to `type=="goal"`; `update` semantic-
+  searches the user's goals for the closest match and applies the **same
+  DELETE-then-INSERT** pattern as a save replace (new UUID, original
+  `created_at` preserved) so a status change updates in place, never
+  duplicates. `user_id` / `store` are `InjectedToolArg`s.
+- Bound as a fourth tool: `TOOLS = [search_memory, save_memory, web_search,
+  manage_goal]`. `_execute_tool_call` gains a `manage_goal` branch (via
+  `_handle_manage_goal`) on the **same** retry-once-then-graceful dispatch path.
+- `SYSTEM_PROMPT` advertises manage_goal and adds routing rules — state an aim
+  → `set`; ask about goals → `list`; report progress/completion → `update` —
+  plus a "DO NOT save … goals (use manage_goal instead)" line so aims don't go
+  to save_memory. The 5-step cap is unchanged (manage_goal is in `TOOLS`, so
+  it's stripped on the final step like the others).
+
+**Scope discipline:** Phase 3 adds ONLY goals. Decay / consolidation and
+reflection (Phases 4–5) and the eval wrap are NOT built; Phase 3 does not add
+TTL / dedupe / summarization and does not touch `tests/eval/`.
 
 ## Roadmap (all phases complete)
 
@@ -163,12 +198,12 @@ sage-agent/
 │   ├── app.py                  Streamlit UI: chat + typed memories sidebar; @st.cache_resource on the graph
 │   ├── cli.py                  Terminal REPL: /new /memories /quit; --persist-dir flag
 │   ├── context.py              Context dataclass (legacy; graph reads user_id directly from RunnableConfig)
-│   ├── graph.py                State machine + JudgeDecision + _judge_save + _classify_save + conflict-resolution _run
+│   ├── graph.py                ReAct loop + MemoryType/ClassifiableType + JudgeDecision + _judge/_classify_save + tool dispatch (save/search/web/goal)
 │   ├── model.py                ChatOpenAI factory pointed at OpenRouter; DEFAULT_MODEL = openai/gpt-oss-120b:free
 │   ├── prompts.py              SYSTEM_PROMPT + JUDGE_PROMPT + CLASSIFIER_PROMPT
 │   ├── state.py                State dataclass: messages + retrieved_memories
-│   ├── store.py                ChromaStore(BaseStore) + make_store(persist_dir=None) + list_memories + lazy embedder
-│   └── tools.py                save_memory + search_memory (InjectedToolArg store/user_id) + web_search (ddgs, no key)
+│   ├── store.py                ChromaStore(BaseStore) + make_store(persist_dir=None) + list_memories + _value_from_md (goal status/created_at passthrough) + lazy embedder
+│   └── tools.py                save_memory + search_memory (InjectedToolArg store/user_id) + web_search (ddgs, no key) + manage_goal (set/list/update)
 └── tests/
     ├── __init__.py
     └── eval/
