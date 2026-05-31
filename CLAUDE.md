@@ -70,8 +70,8 @@ the agent's tool set. Five feature phases plus an eval wrap (5+1):
 
 | Phase | Scope | Status |
 |------:|-------|--------|
-| Phase 1 | ReAct loop + `search_memory` tool. Retrieval becomes a tool the model *chooses* to call (forced `retrieve_memories` node removed); `search_memory` + `save_memory` both bound; model ⇄ tools loop with a per-turn 5-step cap; save still does conflict-resolution + type classification + DELETE-then-INSERT. | **[CURRENT]** — branch `agentic-phase-1` |
-| Phase 2 | `web_search` tool — external knowledge retrieval alongside memory. | planned |
+| Phase 1 | ReAct loop + `search_memory` tool. Retrieval becomes a tool the model *chooses* to call (forced `retrieve_memories` node removed); `search_memory` + `save_memory` both bound; model ⇄ tools loop with a per-turn 5-step cap; save still does conflict-resolution + type classification + DELETE-then-INSERT. | ✅ commit `d586607` — branch `agentic-phase-1` |
+| Phase 2 | `web_search` tool — keyless DuckDuckGo (`ddgs`) external lookup alongside memory; bound as a third tool on the same retry-once-then-graceful dispatch path; `SYSTEM_PROMPT` routes web_search (current/external) vs search_memory (about the user) vs neither (direct knowledge). | **[CURRENT]** — branch `agentic-phase-2` |
 | Phase 3 | Goals — a `manage_goal` tool + goal tracking. | planned |
 | Phase 4 | Decay / consolidation — TTL on episodic memories, periodic dedupe. | planned |
 | Phase 5 | Reflection / auto-summarization of accumulated memories. | planned |
@@ -97,8 +97,38 @@ START → start_turn → call_model → (route_after_model) ⇄ tools → END
 - `SYSTEM_PROMPT` now advertises both tools and drops the forced `{user_info}`
   block; `retrieve_memories` and `_format_user_info` are removed.
 
-**Scope discipline:** Phases 2–5 and the eval wrap are NOT built. Phase 1 does
-not add `web_search` / goals / decay, and does not touch `tests/eval/`.
+**Phase 2 — `web_search` (current):**
+
+- New dependency (the only one this phase adds): **`ddgs`** — the renamed
+  `duckduckgo-search` (package + import are both `ddgs`; pinned via `uv add`,
+  installed `ddgs==9.14.4`). Keyless, free — preserves the $0 constraint.
+  **API gotcha:** the rename also changed the API. The current surface is
+  `from ddgs import DDGS; DDGS().text(query, max_results=N)` returning
+  `list[dict]` with keys `title` / `href` / `body`, and — importantly — it
+  **raises `ddgs.exceptions.DDGSException`** on an empty result set rather than
+  returning `[]`. Verified against the installed version, not assumed.
+- `tools.web_search(query)` wraps it. No `InjectedToolArg`s (it needs no store
+  or user_id). The sync `DDGS().text` runs in `asyncio.to_thread` so it doesn't
+  block the event loop under the `tools_node` `asyncio.gather`. A helper
+  `_run_ddgs_text` converts the specific "No results found." `DDGSException`
+  into an empty list (a normal "no results" outcome the tool renders as a
+  readable message) and **re-raises every other `DDGSException`** (rate limit /
+  timeout / network) so the graph's retry-once-then-degrade path handles it.
+  Output is a short summary of the top `WEB_SEARCH_MAX_RESULTS`=3 results
+  (title + truncated snippet + url).
+- Bound as a third tool: `TOOLS = [search_memory, save_memory, web_search]`.
+  `_execute_tool_call` gains a `web_search` branch (via `_handle_web_search`)
+  on the **same** dispatch path — so it inherits the one-retry-then-graceful
+  ToolMessage handling, and a failing/empty search degrades to a text answer.
+- `SYSTEM_PROMPT` advertises web_search and adds an explicit "choosing a tool"
+  block — web_search = current/external facts the user didn't give and aren't
+  about them; search_memory = about the user; neither = direct knowledge — to
+  curb over-calling web_search. The 5-step cap is unchanged (web_search is in
+  `TOOLS`, so it's stripped on the final step like the others).
+
+**Scope discipline:** Phase 2 adds ONLY `web_search`. Goals / decay /
+reflection (Phases 3–5) and the eval wrap are NOT built; Phase 2 does not add
+`manage_goal` / TTL / summarization and does not touch `tests/eval/`.
 
 ## Roadmap (all phases complete)
 
@@ -138,7 +168,7 @@ sage-agent/
 │   ├── prompts.py              SYSTEM_PROMPT + JUDGE_PROMPT + CLASSIFIER_PROMPT
 │   ├── state.py                State dataclass: messages + retrieved_memories
 │   ├── store.py                ChromaStore(BaseStore) + make_store(persist_dir=None) + list_memories + lazy embedder
-│   └── tools.py                save_memory tool (InjectedToolArg for store + user_id)
+│   └── tools.py                save_memory + search_memory (InjectedToolArg store/user_id) + web_search (ddgs, no key)
 └── tests/
     ├── __init__.py
     └── eval/

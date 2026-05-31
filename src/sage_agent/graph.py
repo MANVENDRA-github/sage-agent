@@ -3,8 +3,9 @@
 Graph shape:
     START → start_turn → call_model → (route_after_model) ⇄ tools → END
 
-The model drives everything. ``call_model`` is bound with two tools —
-``search_memory`` (recall) and ``save_memory`` (write). On each hop:
+The model drives everything. ``call_model`` is bound with three tools —
+``search_memory`` (recall), ``save_memory`` (write), and ``web_search``
+(external lookup, Phase 2). On each hop:
 
 - if the model emits tool calls → ``tools`` executes them and loops back to
   ``call_model`` so the model can read the results and continue;
@@ -48,12 +49,12 @@ from sage_agent.model import get_model
 from sage_agent.prompts import CLASSIFIER_PROMPT, JUDGE_PROMPT, SYSTEM_PROMPT
 from sage_agent.state import State
 from sage_agent.store import make_store, memory_namespace
-from sage_agent.tools import save_memory, search_memory
+from sage_agent.tools import save_memory, search_memory, web_search
 
 MemoryType = Literal["fact", "preference", "episodic"]
 DEFAULT_TYPE: MemoryType = "fact"
 
-TOOLS = [search_memory, save_memory]
+TOOLS = [search_memory, save_memory, web_search]
 TOOLS_BY_NAME = {t.name: t for t in TOOLS}
 
 CONFLICT_NEIGHBORS_K = 3
@@ -238,6 +239,18 @@ async def _handle_search(
     )
 
 
+async def _handle_web_search(tc: dict) -> str:
+    """Execute one web_search call by invoking the actual tool.
+
+    web_search takes no InjectedToolArgs (no store / user_id) — it just wraps
+    the keyless ddgs DuckDuckGo search. The tool already turns a no-results
+    search into a readable "No web results found" string; any transient ddgs
+    failure raises and is handled by the retry-once-then-degrade loop below.
+    """
+    query = (tc.get("args") or {}).get("query", "")
+    return await web_search.ainvoke({"query": query})
+
+
 async def _execute_tool_call(
     tc: dict, *, user_id: str, namespace: tuple[str, str], store: BaseStore
 ) -> ToolMessage:
@@ -259,6 +272,8 @@ async def _execute_tool_call(
                 content = await _handle_save(tc, namespace=namespace, store=store)
             elif name == "search_memory":
                 content = await _handle_search(tc, user_id=user_id, store=store)
+            elif name == "web_search":
+                content = await _handle_web_search(tc)
             else:
                 raise ValueError(f"unknown tool {name!r}")
             return ToolMessage(content=content, tool_call_id=tool_call_id, name=name)
