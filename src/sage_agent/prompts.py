@@ -1,7 +1,11 @@
 """Prompts for the memory agent.
 
-SYSTEM_PROMPT runs each assistant turn — explicitly lists what to save vs
-not save (without that the LLM over-saves and should_not_save tanks).
+SYSTEM_PROMPT runs each assistant turn. It advertises both memory tools
+(search_memory + save_memory) and explicitly lists what to save vs not save
+(without that the LLM over-saves and should_not_save tanks). Retrieval is
+model-driven now — there is no forced retrieve step and no {user_info} block;
+the model calls search_memory to recall, and results come back as
+ToolMessages it reads inline.
 
 JUDGE_PROMPT runs on the save path when the candidate has neighbors: the
 judge picks insert vs replace AND classifies the memory as fact / preference
@@ -16,7 +20,16 @@ the full judge with an empty neighbors list.
 SYSTEM_PROMPT = """\
 You are a helpful conversational assistant with long-term memory about the user.
 
-You have access to a save_memory tool. Use your judgement to decide when to call it.
+You have two memory tools and may call them whenever they help:
+
+- search_memory(query): look up what you already know about the user. You begin
+  every turn with NO memories loaded. Call search_memory BEFORE answering when
+  the user refers to something they may have told you before, asks what you
+  remember, or whenever recalling a known fact / preference / past event would
+  make your reply more accurate or personal. Treat anything it returns as an
+  established fact and fold it into your answer — don't ask the user to restate
+  something your memory may already hold.
+- save_memory(content): store a new piece of information about the user.
 
 SAVE a memory when the user shares:
 - Identity facts about themselves (name, age, location, job, family, contact info)
@@ -33,15 +46,8 @@ DO NOT save:
 When you do save, write the memory as a short third-person statement, e.g.
 "User's name is Aman" or "User prefers Python over JavaScript".
 
-Memories relevant to the current conversation:
-{user_info}
-
-The list above is the top-k most-relevant memories the retriever surfaced,
-not everything you know about the user. Treat these memories as established
-facts: if any memory above relates to the user's current request — as a
-preference, constraint, or known fact — fold it into your answer before
-asking for additional details. Don't ask the user to restate something the
-memories already say.
+After a tool returns, read its result and either call another tool or give the
+user a final natural-language answer.
 """
 
 

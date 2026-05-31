@@ -62,6 +62,44 @@ numbers from `tests/eval/results/week3_20260524T161027Z.json`:
   the temporal anchor). Prompt tuning didn't reliably move that needle on
   the free-tier model.
 
+## Agentic build (current)
+
+A second track on top of the shipped memory system: convert the fixed
+retrieve → respond → save pipeline into a model-driven **ReAct loop** and grow
+the agent's tool set. Five feature phases plus an eval wrap (5+1):
+
+| Phase | Scope | Status |
+|------:|-------|--------|
+| Phase 1 | ReAct loop + `search_memory` tool. Retrieval becomes a tool the model *chooses* to call (forced `retrieve_memories` node removed); `search_memory` + `save_memory` both bound; model ⇄ tools loop with a per-turn 5-step cap; save still does conflict-resolution + type classification + DELETE-then-INSERT. | **[CURRENT]** — branch `agentic-phase-1` |
+| Phase 2 | `web_search` tool — external knowledge retrieval alongside memory. | planned |
+| Phase 3 | Goals — a `manage_goal` tool + goal tracking. | planned |
+| Phase 4 | Decay / consolidation — TTL on episodic memories, periodic dedupe. | planned |
+| Phase 5 | Reflection / auto-summarization of accumulated memories. | planned |
+| +1 | Eval re-baseline — re-measure the 50-case suite against the agentic agent. Retrieval is now model-driven, so the Week 3 numbers no longer describe this graph; the suite is deliberately untouched until here. | planned |
+
+**Phase 1 — graph shape (replaces the fixed pipeline):**
+
+```
+START → start_turn → call_model → (route_after_model) ⇄ tools → END
+```
+
+- `start_turn` resets the per-turn step counter (`State.step`). The 5-step cap
+  (`MAX_MODEL_STEPS`) is per user turn — load-bearing under the CLI/Streamlit
+  checkpointer, where State persists across turns.
+- `call_model` binds `[search_memory, save_memory]`; on the 5th model step it
+  is invoked **without** tools, so a tool call is impossible and the loop
+  terminates with a text answer.
+- `tools` (formerly `store_memory`) executes each tool call with **one retry
+  then graceful degradation** (an error ToolMessage, never a crashed turn).
+  `save_memory` keeps the exact judge + classifier + DELETE-then-INSERT logic;
+  `search_memory` invokes the real tool wrapping `store.asearch` — no second
+  copy of retrieval logic.
+- `SYSTEM_PROMPT` now advertises both tools and drops the forced `{user_info}`
+  block; `retrieve_memories` and `_format_user_info` are removed.
+
+**Scope discipline:** Phases 2–5 and the eval wrap are NOT built. Phase 1 does
+not add `web_search` / goals / decay, and does not touch `tests/eval/`.
+
 ## Roadmap (all phases complete)
 
 | Phase | Scope | Status |
