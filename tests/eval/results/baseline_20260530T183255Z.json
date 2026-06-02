@@ -1,0 +1,166 @@
+{
+  "label": "baseline",
+  "timestamp_utc": "20260530T183255Z",
+  "cases_path": "D:\\sage-agent\\tests\\eval\\cases.json",
+  "n_cases": 5,
+  "elapsed_seconds": 90.98,
+  "aggregate": {
+    "by_category": {
+      "should_save_fact": {
+        "total": 5,
+        "passed": 5,
+        "errors": 0,
+        "type_eligible": 5,
+        "type_correct": 4,
+        "pass_rate": 1.0,
+        "type_accuracy": 0.8
+      }
+    },
+    "save_decision": {
+      "tp": 5,
+      "fp": 0,
+      "fn": 0,
+      "tn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "type_accuracy": {
+      "correct": 4,
+      "eligible": 5,
+      "rate": 0.8
+    }
+  },
+  "cases": [
+    {
+      "id": "case_001",
+      "category": "should_save_fact",
+      "n_setup": 0,
+      "n_total_after": 1,
+      "new_memories": [
+        "User's name is Aman"
+      ],
+      "new_memory_types": [
+        "fact"
+      ],
+      "all_memories": [
+        "User's name is Aman"
+      ],
+      "all_memory_types": [
+        "fact"
+      ],
+      "final_response": "Nice to meet you, Aman! How can I help you today?",
+      "expected_save": true,
+      "predicted_save": true,
+      "content_ok": true,
+      "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": true,
+      "passed": true
+    },
+    {
+      "id": "case_002",
+      "category": "should_save_fact",
+      "n_setup": 0,
+      "n_total_after": 1,
+      "new_memories": [
+        "User lives in Bangalore, India"
+      ],
+      "new_memory_types": [
+        "fact"
+      ],
+      "all_memories": [
+        "User lives in Bangalore, India"
+      ],
+      "all_memory_types": [
+        "fact"
+      ],
+      "final_response": "Got it! I\u2019ve noted that you live in Bangalore, India. Let me know if there\u2019s anything specific you\u2019d like to discuss or any help you need related to your location.",
+      "expected_save": true,
+      "predicted_save": true,
+      "content_ok": true,
+      "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": true,
+      "passed": true
+    },
+    {
+      "id": "case_003",
+      "category": "should_save_fact",
+      "n_setup": 0,
+      "n_total_after": 1,
+      "new_memories": [
+        "User works as a backend engineer at Acme Corp"
+      ],
+      "new_memory_types": [
+        "fact"
+      ],
+      "all_memories": [
+        "User works as a backend engineer at Acme Corp"
+      ],
+      "all_memory_types": [
+        "fact"
+      ],
+      "final_response": "Got it! Thanks for sharing\u2014so you\u2019re a backend engineer at Acme Corp. If there\u2019s anything specific you\u2019d like to discuss\u2014whether it\u2019s architecture, performance tuning, career advice, or anything else\u2014just let me know!",
+      "expected_save": true,
+      "predicted_save": true,
+      "content_ok": true,
+      "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": true,
+      "passed": true
+    },
+    {
+      "id": "case_004",
+      "category": "should_save_fact",
+      "n_setup": 0,
+      "n_total_after": 1,
+      "new_memories": [
+        "User graduated from IIT Delhi in 2018"
+      ],
+      "new_memory_types": [
+        "episodic"
+      ],
+      "all_memories": [
+        "User graduated from IIT Delhi in 2018"
+      ],
+      "all_memory_types": [
+        "episodic"
+      ],
+      "final_response": "Got it! \ud83c\udf93 If you\u2019d like to discuss anything related to your IIT Delhi experience\u2014career paths, projects, further studies, or anything else\u2014just let me know!",
+      "expected_save": true,
+      "predicted_save": true,
+      "content_ok": true,
+      "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": false,
+      "passed": true
+    },
+    {
+      "id": "case_005",
+      "category": "should_save_fact",
+      "n_setup": 0,
+      "n_total_after": 1,
+      "new_memories": [
+        "User's birthday is on March 15th"
+      ],
+      "new_memory_types": [
+        "fact"
+      ],
+      "all_memories": [
+        "User's birthday is on March 15th"
+      ],
+      "all_memory_types": [
+        "fact"
+      ],
+      "final_response": "Got it! I\u2019ve noted that your birthday is on March\u202f15th. \ud83c\udf89 If you ever need ideas for celebrations, gift suggestions, or anything else related to your special day, just let me know!",
+      "expected_save": true,
+      "predicted_save": true,
+      "content_ok": true,
+      "response_ok": true,
+      "expected_type": "fact",
+      "type_ok": true,
+      "passed": true
+    }
+  ]
+}
