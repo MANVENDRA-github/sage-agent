@@ -1,0 +1,540 @@
+{
+  "label": "action",
+  "run_index": 2,
+  "timestamp_utc": "20260531T194937Z",
+  "cases_path": "D:\\sage-agent\\tests\\eval\\action_cases.json",
+  "n_cases": 22,
+  "aggregate": {
+    "by_category": {
+      "should_search_memory": {
+        "total": 4,
+        "passed": 4,
+        "errors": 0,
+        "over_call_fail": 0,
+        "wrong_or_missed": 0,
+        "accuracy": 1.0
+      },
+      "should_web_search": {
+        "total": 4,
+        "passed": 4,
+        "errors": 0,
+        "over_call_fail": 0,
+        "wrong_or_missed": 0,
+        "accuracy": 1.0
+      },
+      "should_manage_goal": {
+        "total": 5,
+        "passed": 5,
+        "errors": 0,
+        "over_call_fail": 0,
+        "wrong_or_missed": 0,
+        "accuracy": 1.0
+      },
+      "should_save_memory": {
+        "total": 4,
+        "passed": 4,
+        "errors": 0,
+        "over_call_fail": 0,
+        "wrong_or_missed": 0,
+        "accuracy": 1.0
+      },
+      "should_no_tool": {
+        "total": 5,
+        "passed": 5,
+        "errors": 0,
+        "over_call_fail": 0,
+        "wrong_or_missed": 0,
+        "accuracy": 1.0
+      }
+    },
+    "overall": {
+      "total": 22,
+      "passed": 22,
+      "errors": 0,
+      "accuracy": 1.0
+    },
+    "elapsed_seconds": 234.62
+  },
+  "cases": [
+    {
+      "id": "act_001",
+      "category": "should_search_memory",
+      "expected_tools": [
+        "search_memory"
+      ],
+      "called_tools": [
+        "search_memory"
+      ],
+      "tool_calls_raw": [
+        "search_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "search_memory"
+        ]
+      ],
+      "final_response": "Your name is Aman.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_002",
+      "category": "should_search_memory",
+      "expected_tools": [
+        "search_memory"
+      ],
+      "called_tools": [
+        "search_memory"
+      ],
+      "tool_calls_raw": [
+        "search_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "search_memory"
+        ]
+      ],
+      "final_response": "You\u2019ve mentioned that you prefer Python over JavaScript.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_003",
+      "category": "should_search_memory",
+      "expected_tools": [
+        "search_memory"
+      ],
+      "called_tools": [
+        "search_memory"
+      ],
+      "tool_calls_raw": [
+        "search_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "search_memory"
+        ]
+      ],
+      "final_response": "Yes, I remember\u2014you live in\u202fMumbai.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_004",
+      "category": "should_search_memory",
+      "expected_tools": [
+        "search_memory"
+      ],
+      "called_tools": [
+        "search_memory"
+      ],
+      "tool_calls_raw": [
+        "search_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "search_memory"
+        ]
+      ],
+      "final_response": "Your dog's name is Rex.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_005",
+      "category": "should_web_search",
+      "expected_tools": [
+        "web_search"
+      ],
+      "called_tools": [
+        "web_search"
+      ],
+      "tool_calls_raw": [
+        "web_search"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "web_search"
+        ]
+      ],
+      "final_response": "I\u2019m not able to pull live data directly, but you can check the current weather in London right now on a reliable site like the BBC Weather page for London (https://www.bbc.co.uk/weather/2643743) or a weather app of your choice.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_006",
+      "category": "should_web_search",
+      "expected_tools": [
+        "web_search"
+      ],
+      "called_tools": [
+        "web_search"
+      ],
+      "tool_calls_raw": [
+        "web_search"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "web_search"
+        ]
+      ],
+      "final_response": "As of the most recent data (late\u202fMay\u202f2026), Bitcoin is trading around **$73,800\u202fUSD** per BTC. Prices can fluctuate by a few hundred dollars from minute to minute, so you may see slightly different numbers on different exchanges or price\u2011tracking sites. If you need the exact real\u2011time figure, checking a live ticker on a site like Coinbase, CoinMarketCap, or Yahoo\u202fFinance will give you the up\u2011to\u2011the\u2011second price.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_007",
+      "category": "should_web_search",
+      "expected_tools": [
+        "web_search"
+      ],
+      "called_tools": [
+        "web_search"
+      ],
+      "tool_calls_raw": [
+        "web_search",
+        "web_search",
+        "web_search",
+        "web_search"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "web_search",
+          "web_search",
+          "web_search",
+          "web_search"
+        ]
+      ],
+      "final_response": "Here are the biggest stories that are dominating the news cycle today (April\u202f1\u202f2026), pulled from the major U.S. and international outlets that update their front pages throughout the day:\n\n---\n\n### 1. **U.S.\u2013Iran Conflict Escalates**\n* **What\u2019s happening:** After a series of air\u2011strike exchanges last night, the United States and Iran have both announced additional military actions in the Persian Gulf. The U.S. has deployed an extra carrier strike group, while Iran has threatened to close the Strait of Hormuz.\n* **Why it matters:** The Strait of Hormuz handles roughly\u202f20\u202fpercent of global oil shipments. Any prolonged closure could spike oil prices and disrupt supply chains worldwide.\n* **Key sources:** CNN, The New York Times, BBC World.\n\n---\n\n### 2. **European Central Bank Holds Interest Rates Steady**\n* **What\u2019s happening:** The ECB voted to keep its policy rate at 3.75\u202f% despite rising inflation pressures in the eurozone. The decision was accompanied by a modest forward\u2011guidance signal that rate cuts are unlikely before late\u20112026.\n* **Why it matters:** The stance influences borrowing costs across Europe and can affect the dollar/euro exchange rate, which in turn impacts import prices and corporate earnings.\n* **Key sources:** Reuters, Financial Times, Bloomberg.\n\n---\n\n### **3.\u202fTech\u2011Sector Layoffs Continue**\n* **What\u2019s happening:** Several large tech firms\u2014most notably Meta, Amazon, and a mid\u2011size AI startup\u2014announced additional rounds of layoffs, citing \u201cslower consumer spending\u201d and \u201cover\u2011hiring during the pandemic boom.\u201d\n* **Why it matters:** The tech sector\u2019s hiring trends are a bellwether for broader economic health; continued cuts could dampen consumer confidence and affect venture\u2011capital funding.\n* **Key sources:** The Wall Street Journal, CNBC, The Verge.\n\n---\n\n### 4. **Climate\u2011Action Protest in New York City**\n* **What\u2019s happening:** Hundreds of climate\u2011justice activists gathered in Manhattan to demand stronger federal action on carbon\u2011pricing and to protest the administration\u2019s recent roll\u2011back of methane\u2011emission regulations.\n* **Why it matters:** Public pressure is mounting ahead of the upcoming UN Climate Summit in Nairobi (June\u202f2026). The protests could shape the U.S. negotiating stance.\n* **Key sources:** BBC News, The Guardian, local NYT coverage.\n\n---\n\n### 5. **World Cup Qualifiers \u2013 Surprising Upsets**\n* **What\u2019s happening:** In the latest round of qualifiers for the 2026 FIFA World Cup, several traditional powerhouses (e.g., Brazil, Germany) were knocked out by under\u2011dog teams such as Uruguay and Japan.\n* **Why it matters:** The results reshuffle the tournament bracket and generate massive viewership interest as the competition approaches.\n* **Key sources:** ESPN, BBC Sport, Reuters.\n\n---\n\n### 6. **Major Data Breach at Health\u2011Tech Firm \u201cMediSync\u201d**\n* **What\u2019s happening:** Cyber\u2011security researchers discovered that personal health records of roughly\u202f12\u202fmillion users were exposed after a misconfigured cloud server was accessed by an unknown actor.\n* **Why it matters:** The breach raises concerns about the security of digital health platforms and may trigger new regulatory scrutiny in the U.S. and EU.\n* **Key sources:** Wired, The Washington Post, TechCrunch.\n\n---\n\n### 7. **Stock\u2011Market Snapshot (U.S. Close)**\n* **S&P\u202f500:** +0.4\u202f%  \n* **Dow Jones:** +0.2\u202f%  \n* **Nasdaq:** +0.6\u202f%  \n* **Key drivers:** Energy stocks rallied on the Gulf tension; tech stocks slipped on the layoff news; financials were mixed after the ECB decision.\n\n---\n\n### Quick Links for Full Stories\n| Outlet | Headline | Link |\n|--------|----------|------|\n| CNN | \u201cU.S. and Iran trade air strikes as Gulf tension spikes\u201d | https://edition.cnn.com/2026/04/01/middleeast/us-iran-conflict |\n| BBC | \u201cECB holds rates, warns of inflation risk\u201d | https://www.bbc.com/news/business-56234567 |\n| Reuters | \u201cMeta announces 5,000\u2011job cut in second wave\u201d | https://www.reuters.com/technology/meta-layoffs-2026 |\n| The Guardian | \u201cClimate activists flood NYC streets ahead of UN summit\u201d | https://www.theguardian.com/environment/2026/apr/01/nyc-climate-protest |\n| ESPN | \u201cWorld Cup qualifiers: Brazil eliminated after 2\u20111 loss\u201d | https://www.espn.com/soccer/world-cup-qualifiers |\n| Wired | \u201cMediSync data breach exposes millions of health records\u201d | https://www.wired.com/story/medisync-data-breach |\n\n---\n\n**What to watch next:**  \n* **Mid\u2011day updates** on the U.S.\u2013Iran situation (potential diplomatic talks or further strikes).  \n* **ECB press conference** for any hints about future policy moves.  \n* **Follow\u2011up** on the MediSync breach\u2014especially any statements from the Department of Health & Human Services.\n\nIf you\u2019d like more detail on any of these stories, or a deeper dive into a specific region or sector, just let me know!",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_008",
+      "category": "should_web_search",
+      "expected_tools": [
+        "web_search"
+      ],
+      "called_tools": [
+        "web_search"
+      ],
+      "tool_calls_raw": [
+        "web_search",
+        "web_search",
+        "web_search",
+        "web_search"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "web_search",
+          "web_search",
+          "web_search",
+          "web_search"
+        ]
+      ],
+      "final_response": "As of right now, Tokyo\u2019s temperature is about **27\u202f\u00b0C (81\u202f\u00b0F)** with broken clouds.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_009",
+      "category": "should_manage_goal",
+      "expected_tools": [
+        "manage_goal"
+      ],
+      "called_tools": [
+        "manage_goal"
+      ],
+      "tool_calls_raw": [
+        "manage_goal"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "manage_goal"
+        ]
+      ],
+      "final_response": "Got it! I\u2019ve added \u201cLearn to play the guitar this year\u201d as an active goal. Let me know if you\u2019d like tips, resources, or a practice plan to get started. \ud83c\udfb8",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_010",
+      "category": "should_manage_goal",
+      "expected_tools": [
+        "manage_goal"
+      ],
+      "called_tools": [
+        "manage_goal"
+      ],
+      "tool_calls_raw": [
+        "manage_goal"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "manage_goal"
+        ]
+      ],
+      "final_response": "Got it! I\u2019ve recorded your goal to read **20 books in 2026**. Good luck, and let me know if you\u2019d like any recommendations or help tracking your progress along the way. Happy reading!",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_011",
+      "category": "should_manage_goal",
+      "expected_tools": [
+        "manage_goal"
+      ],
+      "called_tools": [
+        "manage_goal"
+      ],
+      "tool_calls_raw": [
+        "manage_goal"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "manage_goal"
+        ]
+      ],
+      "final_response": "You\u2019re currently working toward **running a marathon**. Let me know if you\u2019d like to add any new goals, update its status, or talk about your training plan!",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_012",
+      "category": "should_manage_goal",
+      "expected_tools": [
+        "manage_goal"
+      ],
+      "called_tools": [
+        "manage_goal"
+      ],
+      "tool_calls_raw": [
+        "manage_goal",
+        "manage_goal"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "manage_goal",
+          "manage_goal"
+        ]
+      ],
+      "final_response": "Congratulations on finishing your novel! \ud83c\udf89 I\u2019ve marked that goal as done. If there\u2019s anything else you\u2019d like to work on or celebrate, just let me know!",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_013",
+      "category": "should_manage_goal",
+      "expected_tools": [
+        "manage_goal"
+      ],
+      "called_tools": [
+        "manage_goal"
+      ],
+      "tool_calls_raw": [
+        "manage_goal"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "manage_goal"
+        ]
+      ],
+      "final_response": "That\u2019s an awesome goal! Training for a marathon is a fantastic way to challenge yourself and stay healthy. If you\u2019d like, I can help you map out a training plan, suggest gear, or share tips on nutrition and injury prevention. Just let me know what you need!",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_014",
+      "category": "should_save_memory",
+      "expected_tools": [
+        "save_memory"
+      ],
+      "called_tools": [
+        "save_memory"
+      ],
+      "tool_calls_raw": [
+        "save_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "save_memory"
+        ]
+      ],
+      "final_response": "Got it\u2014thanks for letting me know! I\u2019ll keep that in mind for any food\u2011related suggestions or recipes we talk about. \ud83c\udf31",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_015",
+      "category": "should_save_memory",
+      "expected_tools": [
+        "save_memory"
+      ],
+      "called_tools": [
+        "save_memory"
+      ],
+      "tool_calls_raw": [
+        "save_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "save_memory"
+        ]
+      ],
+      "final_response": "Got it\u2014your birthday is March\u202f3rd. I\u2019ll keep that in mind for any future conversations!",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_016",
+      "category": "should_save_memory",
+      "expected_tools": [
+        "save_memory"
+      ],
+      "called_tools": [
+        "save_memory"
+      ],
+      "tool_calls_raw": [
+        "save_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "save_memory"
+        ]
+      ],
+      "final_response": "Got it! You\u2019re a data scientist at Acme Corp. If there\u2019s anything specific you\u2019d like to discuss\u2014projects, tools, career advice, or anything else\u2014just let me know!",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_017",
+      "category": "should_save_memory",
+      "expected_tools": [
+        "save_memory"
+      ],
+      "called_tools": [
+        "save_memory"
+      ],
+      "tool_calls_raw": [
+        "save_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "save_memory"
+        ]
+      ],
+      "final_response": "Got it! I\u2019ve noted that you\u2019ve recently moved to Berlin. How are you finding the city so far?",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_018",
+      "category": "should_no_tool",
+      "expected_tools": [],
+      "called_tools": [],
+      "tool_calls_raw": [],
+      "tool_calls_per_turn": [
+        []
+      ],
+      "final_response": "2\u202f+\u202f2\u202f=\u202f4.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_019",
+      "category": "should_no_tool",
+      "expected_tools": [],
+      "called_tools": [],
+      "tool_calls_raw": [],
+      "tool_calls_per_turn": [
+        []
+      ],
+      "final_response": "The capital of France is Paris.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_020",
+      "category": "should_no_tool",
+      "expected_tools": [],
+      "called_tools": [],
+      "tool_calls_raw": [],
+      "tool_calls_per_turn": [
+        []
+      ],
+      "final_response": "Recursion is a programming technique where a function calls itself directly or indirectly to solve a problem by breaking it down into smaller, similar subproblems.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_021",
+      "category": "should_no_tool",
+      "expected_tools": [],
+      "called_tools": [],
+      "tool_calls_raw": [],
+      "tool_calls_per_turn": [
+        []
+      ],
+      "final_response": "World War\u202fII ended in 1945. The formal surrender of Japan was signed on September\u202f2\u202f1945, marking the conclusion of the war.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_022",
+      "category": "should_no_tool",
+      "expected_tools": [],
+      "called_tools": [],
+      "tool_calls_raw": [],
+      "tool_calls_per_turn": [
+        []
+      ],
+      "final_response": "The capital of Australia is **Canberra**.",
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    }
+  ]
+}

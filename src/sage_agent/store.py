@@ -71,6 +71,27 @@ def _parse_ts(value: str | None) -> datetime:
     return datetime.fromisoformat(value) if value else datetime.now(timezone.utc)
 
 
+# Optional structured fields a memory's value may carry beyond content/type.
+# Only goal-type memories (created via the manage_goal tool) set these; every
+# other memory leaves them unset, so this passthrough is fully backward
+# compatible. Chroma metadata can't hold None, so absent fields are simply
+# omitted rather than stored as null.
+_EXTRA_VALUE_FIELDS = ("status", "created_at")
+
+
+def _value_from_md(md: dict) -> dict:
+    """Rebuild a memory's ``value`` from Chroma metadata.
+
+    Always includes ``content`` and ``type``; carries the optional goal fields
+    (``status`` / ``created_at``) through only when they are present.
+    """
+    value = {"content": md.get("content", ""), "type": md.get("type", "fact")}
+    for extra in _EXTRA_VALUE_FIELDS:
+        if md.get(extra) is not None:
+            value[extra] = md[extra]
+    return value
+
+
 class ChromaStore(BaseStore):
     """BaseStore implementation backed by a single Chroma collection."""
 
@@ -109,6 +130,11 @@ class ChromaStore(BaseStore):
             "type": mem_type,
             "updated_at": _ts_now(),
         }
+        # Carry optional goal fields (status / created_at) when present.
+        for extra in _EXTRA_VALUE_FIELDS:
+            val = op.value.get(extra)
+            if val is not None:
+                metadata[extra] = val
         self._collection.upsert(
             ids=[cid],
             embeddings=[self._embed(content)],
@@ -124,10 +150,7 @@ class ChromaStore(BaseStore):
         md = res["metadatas"][0]
         ts = _parse_ts(md.get("updated_at"))
         return Item(
-            value={
-                "content": md.get("content", ""),
-                "type": md.get("type", "fact"),
-            },
+            value=_value_from_md(md),
             key=md.get("key", op.key),
             namespace=op.namespace,
             created_at=ts,
@@ -152,10 +175,7 @@ class ChromaStore(BaseStore):
                     SearchItem(
                         namespace=op.namespace_prefix,
                         key=md.get("key", ""),
-                        value={
-                            "content": md.get("content", ""),
-                            "type": md.get("type", "fact"),
-                        },
+                        value=_value_from_md(md),
                         created_at=ts,
                         updated_at=ts,
                         score=1.0 - float(dist),
@@ -172,10 +192,7 @@ class ChromaStore(BaseStore):
                 SearchItem(
                     namespace=op.namespace_prefix,
                     key=md.get("key", ""),
-                    value={
-                        "content": md.get("content", ""),
-                        "type": md.get("type", "fact"),
-                    },
+                    value=_value_from_md(md),
                     created_at=ts,
                     updated_at=ts,
                     score=None,
