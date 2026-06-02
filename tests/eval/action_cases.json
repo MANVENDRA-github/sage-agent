@@ -140,5 +140,96 @@
     "conversation": [{"role": "user", "content": "What is the capital of Australia?"}],
     "expected_tools": [],
     "note": "Near-miss: model knows this; should answer directly, not web_search."
+  },
+
+  {
+    "id": "act_023",
+    "category": "should_web_search",
+    "conversation": [{"role": "user", "content": "Who is the current president of the United States?"}],
+    "expected_tools": ["web_search"],
+    "note": "HARD: the office changes and the model's training is likely stale, so the correct move is web_search. Failure mode: the model answers confidently from (possibly outdated) training instead of searching."
+  },
+  {
+    "id": "act_024",
+    "category": "should_web_search",
+    "conversation": [{"role": "user", "content": "What's the newest iPhone model available right now?"}],
+    "expected_tools": ["web_search"],
+    "note": "HARD: 'right now' implies current state past the training cutoff -> web_search. Failure mode: model names whatever model it remembers as newest."
+  },
+  {
+    "id": "act_025",
+    "category": "should_no_tool",
+    "conversation": [{"role": "user", "content": "How many countries are in the European Union?"}],
+    "expected_tools": [],
+    "note": "HARD (the other way): a stable, well-known fact (27) the model knows -> answer directly. Tempting to web_search 'to be safe'. Debatable: EU membership can change, but it's stable enough that direct is the better default."
+  },
+  {
+    "id": "act_026",
+    "category": "should_manage_goal",
+    "conversation": [{"role": "user", "content": "I really want to get better at chess this year."}],
+    "expected_tools": ["manage_goal"],
+    "note": "HARD: a stated aim with a horizon ('this year') -> manage_goal(set). Tempting to treat it as a plain interest and save_memory it."
+  },
+  {
+    "id": "act_027",
+    "category": "should_save_memory",
+    "conversation": [{"role": "user", "content": "I've really gotten into trail running lately."}],
+    "expected_tools": ["save_memory"],
+    "note": "HARD (the other way): an established habit/preference -> save_memory. No target or intention is stated, so it is NOT a goal. Tempting to read it as a fitness goal and call manage_goal."
+  },
+  {
+    "id": "act_028",
+    "category": "should_save_memory",
+    "conversation": [{"role": "user", "content": "I'm learning to play the piano."}],
+    "expected_tools": ["save_memory"],
+    "note": "HARD/borderline: a present-tense fact about a current activity -> save_memory. 'learning' tempts manage_goal because it sounds aspirational. Genuinely debatable; labelled save_memory because no goal/target is expressed."
+  },
+  {
+    "id": "act_029",
+    "category": "should_chain",
+    "setup_memories": [{"content": "User lives in Seattle.", "type": "fact"}],
+    "conversation": [{"role": "user", "content": "What's the weather like where I live right now?"}],
+    "expected_sequence": ["search_memory", "web_search"],
+    "note": "HARD two-tool chain: must first search_memory to learn the city (Seattle), THEN web_search its current weather. Failure modes: web_search 'where I live' (no city), or only recall and never look up the weather, or wrong order."
+  },
+  {
+    "id": "act_030",
+    "category": "should_chain",
+    "setup_memories": [{"content": "User's favorite football team is Arsenal.", "type": "preference"}],
+    "conversation": [{"role": "user", "content": "Did my favorite team win their most recent match?"}],
+    "expected_sequence": ["search_memory", "web_search"],
+    "note": "HARD two-tool chain: recall the team (Arsenal) via search_memory, THEN web_search the latest result. Failure modes: web_search without the team name, recall only, or wrong order."
+  },
+  {
+    "id": "act_031",
+    "category": "should_no_tool",
+    "setup_memories": [
+      {"content": "Learn to cook", "type": "goal"},
+      {"content": "Save $5000", "type": "goal"}
+    ],
+    "conversation": [{"role": "user", "content": "I finally did it — please mark my goal as done!"}],
+    "expected_tools": [],
+    "note": "HARD/under-specified: two goals exist and 'my goal' is ambiguous. The safest action is to ask WHICH goal (no tool) rather than blindly manage_goal(update) and risk closing the wrong one. DEBATABLE — calling manage_goal(list) to show options is also reasonable, so the model may 'fail' this label by doing something defensible. Documented intentionally."
+  },
+  {
+    "id": "act_032",
+    "category": "should_no_tool",
+    "conversation": [{"role": "user", "content": "Remind me what my name is — oh wait, never mind, it's Alex."}],
+    "expected_tools": [],
+    "note": "HARD over-call trap: the user supplies the answer in the same breath, so recalling via search_memory is an unnecessary tool call. Correct = answer directly. Tempting to search_memory on 'what my name is'."
+  },
+  {
+    "id": "act_033",
+    "category": "should_no_tool",
+    "conversation": [{"role": "user", "content": "I was thinking it might be fun to visit Japan someday. What's the best season to go?"}],
+    "expected_tools": [],
+    "note": "HARD over-call trap: a vague musing ('someday') is too soft to record as a goal/fact, and the actual question ('best season') is general knowledge -> answer directly. Tempting to save_memory ('plans to visit Japan'), manage_goal, or web_search."
+  },
+  {
+    "id": "act_034",
+    "category": "should_manage_goal",
+    "conversation": [{"role": "user", "content": "My new year's resolution is to save more money."}],
+    "expected_tools": ["manage_goal"],
+    "note": "HARD/borderline: a resolution is an aim -> manage_goal(set). Tempting to save_memory it as a preference about money. Debatable but labelled manage_goal because it is explicitly a resolution (a goal)."
   }
 ]
