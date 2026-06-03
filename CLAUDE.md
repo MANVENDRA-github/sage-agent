@@ -76,7 +76,7 @@ reflection renumber to Phases 5–6.
 | Phase 1 | ReAct loop + `search_memory` tool. Retrieval becomes a tool the model *chooses* to call (forced `retrieve_memories` node removed); `search_memory` + `save_memory` both bound; model ⇄ tools loop with a per-turn 5-step cap; save still does conflict-resolution + type classification + DELETE-then-INSERT. | ✅ commit `d586607` — branch `agentic-phase-1` |
 | Phase 2 | `web_search` tool — keyless DuckDuckGo (`ddgs`) external lookup alongside memory; bound as a third tool on the same retry-once-then-graceful dispatch path; `SYSTEM_PROMPT` routes web_search (current/external) vs search_memory (about the user) vs neither (direct knowledge). | ✅ commit `1529767` — branch `agentic-phase-2` |
 | Phase 3 | Goals — a `manage_goal` tool (set / list / update) + a `goal` memory type stored in the same Chroma store with `status` + `created_at`; reached ONLY via manage_goal, never the save_memory auto-classifier; update reuses DELETE-then-INSERT. | ✅ commit `97aa425` — branch `agentic-phase-3` |
-| Phase 4 | Action-selection eval (eval wrap, brought forward). `runner.run_case` now captures per-turn tool calls (additive — memory scoring untouched); a NEW `tests/eval/action_cases.json` (~22 cases) + `tests/eval/action_runner.py` score tool-choice accuracy (pass = called the expected tool AND didn't over-call); the 50-case memory suite is re-baselined against the agentic graph. | **[CURRENT]** — branch `agentic-phase-4` |
+| Phase 4 | Action-selection eval (eval wrap, brought forward). `runner.run_case` now captures per-turn tool calls (additive — memory scoring untouched); a NEW `tests/eval/action_cases.json` + `tests/eval/action_runner.py` score tool-choice accuracy (pass = called the expected tool AND didn't over-call); the 50-case memory suite is re-baselined against the agentic graph. **Phase 4b** hardened the action suite: +12 ambiguous cases (`act_023`–`act_034`) incl. ordered two-tool `should_chain` scoring, pushing the metric off 100% to a 91.2%–94.1% range with named failure modes. | ✅ — branch `agentic-phase-4` |
 | Phase 5 | Decay / consolidation — TTL on episodic memories, periodic dedupe. | planned |
 | Phase 6 | Reflection / auto-summarization of accumulated memories. | planned |
 
@@ -168,7 +168,7 @@ START → start_turn → call_model → (route_after_model) ⇄ tools → END
 reflection (Phases 5–6) and the eval wrap are NOT built; Phase 3 does not add
 TTL / dedupe / summarization and does not touch `tests/eval/`.
 
-**Phase 4 — action-selection eval (current):**
+**Phase 4 — action-selection eval:**
 
 - The memory eval (`runner.py`) scores memory OUTCOMES (save decision, type,
   retrieval, contradiction) — never which TOOL the model chose. With four tools
@@ -201,26 +201,83 @@ re-baseline. No decay / consolidation / reflection; the agent code
 (`src/sage_agent/`) is unchanged except the additive tool-call capture in the
 runner. The existing 50 cases and their scoring are untouched.
 
-**Phase 4 — Results** (real runs, 2026-05-31, free-tier `openai/gpt-oss-120b:free`):
+**Phase 4b — harden the action suite (push it off 100%):**
 
-*Action-selection* — `python -m tests.eval.action_runner --runs 3` (22 cases),
-files `action_run{1,2,3}_*.json`:
+- **Why.** The original 22 action cases scored 100% across three runs — all
+  clear-cut, so the metric had no signal. 4b adds 12 deliberately ambiguous
+  cases (`act_023`–`act_034`) so the number reflects real difficulty.
+- **New `should_chain` category + ordered scoring.** Two-tool cases carry an
+  `expected_sequence` (>=2 tools) instead of `expected_tools`; `score_action`
+  de-duplicates the emitted tool-call list in first-occurrence order and passes
+  only if that order **equals** the expected sequence exactly (every expected
+  tool, right order, no foreign over-call). `validate_cases` requires
+  `expected_sequence` for `should_chain` and `expected_tools` for the rest.
+- **The hard cases** (each documents WHY it's hard in a `note`): stale-fact
+  web_search-vs-direct (`act_023` current president, `act_024` newest iPhone)
+  vs a stable fact that should stay direct (`act_025` EU member count);
+  borderline preference-vs-goal (`act_026`/`act_034` aims → manage_goal,
+  `act_027`/`act_028` habits → save_memory); two genuine chains (`act_029`
+  weather-where-I-live, `act_030` favorite-team's-last-result) needing
+  `search_memory` THEN `web_search`; an under-specified "mark my goal as done"
+  with two goals (`act_031`, ask-which → no tool); and over-call traps
+  (`act_032` self-answered name, `act_033` vague musing).
+- **Honesty about labels.** Some hard cases are genuinely debatable
+  (`act_025`, `act_028`, `act_031`) and the chosen label is documented as such
+  in the `note` — the model "failing" one of these may be doing something
+  defensible. That's expected and recorded, not hidden.
 
-| run | overall | over-calls | errors |
-|----:|--------:|-----------:|-------:|
-| 1 | 22/22 = 100% | 0 | 0 |
-| 2 | 22/22 = 100% | 0 | 0 |
-| 3 | 22/22 = 100% | 0 | 0 |
+**Scope discipline (4b):** adds ONLY harder action cases + the `should_chain`
+ordered-scoring path in `action_runner.py` and a 3× re-run. No decay; the agent
+source (`src/sage_agent/`) is untouched; the 50 memory cases and `runner.py`
+scoring are untouched.
 
-**Range: 100% – 100% (mean 100%).** Per category (identical all three runs):
-search_memory 4/4, web_search 4/4, manage_goal 5/5, save_memory 4/4,
-no_tool 5/5 — including the near-misses (an aim routed to `manage_goal` not
-`save_memory`; "what year did WWII end" / "capital of Australia" answered
-directly, NOT web-searched). Read honestly: 100% means tool routing on these
-clear-cut cases is within the model's competence — not that routing is
-infallible. The metric's standing value is regression detection and catching
-**over-calling** (the OverCall column) as the toolset grows; harder/ambiguous
-cases can be added to push it below ceiling.
+**Phase 4 — Results** (free-tier `openai/gpt-oss-120b:free`):
+
+*Action-selection (Phase 4 baseline, 22 cases)* — `python -m
+tests.eval.action_runner --runs 3` on the original **clear-cut** cases
+(2026-05-31), files `action_run{1,2,3}_*.json`: **22/22 = 100%** all three runs
+(range 100% – 100%, 0 over-calls, 0 errors). That ceiling was the problem — a
+metric pinned at 100% has no signal — so **Phase 4b** added 12 deliberately
+HARD/ambiguous cases (`act_023`–`act_034`): stale-fact web_search-vs-direct
+ambiguity, borderline preference-vs-goal, two-tool `should_chain` cases (recall
+a stored city via `search_memory` THEN `web_search` its weather, scored by an
+ORDERED `expected_sequence`), an under-specified "mark my goal as done" with two
+goals, and over-call traps where NO tool is correct but acting is tempting.
+
+*Action-selection (Phase 4b, 34 cases)* — `python -m tests.eval.action_runner
+--runs 3 --label phase4b` (2026-06-03), files `phase4b_run{1,2,3}_*.json`:
+
+| run | overall | failures |
+|----:|--------:|----------|
+| 1 | 32/34 = 94.1% | act_031, act_032 |
+| 2 | 32/34 = 94.1% | act_031, act_032 |
+| 3 | 31/34 = 91.2% | act_029, act_031, act_032 |
+
+**Range: 91.2% – 94.1% (mean 93.1%).** The harder set pushes the metric off the
+ceiling and surfaces real failure modes. Per-category (run 3, the worst run):
+search_memory 4/4, web_search 6/6, manage_goal 7/7, save_memory 6/6, no_tool
+7/9, chain 1/2. Characterized failures (real `expected -> got` from the run):
+
+- **`act_031` (failed 3/3, over-call)** — "I finally did it — mark my goal as
+  done!" with **two** active goals in store. Correct move is to ask *which*
+  goal (no tool); the model instead fires `manage_goal` (`expected=[] ->
+  got=['manage_goal']`) and risks closing the wrong one. The most consistent
+  failure — the model won't ask a clarifying question when an action is on
+  offer.
+- **`act_032` (failed 3/3, over-call)** — "Remind me what my name is — oh wait,
+  never mind, it's Alex." The user supplies the answer in the same breath, so
+  any tool call is wasted; the model calls `save_memory` anyway (`expected=[]
+  -> got=['save_memory']`).
+- **`act_029` (failed 1/3, flaky chain)** — "What's the weather where I live?"
+  with the city in memory. Expected `search_memory` → `web_search`; in run 3
+  the model called **no tool** (`expected=['search_memory','web_search'] ->
+  got=[]`) and answered from nothing — it passed the chain in runs 1–2. Shows
+  the ordered chain scorer catching a dropped multi-step plan.
+
+Read honestly: 93% is not a new ceiling — it reflects that two over-call traps
+are genuinely hard for this model and one chain case is non-deterministic. The
+metric now does its job (regression + over-call detection) with real headroom,
+and every miss is named above rather than hidden behind an aggregate.
 
 *50-case memory re-baseline* — `python -m tests.eval.runner --label phase4`
 (agentic graph), file `phase4_20260531T194151Z.json`:
