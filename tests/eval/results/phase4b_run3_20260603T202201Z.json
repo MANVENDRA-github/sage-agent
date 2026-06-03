@@ -1,0 +1,847 @@
+{
+  "label": "phase4b",
+  "run_index": 3,
+  "timestamp_utc": "20260603T202201Z",
+  "cases_path": "D:\\sage-agent\\tests\\eval\\action_cases.json",
+  "n_cases": 34,
+  "aggregate": {
+    "by_category": {
+      "should_search_memory": {
+        "total": 4,
+        "passed": 4,
+        "errors": 0,
+        "over_call_fail": 0,
+        "wrong_or_missed": 0,
+        "accuracy": 1.0
+      },
+      "should_web_search": {
+        "total": 6,
+        "passed": 6,
+        "errors": 0,
+        "over_call_fail": 0,
+        "wrong_or_missed": 0,
+        "accuracy": 1.0
+      },
+      "should_manage_goal": {
+        "total": 7,
+        "passed": 7,
+        "errors": 0,
+        "over_call_fail": 0,
+        "wrong_or_missed": 0,
+        "accuracy": 1.0
+      },
+      "should_save_memory": {
+        "total": 6,
+        "passed": 6,
+        "errors": 0,
+        "over_call_fail": 0,
+        "wrong_or_missed": 0,
+        "accuracy": 1.0
+      },
+      "should_no_tool": {
+        "total": 9,
+        "passed": 7,
+        "errors": 0,
+        "over_call_fail": 2,
+        "wrong_or_missed": 0,
+        "accuracy": 0.7777777777777778
+      },
+      "should_chain": {
+        "total": 2,
+        "passed": 1,
+        "errors": 0,
+        "over_call_fail": 0,
+        "wrong_or_missed": 1,
+        "accuracy": 0.5
+      }
+    },
+    "overall": {
+      "total": 34,
+      "passed": 31,
+      "errors": 0,
+      "accuracy": 0.912
+    },
+    "elapsed_seconds": 270.79
+  },
+  "cases": [
+    {
+      "id": "act_001",
+      "category": "should_search_memory",
+      "tool_calls_raw": [
+        "search_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "search_memory"
+        ]
+      ],
+      "final_response": "Your name is Aman.",
+      "mode": "set",
+      "expected_tools": [
+        "search_memory"
+      ],
+      "called_tools": [
+        "search_memory"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_002",
+      "category": "should_search_memory",
+      "tool_calls_raw": [
+        "search_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "search_memory"
+        ]
+      ],
+      "final_response": "You\u2019ve mentioned that you prefer Python over JavaScript.",
+      "mode": "set",
+      "expected_tools": [
+        "search_memory"
+      ],
+      "called_tools": [
+        "search_memory"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_003",
+      "category": "should_search_memory",
+      "tool_calls_raw": [
+        "search_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "search_memory"
+        ]
+      ],
+      "final_response": "Yes, I remember\u2014you live in\u202fMumbai.",
+      "mode": "set",
+      "expected_tools": [
+        "search_memory"
+      ],
+      "called_tools": [
+        "search_memory"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_004",
+      "category": "should_search_memory",
+      "tool_calls_raw": [
+        "search_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "search_memory"
+        ]
+      ],
+      "final_response": "Your dog\u2019s name is Rex.",
+      "mode": "set",
+      "expected_tools": [
+        "search_memory"
+      ],
+      "called_tools": [
+        "search_memory"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_005",
+      "category": "should_web_search",
+      "tool_calls_raw": [
+        "web_search",
+        "web_search"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "web_search",
+          "web_search"
+        ]
+      ],
+      "final_response": "I\u2019m not able to pull live data directly, but you can see the up\u2011to\u2011date weather for London right now on sites like the Met\u202fOffice, AccuWeather, or BBC Weather. Just visit one of those pages and you\u2019ll get the current temperature, conditions, and short\u2011term forecast.",
+      "mode": "set",
+      "expected_tools": [
+        "web_search"
+      ],
+      "called_tools": [
+        "web_search"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_006",
+      "category": "should_web_search",
+      "tool_calls_raw": [
+        "web_search"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "web_search"
+        ]
+      ],
+      "final_response": "As of the latest data, Bitcoin is trading at **about\u202f$66,300\u202fUSD** per BTC. (Prices can change quickly, so you may want to check a live ticker like CoinMarketCap or CoinDesk for the most up\u2011to\u2011date figure.)",
+      "mode": "set",
+      "expected_tools": [
+        "web_search"
+      ],
+      "called_tools": [
+        "web_search"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_007",
+      "category": "should_web_search",
+      "tool_calls_raw": [
+        "web_search"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "web_search"
+        ]
+      ],
+      "final_response": "Here are some of the biggest headlines making the rounds today (June\u202f3\u202f2026):\n\n| Category | Headline (brief) | Source |\n|----------|------------------|--------|\n| **World** | **U.N. Climate Summit kicks off with new \u201cnet\u2011zero by 2035\u201d pledge from several major economies** | Reuters |\n| **U.S.** | **Supreme Court hears arguments in the landmark \u201cdigital privacy\u201d case that could reshape data\u2011collection laws** | AP |\n| **Europe** | **Eurozone inflation falls to 2.8\u202f% in May, the lowest level in three years** | Bloomberg |\n| **Asia** | **India\u2019s government announces a $150\u202fbillion infrastructure fund aimed at rural electrification and high\u2011speed rail** | The Hindu |\n| **Technology** | **OpenAI releases GPT\u20115 with multimodal reasoning and real\u2011time tool integration** | TechCrunch |\n| **Business** | **Tesla reports record Q1 deliveries, driven by strong demand for its new affordable Model\u202f2** | CNBC |\n| **Health** | **WHO warns of a new strain of avian flu spreading in Southeast Asia; vaccine trials accelerated** | BBC |\n| **Science** | **James Webb Telescope captures first detailed images of a potentially habitable exoplanet\u2019s atmosphere** | NASA |\n| **Sports** | **2026 FIFA World Cup: England beats Brazil 2\u20111 in a dramatic quarter\u2011final upset** | ESPN |\n| **Entertainment** | **\u201cThe Last Frontier\u201d series premieres on Netflix, quickly becoming the most\u2011watched show of the week** | Variety |\n\n*These headlines are compiled from major news outlets (Reuters, AP, Bloomberg, etc.) and reflect the most widely reported stories as of today.*",
+      "mode": "set",
+      "expected_tools": [
+        "web_search"
+      ],
+      "called_tools": [
+        "web_search"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_008",
+      "category": "should_web_search",
+      "tool_calls_raw": [
+        "web_search"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "web_search"
+        ]
+      ],
+      "final_response": "Tokyo\u2019s temperature right now is about **67\u202f\u00b0F (19\u202f\u00b0C)**, with partly\u2011cloudy conditions.",
+      "mode": "set",
+      "expected_tools": [
+        "web_search"
+      ],
+      "called_tools": [
+        "web_search"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_009",
+      "category": "should_manage_goal",
+      "tool_calls_raw": [
+        "manage_goal"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "manage_goal"
+        ]
+      ],
+      "final_response": "That\u2019s a great goal! I\u2019ve added \u201cLearn to play the guitar this year\u201d to your list of active goals. Do you have any ideas about how you\u2019d like to get started\u2014like finding a teacher, using online lessons, or picking up a specific style? Let me know how I can help you plan the next steps.",
+      "mode": "set",
+      "expected_tools": [
+        "manage_goal"
+      ],
+      "called_tools": [
+        "manage_goal"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_010",
+      "category": "should_manage_goal",
+      "tool_calls_raw": [
+        "manage_goal"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "manage_goal"
+        ]
+      ],
+      "final_response": "Got it! I\u2019ve recorded your goal to read **20 books in 2026**. Good luck, and let me know if you\u2019d like any recommendations or help tracking your progress along the way. Happy reading!",
+      "mode": "set",
+      "expected_tools": [
+        "manage_goal"
+      ],
+      "called_tools": [
+        "manage_goal"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_011",
+      "category": "should_manage_goal",
+      "tool_calls_raw": [
+        "manage_goal"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "manage_goal"
+        ]
+      ],
+      "final_response": "You\u2019re currently working toward **running a marathon** (status: active).",
+      "mode": "set",
+      "expected_tools": [
+        "manage_goal"
+      ],
+      "called_tools": [
+        "manage_goal"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_012",
+      "category": "should_manage_goal",
+      "tool_calls_raw": [
+        "manage_goal"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "manage_goal"
+        ]
+      ],
+      "final_response": "Congratulations on finishing your novel! \ud83c\udf89 That's a huge accomplishment. If you\u2019d like any help with next steps\u2014editing, publishing, or marketing\u2014just let me know.",
+      "mode": "set",
+      "expected_tools": [
+        "manage_goal"
+      ],
+      "called_tools": [
+        "manage_goal"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_013",
+      "category": "should_manage_goal",
+      "tool_calls_raw": [
+        "manage_goal"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "manage_goal"
+        ]
+      ],
+      "final_response": "That\u2019s an awesome goal! Training for a marathon is a fantastic way to challenge yourself and stay healthy. If you\u2019d like any tips on training plans, gear, nutrition, or how to stay motivated, just let me know\u2014I\u2019m happy to help you map out a path to the finish line.",
+      "mode": "set",
+      "expected_tools": [
+        "manage_goal"
+      ],
+      "called_tools": [
+        "manage_goal"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_014",
+      "category": "should_save_memory",
+      "tool_calls_raw": [
+        "save_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "save_memory"
+        ]
+      ],
+      "final_response": "Got it! I\u2019ll keep that in mind for any food\u2011related suggestions or recipes we talk about. \ud83c\udf31 If you ever want vegetarian meal ideas or restaurant recommendations, just let me know!",
+      "mode": "set",
+      "expected_tools": [
+        "save_memory"
+      ],
+      "called_tools": [
+        "save_memory"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_015",
+      "category": "should_save_memory",
+      "tool_calls_raw": [
+        "save_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "save_memory"
+        ]
+      ],
+      "final_response": "Got it\u2014your birthday is on March\u202f3rd. I\u2019ll keep that in mind!",
+      "mode": "set",
+      "expected_tools": [
+        "save_memory"
+      ],
+      "called_tools": [
+        "save_memory"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_016",
+      "category": "should_save_memory",
+      "tool_calls_raw": [
+        "save_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "save_memory"
+        ]
+      ],
+      "final_response": "Got it! I\u2019ve noted that you work as a data scientist at Acme\u202fCorp. Let me know if there\u2019s anything specific you\u2019d like to discuss or need help with.",
+      "mode": "set",
+      "expected_tools": [
+        "save_memory"
+      ],
+      "called_tools": [
+        "save_memory"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_017",
+      "category": "should_save_memory",
+      "tool_calls_raw": [
+        "save_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "save_memory"
+        ]
+      ],
+      "final_response": "Got it! I\u2019ve noted that you\u2019ve recently moved to Berlin. If you need any tips about the city or anything else, just let me know!",
+      "mode": "set",
+      "expected_tools": [
+        "save_memory"
+      ],
+      "called_tools": [
+        "save_memory"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_018",
+      "category": "should_no_tool",
+      "tool_calls_raw": [],
+      "tool_calls_per_turn": [
+        []
+      ],
+      "final_response": "2\u202f+\u202f2\u202f=\u202f4.",
+      "mode": "set",
+      "expected_tools": [],
+      "called_tools": [],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_019",
+      "category": "should_no_tool",
+      "tool_calls_raw": [],
+      "tool_calls_per_turn": [
+        []
+      ],
+      "final_response": "The capital of France is Paris.",
+      "mode": "set",
+      "expected_tools": [],
+      "called_tools": [],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_020",
+      "category": "should_no_tool",
+      "tool_calls_raw": [],
+      "tool_calls_per_turn": [
+        []
+      ],
+      "final_response": "Recursion is a programming technique where a function calls itself directly or indirectly to solve a problem by breaking it down into smaller, similar sub\u2011problems.",
+      "mode": "set",
+      "expected_tools": [],
+      "called_tools": [],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_021",
+      "category": "should_no_tool",
+      "tool_calls_raw": [],
+      "tool_calls_per_turn": [
+        []
+      ],
+      "final_response": "World War\u202fII ended in 1945. The formal surrender of Japan was signed on September\u202f2,\u202f1945, marking the conclusion of the war.",
+      "mode": "set",
+      "expected_tools": [],
+      "called_tools": [],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_022",
+      "category": "should_no_tool",
+      "tool_calls_raw": [],
+      "tool_calls_per_turn": [
+        []
+      ],
+      "final_response": "The capital of Australia is **Canberra**.",
+      "mode": "set",
+      "expected_tools": [],
+      "called_tools": [],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_023",
+      "category": "should_web_search",
+      "tool_calls_raw": [
+        "web_search"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "web_search"
+        ]
+      ],
+      "final_response": "As of\u202f2026, the President of the United\u202fStates is **Joe\u202fBiden**.",
+      "mode": "set",
+      "expected_tools": [
+        "web_search"
+      ],
+      "called_tools": [
+        "web_search"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_024",
+      "category": "should_web_search",
+      "tool_calls_raw": [
+        "web_search"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "web_search"
+        ]
+      ],
+      "final_response": "As of\u202f2026 the newest iPhone lineup is the **iPhone\u202f17 series**, which includes:\n\n- **iPhone\u202f17** \u2013 the standard model  \n- **iPhone\u202f17\u202fPro** \u2013 higher\u2011end with advanced camera and display features  \n- **iPhone\u202f17\u202fPro\u202fMax** \u2013 the largest Pro version with the best specs  \n- **iPhone\u202f17\u202fAir** \u2013 a lighter, slightly more affordable option  \n- **iPhone\u202f17e** \u2013 an entry\u2011level variant released earlier in the year  \n\nThese models were launched in September\u202f2025 (the 17, 17\u202fPro, and 17\u202fPro\u202fMax) and the iPhone\u202f17e arrived in March\u202f2026. If you\u2019re looking to buy the latest Apple phone, any of these 17\u2011series devices would be the most current options.",
+      "mode": "set",
+      "expected_tools": [
+        "web_search"
+      ],
+      "called_tools": [
+        "web_search"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_025",
+      "category": "should_no_tool",
+      "tool_calls_raw": [],
+      "tool_calls_per_turn": [
+        []
+      ],
+      "final_response": "There are **27 countries** in the European Union.",
+      "mode": "set",
+      "expected_tools": [],
+      "called_tools": [],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_026",
+      "category": "should_manage_goal",
+      "tool_calls_raw": [
+        "manage_goal"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "manage_goal"
+        ]
+      ],
+      "final_response": "Got it! I\u2019ve added \u201cGet better at chess this year\u201d to your goals as an active goal. Let me know if you\u2019d like resources, practice plans, or anything else to help you achieve it. Good luck, and enjoy the game!",
+      "mode": "set",
+      "expected_tools": [
+        "manage_goal"
+      ],
+      "called_tools": [
+        "manage_goal"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_027",
+      "category": "should_save_memory",
+      "tool_calls_raw": [
+        "save_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "save_memory"
+        ]
+      ],
+      "final_response": "That\u2019s awesome! Trail running is such a great way to combine fitness with nature. Do you have any favorite trails or upcoming runs you\u2019re planning?",
+      "mode": "set",
+      "expected_tools": [
+        "save_memory"
+      ],
+      "called_tools": [
+        "save_memory"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_028",
+      "category": "should_save_memory",
+      "tool_calls_raw": [
+        "save_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "save_memory"
+        ]
+      ],
+      "final_response": "That\u2019s wonderful! \ud83c\udfb9 How\u2019s it going so far? Do you have any specific goals in mind\u2014like learning a particular piece, mastering a technique, or playing for a certain amount of time each week? Let me know, and I can help you track progress or find resources.",
+      "mode": "set",
+      "expected_tools": [
+        "save_memory"
+      ],
+      "called_tools": [
+        "save_memory"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_029",
+      "category": "should_chain",
+      "tool_calls_raw": [],
+      "tool_calls_per_turn": [
+        []
+      ],
+      "final_response": "I\u2019m not sure where you\u2019re located at the moment. Could you let me know the city (or zip code) you\u2019d like the current weather for?",
+      "mode": "sequence",
+      "expected_sequence": [
+        "search_memory",
+        "web_search"
+      ],
+      "called_order": [],
+      "expected_tools": [
+        "search_memory",
+        "web_search"
+      ],
+      "called_tools": [],
+      "hit": false,
+      "over_called": [],
+      "missed": [
+        "search_memory",
+        "web_search"
+      ],
+      "passed": false
+    },
+    {
+      "id": "act_030",
+      "category": "should_chain",
+      "tool_calls_raw": [
+        "search_memory",
+        "web_search",
+        "web_search"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "search_memory",
+          "web_search",
+          "web_search"
+        ]
+      ],
+      "final_response": "Your favorite team, Arsenal, **did not win** their most recent match \u2013 they lost 2\u20111 to Crystal Palace.",
+      "mode": "sequence",
+      "expected_sequence": [
+        "search_memory",
+        "web_search"
+      ],
+      "called_order": [
+        "search_memory",
+        "web_search"
+      ],
+      "expected_tools": [
+        "search_memory",
+        "web_search"
+      ],
+      "called_tools": [
+        "search_memory",
+        "web_search"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_031",
+      "category": "should_no_tool",
+      "tool_calls_raw": [
+        "manage_goal"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "manage_goal"
+        ]
+      ],
+      "final_response": "Got it! \ud83c\udf89 Which of your goals would you like me to mark as done\u2014*Learn to cook* or *Save\u202f$5000*?",
+      "mode": "set",
+      "expected_tools": [],
+      "called_tools": [
+        "manage_goal"
+      ],
+      "hit": true,
+      "over_called": [
+        "manage_goal"
+      ],
+      "missed": [],
+      "passed": false
+    },
+    {
+      "id": "act_032",
+      "category": "should_no_tool",
+      "tool_calls_raw": [
+        "save_memory"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "save_memory"
+        ]
+      ],
+      "final_response": "Got it\u2014your name is Alex! Let me know if there\u2019s anything else you\u2019d like me to remember.",
+      "mode": "set",
+      "expected_tools": [],
+      "called_tools": [
+        "save_memory"
+      ],
+      "hit": true,
+      "over_called": [
+        "save_memory"
+      ],
+      "missed": [],
+      "passed": false
+    },
+    {
+      "id": "act_033",
+      "category": "should_no_tool",
+      "tool_calls_raw": [],
+      "tool_calls_per_turn": [
+        []
+      ],
+      "final_response": "Visiting Japan is wonderful any time of year, but many travelers consider **spring (late March to early May)** and **autumn (late September to early November)** to be the best seasons:\n\n- **Spring** \u2013 The iconic cherry\u2011blossom (sakura) season peaks in late March to early April (though timing varies by region). The weather is mild, and festivals abound.\n- **Autumn** \u2013 Temperatures are comfortable and the foliage turns brilliant reds, oranges, and yellows. Late October to early November is prime for leaf\u2011viewing (k\u014dy\u014d).\n\nBoth seasons offer comfortable weather, stunning natural scenery, and a festive atmosphere. If you have specific interests\u2014like winter skiing in Hokkaido or summer festivals in Kyoto\u2014those can also be great times, but for a classic, picture\u2011perfect experience, aim for spring or autumn. Happy planning!",
+      "mode": "set",
+      "expected_tools": [],
+      "called_tools": [],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    },
+    {
+      "id": "act_034",
+      "category": "should_manage_goal",
+      "tool_calls_raw": [
+        "manage_goal"
+      ],
+      "tool_calls_per_turn": [
+        [
+          "manage_goal"
+        ]
+      ],
+      "final_response": "Got it! I\u2019ve recorded your New\u202fYear\u2019s resolution to **save more money** as an active goal. If you\u2019d like any tips, budgeting tools, or just want to check in on your progress later, just let me know. Good luck!",
+      "mode": "set",
+      "expected_tools": [
+        "manage_goal"
+      ],
+      "called_tools": [
+        "manage_goal"
+      ],
+      "hit": true,
+      "over_called": [],
+      "missed": [],
+      "passed": true
+    }
+  ]
+}
