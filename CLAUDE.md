@@ -32,13 +32,15 @@ template with:
 The headline of the project is the eval table, not the feature list.
 
 **Owner**: Manvendra. **License**: MIT. **Python**: ≥ 3.11. **Package
-manager**: `uv`. **Default branch**: `dev`. **Live demo**:
+manager**: `uv`. **Default branch**: `main`. **Live demo**:
 <https://sage-agent.streamlit.app/>.
 
-## Current status — Week 4 + polish complete
+## Current status — Week 4 + polish complete; agentic through Phase 4b
 
-All four roadmap weeks plus the polish pass have shipped on `dev`. Headline
-numbers from `tests/eval/results/week3_20260524T161027Z.json`:
+All four roadmap weeks plus the polish pass have shipped on `main`, and the
+agentic track is now through Phase 4b (see *Agentic build* below). Headline
+numbers for the memory system from
+`tests/eval/results/week3_20260524T161027Z.json`:
 
 - `contradiction_update`: 0% (baseline) → 57.1% (Week 2) → **100%** (Week 3
   + polish). Case_040 Camry→Tesla, the long-time holdout, passed on the
@@ -324,6 +326,7 @@ sage-agent/
 ├── README.md                   public-facing, leads with the live demo URL
 ├── CLAUDE.md                   this file
 ├── TROUBLESHOOTING.md          symptom → cause → fix for every gotcha we hit
+├── docs/EVAL.md                evaluation methodology (linked from README)
 ├── .env.example                OPENROUTER_API_KEY + MODEL_NAME template
 ├── .env                        local-only (gitignored)
 ├── .gitignore                  ignores .env, .chroma/, .streamlit/secrets.toml; commits eval results
@@ -336,17 +339,19 @@ sage-agent/
 │   ├── graph.py                ReAct loop + MemoryType/ClassifiableType + JudgeDecision + _judge/_classify_save + tool dispatch (save/search/web/goal)
 │   ├── model.py                ChatOpenAI factory pointed at OpenRouter; DEFAULT_MODEL = openai/gpt-oss-120b:free
 │   ├── prompts.py              SYSTEM_PROMPT + JUDGE_PROMPT + CLASSIFIER_PROMPT
-│   ├── state.py                State dataclass: messages + retrieved_memories
+│   ├── state.py                State dataclass: messages + step (per-turn ReAct cap) + retrieved_memories (legacy)
 │   ├── store.py                ChromaStore(BaseStore) + make_store(persist_dir=None) + list_memories + _value_from_md (goal status/created_at passthrough) + lazy embedder
 │   └── tools.py                save_memory + search_memory (InjectedToolArg store/user_id) + web_search (ddgs, no key) + manage_goal (set/list/update)
 └── tests/
     ├── __init__.py
     └── eval/
         ├── __init__.py
-        ├── cases.json          50 cases across 6 categories
+        ├── cases.json          50 memory cases across 6 categories
+        ├── action_cases.json   34 action-selection cases across 6 tool-choice categories
         ├── runner.py           Load → validate → run → score → aggregate → write JSON
+        ├── action_runner.py    Tool-choice scoring (set + ordered should_chain sequence); --runs N for a range
         ├── rescore.py          Re-apply current score_case to a stored JSON; no LLM calls
-        └── results/            .gitkept; baseline_*.json / week2_*.json / week3_*.json committed
+        └── results/            .gitkept; baseline/week2/week3/phase1/phase4/phase4b/action_run* committed
 ```
 
 ## Architecture
@@ -601,11 +606,15 @@ fix is `git checkout HEAD -- <file>` and re-run.
 
 ## Coding conventions
 
-- **Commit messages**: lowercase `feature: ...` is the established style.
-  Look at `git log --oneline` — every commit follows it. Don't switch to
-  Conventional Commits (`feat:`) mid-stream. Use `fix: ...` / `refactor: ...`
-  / `docs: ...` in the same lowercase style.
-- **Branching**: work on `dev`; PRs (eventually) target `main`.
+- **Commit messages**: lowercase Conventional Commits short prefixes —
+  `feat:` / `fix:` / `docs:` / `chore:` / `test:` / `refactor:` / `build:`.
+  The history is mixed: the early weeks used the long `feature:` form (still
+  the plurality in `git log`), but the agentic track standardized on the short
+  `feat:` prefix plus `docs:` / `chore:` / `test:` / `build:`. New commits
+  follow the short forms — `feat:`, not `feature:` — and stay lowercase.
+- **Branching**: `main` is the trunk. Cut a short-lived feature branch off
+  `main` (the agentic track used `agentic-phase-N`), then PR it back into
+  `main`; the legacy `dev` branch is retired (it lagged `main` and was deleted).
 - **Commit & push**: **the user owns these.** Claude prepares the working
   tree, then stops. Don't run `git commit` or `git push` unilaterally —
   the user is explicit about wanting to control these.
