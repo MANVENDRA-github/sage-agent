@@ -1,27 +1,27 @@
 # sage-agent
 
-A memory-augmented chat agent: a LangGraph ReAct loop that decides for itself when to recall a memory, save one, search the web, or track a goal — paired with two evaluation suites that measure whether it makes those calls correctly.
+A memory-augmented chat agent built on a LangGraph ReAct loop. It decides for itself when to recall a memory, save one, search the web, or track a goal. Two evaluation suites score whether those decisions are the right ones.
 
-> **Live demo:** [sage-agent.streamlit.app](https://sage-agent.streamlit.app/) — tell it something about yourself, reload the page, and ask it back.
+> **Live demo:** [sage-agent.streamlit.app](https://sage-agent.streamlit.app/). Tell it something about yourself, reload the page, and ask it back.
 
 ## What it does
 
-A conversational agent is only useful across sessions if it can decide *what* about you is worth keeping, reconcile new information against what it already stored, and pull the right memory back at the right moment. Building that is one problem; knowing whether it actually works is another. sage-agent is both halves — a working memory agent, and the harness that grades its behavior.
+A conversational agent is only useful across sessions if it can decide *what* about you is worth keeping, reconcile new information against what it already stored, and pull the right memory back when it matters. Building that is the first half of the work. Measuring whether it actually does those things is the second half, and the part most projects skip. sage-agent includes both: the agent, and the harness that grades it.
 
-It began as the [`langchain-ai/memory-agent`](https://github.com/langchain-ai/memory-agent) template and replaced the template's "dump every memory into the prompt" stub with semantic retrieval, conflict-resolving writes, and typed memory. From there the fixed retrieve → respond → save pipeline was converted into a model-driven loop over four tools. Every change is recorded as a delta in a committed results file, so the numbers below reproduce from git history.
+It started from the [`langchain-ai/memory-agent`](https://github.com/langchain-ai/memory-agent) template and replaced that template's "dump every memory into the prompt" stub with semantic retrieval, conflict-resolving writes, and typed memory. The fixed retrieve → respond → save pipeline then became a model-driven loop over four tools. Each change is recorded in a committed results file, so the numbers below reproduce from git history.
 
 The agent calls four tools:
 
-- **`search_memory`** — semantic top-`k` recall of what you told it before (Chroma + local `all-MiniLM-L6-v2`), scoped per `user_id`.
-- **`save_memory`** — store a new memory, with type classification (`fact` / `preference` / `episodic`) and an LLM judge that decides insert vs. replace.
-- **`web_search`** — keyless DuckDuckGo lookup (`ddgs`) for current or external facts you didn't supply.
-- **`manage_goal`** — set / list / update personal goals, kept as a separate `goal` memory type with a status and creation timestamp.
+- **`search_memory`**: semantic top-`k` recall of what you told it before (Chroma + local `all-MiniLM-L6-v2`), scoped per `user_id`.
+- **`save_memory`**: store a new memory, with type classification (`fact` / `preference` / `episodic`) and an LLM judge that decides insert vs. replace.
+- **`web_search`**: keyless DuckDuckGo lookup (`ddgs`) for current or external facts you didn't supply.
+- **`manage_goal`**: set / list / update personal goals, kept as a separate `goal` memory type with a status and creation timestamp.
 
-It runs on a free OpenRouter model and local embeddings, so a clone costs nothing to demo on a free key.
+It runs on a free OpenRouter model with local embeddings, so cloning and demoing it costs nothing beyond a free API key.
 
 ## How it works
 
-**The defining decision: retrieval is a tool the model chooses, not a step the graph forces.** The pre-agentic version always ran a `retrieve_memories` node before every reply. Here that node is gone — the model calls `search_memory` only when recall would help, calls `web_search` when the answer is external, calls neither when it already knows, and reads the results back inline as it reasons. The `retrieval_relevance` eval rows (100%, below) confirm the free-tier model reliably reaches for memory when the answer lives there.
+**The core design choice is that retrieval is a tool the model chooses rather than a step the graph forces.** The pre-agentic version ran a `retrieve_memories` node before every reply. That node is now gone. The model calls `search_memory` only when recall would help, `web_search` when the answer is external, and neither when it already knows, reading the results back inline as it reasons. The `retrieval_relevance` rows below (100%) show the free-tier model reliably reaches for memory when the answer lives there.
 
 The graph is a bounded ReAct loop:
 
@@ -38,8 +38,8 @@ flowchart LR
 `START → start_turn → call_model ⇄ tools → END`.
 
 - **`start_turn`** resets the per-turn step counter (`State.step`) to 0. The reset matters because the CLI and Streamlit run with a checkpointer, so `State` persists across turns and an un-reset counter would leak the cap from one turn into the next.
-- **`call_model`** binds all four tools and either emits tool calls or answers in plain text. On the fifth model step (`MAX_MODEL_STEPS = 5`) it is invoked **without** tools, so a tool call becomes impossible and the loop is guaranteed to terminate with an answer. That makes termination structural rather than hopeful — the price is at most four tool-calling steps per turn, which is plenty.
-- **`tools`** executes every tool call concurrently, each with **one retry then graceful degradation**: a malformed or transiently failing call returns an error `ToolMessage` instead of raising, so the turn continues and the model answers without the tool rather than crashing.
+- **`call_model`** binds all four tools and either emits tool calls or answers in plain text. On the fifth model step (`MAX_MODEL_STEPS = 5`) it is invoked **without** tools, so a tool call is impossible and the loop has to terminate with an answer. Termination is guaranteed by the graph itself rather than by the model's discretion. The cost is a ceiling of four tool-calling steps per turn, which is enough in practice.
+- **`tools`** executes every tool call concurrently, each with **one retry then graceful degradation**: a malformed or transiently failing call returns an error `ToolMessage` instead of raising, so the turn continues and the model answers without the tool instead of crashing.
 
 ### The save path
 
@@ -52,23 +52,23 @@ For each save:
 3. **Neighbors exist** → an LLM judge classifies the type **and** decides insert vs. replace in one structured-output call. `replace` is gated to same-type-and-same-facet; a cross-type "replace" is downgraded to an insert by a post-validator.
 4. `replace` is implemented as **DELETE-then-INSERT** (a new UUID), not an in-place overwrite.
 
-That last point is deliberate and load-bearing for honest measurement. The eval counts a save by spotting a new, non-setup memory key; an in-place overwrite of a seeded memory would satisfy the contradiction check but register as "no save," tanking save-decision recall. The new UUID keeps a contradiction update counting as the save it actually is.
+That last point is deliberate, and it exists for the sake of measurement. The eval counts a save by spotting a new, non-setup memory key. An in-place overwrite of a seeded memory would satisfy the contradiction check but register as "no save," which tanks save-decision recall. Using a fresh UUID means a contradiction update is still counted as the save it is.
 
 ### Keeping goals out of the auto-classifier
 
-Goals share the same Chroma store as memories, stored with `type="goal"`. But the save path's classifier and judge are typed to a narrow `ClassifiableType = Literal["fact", "preference", "episodic"]` — they physically cannot emit `goal`. A goal is reachable **only** through `manage_goal`. This stops an offhand "I want to learn French" from being silently filed as a goal by `save_memory`, and, because the judge can only target the three classifiable types, it also protects goals from being replaced as a side effect of an ordinary save.
+Goals share the same Chroma store as memories, stored with `type="goal"`. The save path's classifier and judge, though, are typed to a narrow `ClassifiableType = Literal["fact", "preference", "episodic"]`, so they cannot emit `goal` at all. A goal is reachable **only** through `manage_goal`. That stops an offhand "I want to learn French" from being silently filed as a goal by `save_memory`. It also means goals can't be replaced as a side effect of an ordinary save, since the judge can only target the three classifiable types.
 
 ### Memory store
 
-`ChromaStore` is a LangGraph `BaseStore` subclass over a single Chroma collection (`sage_memories`); the store contract is satisfied by implementing `batch` / `abatch`, and the higher-level `get` / `put` / `search` / `delete` dispatch through them. Namespace tuples (`("memories", user_id)`) are encoded as metadata and scoped with a where-filter on every operation, so one collection holds every user's memories — which keeps the eval cheap, since it spins up a fresh store per case. Embeddings are computed locally by a lazily loaded `all-MiniLM-L6-v2` (no embed cost on `--help` or dry-runs). `make_store()` returns an in-memory `EphemeralClient` for hermetic eval runs; `make_store(persist_dir=".chroma/")` returns a `PersistentClient` for the CLI and Streamlit.
+`ChromaStore` is a LangGraph `BaseStore` subclass over a single Chroma collection (`sage_memories`). The store contract is satisfied by implementing `batch` / `abatch`, and the higher-level `get` / `put` / `search` / `delete` dispatch through them. Namespace tuples (`("memories", user_id)`) are encoded as metadata and scoped with a where-filter on every operation, so one collection holds every user's memories. That keeps the eval cheap, since each case spins up a fresh store. Embeddings are computed locally by a lazily loaded `all-MiniLM-L6-v2` (no embed cost on `--help` or dry-runs). `make_store()` returns an in-memory `EphemeralClient` for hermetic eval runs, while `make_store(persist_dir=".chroma/")` returns a `PersistentClient` for the CLI and Streamlit.
 
 ## Evaluation
 
-Both suites run on `openai/gpt-oss-120b:free` via OpenRouter at temperature 0. The free tier is non-deterministic even at temp 0, so action-selection is reported as a **range across three runs**, not a single figure. Result JSONs are committed, so each table reproduces from the cited file.
+Both suites run on `openai/gpt-oss-120b:free` via OpenRouter at temperature 0. The free tier is non-deterministic even at temp 0, so action-selection is reported as a **range across three runs** rather than one number. The result JSONs are committed, so each table reproduces from the cited file.
 
 ### 50-case memory suite
 
-Source: `tests/eval/results/phase4_20260531T194151Z.json` — the agentic re-baseline. Retrieval is model-driven now, so these numbers describe the current graph and supersede the pre-agentic week-by-week runs.
+Source: `tests/eval/results/phase4_20260531T194151Z.json`, the agentic re-baseline. Retrieval is model-driven now, so these numbers describe the current graph and supersede the pre-agentic week-by-week runs.
 
 | Category                 | Pass rate          | Type accuracy   |
 |--------------------------|-------------------:|----------------:|
@@ -81,16 +81,16 @@ Source: `tests/eval/results/phase4_20260531T194151Z.json` — the agentic re-bas
 
 **Save-decision precision / recall / F1: 1.000 / 0.967 / 0.983** (tp 29, fp 0, fn 1, tn 20). **Type accuracy: 83.3%** (25/30 type-eligible cases).
 
-Reading the rows honestly:
+Notes on the rows:
 
 - **`contradiction_update` is 85.7%, not 100%.** Same-facet updates collapse the prior memory correctly in 6 of 7 cases. The holdout is the case_040 Camry→Tesla substitution, which the free-tier judge flips between pass and fail across re-runs.
-- **`retrieval_relevance` holds at 100% despite retrieval now being optional** — the model chooses `search_memory` reliably when the answer is in memory.
-- **Save-decision F1 = 0.983 is the headline invariant.** It survives the pipeline → ReAct conversion because `replace` is DELETE-then-INSERT and still counts as a save. The single false negative (recall 0.967) is the long-standing case_021 episodic miss, which has failed every run since baseline.
-- **Type accuracy 83.3%** — strong on facts and contradiction updates; the classifier stays fuzzy on borderline preference-vs-fact ("does not drink coffee" → fact) and episodic-vs-fact ("graduated from IIT Delhi in 2018" → episodic on the temporal anchor).
+- **`retrieval_relevance` holds at 100% despite retrieval now being optional.** The model chooses `search_memory` reliably when the answer is in memory.
+- **Save-decision F1 holds at 0.983.** It survives the pipeline → ReAct conversion because `replace` is DELETE-then-INSERT and still counts as a save. The single false negative (recall 0.967) is the long-standing case_021 episodic miss, which has failed every run since baseline.
+- **Type accuracy 83.3%** is strong on facts and contradiction updates. The classifier stays fuzzy on borderline preference-vs-fact ("does not drink coffee" → fact) and episodic-vs-fact ("graduated from IIT Delhi in 2018" → episodic on the temporal anchor).
 
 ### 34-case action-selection suite
 
-Sources: `tests/eval/results/phase4b_run{1,2,3}_20260603T*.json`. A case passes only if the model calls **exactly** the expected tool(s) — hitting the target tool **and** not over-calling; `should_chain` cases must match an ordered `expected_sequence`.
+Sources: `tests/eval/results/phase4b_run{1,2,3}_20260603T*.json`. A case passes only if the model calls **exactly** the expected tool(s): it must hit the target tool **and** not over-call. `should_chain` cases must match an ordered `expected_sequence`.
 
 | Run | Overall          | Failing cases                      |
 |----:|-----------------:|------------------------------------|
@@ -100,13 +100,13 @@ Sources: `tests/eval/results/phase4b_run{1,2,3}_20260603T*.json`. A case passes 
 
 **Range 91.2% – 94.1%, mean 93.1%.** Per-category on the worst run (run 3): `search_memory` 4/4, `web_search` 6/6, `manage_goal` 7/7, `save_memory` 6/6, `should_no_tool` 7/9, `should_chain` 1/2.
 
-The sub-100% is the finding, not noise — it's an over-action bias in the free-tier model:
+The gap from 100% is itself the result: the free-tier model has an over-action bias.
 
-- **`act_031` (fails 3/3).** "I finally did it — mark my goal as done!" with **two** active goals in the store. The safe move is to ask *which* goal (no tool); the model fires `manage_goal` anyway and risks closing the wrong one. The chosen label is intentionally strict — calling `manage_goal(list)` to show options is also defensible, and the case documents that.
+- **`act_031` (fails 3/3).** "I finally did it — mark my goal as done!" with **two** active goals in the store. The safe move is to ask *which* goal (no tool); the model fires `manage_goal` anyway and risks closing the wrong one. The chosen label is intentionally strict, since calling `manage_goal(list)` to show options is also defensible, and the case documents that.
 - **`act_032` (fails 3/3).** "Remind me what my name is — oh wait, never mind, it's Alex." The user answers mid-sentence, so any tool call is wasted; the model saves anyway.
 - **`act_029` (fails 1/3, flaky chain).** "What's the weather where I live?" with the city in memory. Expected `search_memory` → `web_search`; in run 3 the model called no tool and answered from nothing. The ordered chain scorer caught the dropped plan; it passed in runs 1–2.
 
-Deeper methodology — what each category tests, why scoring is shaped the way it is, and how to extend the suite without breaking cross-phase comparability — is in [`docs/EVAL.md`](docs/EVAL.md).
+Deeper methodology is in [`docs/EVAL.md`](docs/EVAL.md): what each category tests, why scoring is shaped the way it is, and how to extend the suite without breaking cross-phase comparability.
 
 ## Setup
 
@@ -139,7 +139,7 @@ you> which database do I prefer?
 bot> You prefer Postgres over MySQL.
 ```
 
-`/new` starts a fresh conversation thread while memories persist (that is the whole point — conversation state and long-term memory are decoupled). `/memories` dumps everything stored for the current user; `/quit` exits. By default the store persists to `.chroma/`; pass `--persist-dir ""` for in-memory only.
+`/new` starts a fresh conversation thread while memories persist; that decoupling of conversation state from long-term memory is the whole point. `/memories` dumps everything stored for the current user, and `/quit` exits. By default the store persists to `.chroma/`; pass `--persist-dir ""` for in-memory only.
 
 **Streamlit UI:**
 
@@ -164,7 +164,7 @@ uv run python -m tests.eval.runner --label phase4          # full run with a lab
 uv run python -m tests.eval.action_runner --runs 3 --label phase4b   # 3 runs → accuracy range
 ```
 
-When scoring rules change but the agent's outputs haven't, re-score a stored run offline — no LLM calls:
+When scoring rules change but the agent's outputs haven't, you can re-score a stored run offline with no LLM calls:
 
 ```bash
 uv run python -m tests.eval.rescore tests/eval/results/phase4_20260531T194151Z.json
@@ -177,13 +177,13 @@ What they cover:
 
 ## Tech stack
 
-- **Orchestration** — LangGraph (`>=0.6`); explicit state machine with first-class store and checkpointer.
-- **LLM** — `ChatOpenAI` pointed at OpenRouter's OpenAI-compatible endpoint; default `openai/gpt-oss-120b:free`, chosen for the strongest tool-calling among current free models. `model.py` is a one-function swap to move to Claude or any other provider.
-- **Embeddings** — `sentence-transformers` / `all-MiniLM-L6-v2`, local and lazily loaded ($0, no API embedding cost).
-- **Vector store** — `chromadb`, embedded (`EphemeralClient` for tests, `PersistentClient` for the CLI / Streamlit).
-- **Web search** — `ddgs` (keyless DuckDuckGo).
-- **UI** — Streamlit, with `@st.cache_resource` on the graph build so the embedder loads once per session.
-- **Env / packaging** — `python-dotenv`, `uv` (committed `uv.lock`), hatchling build.
+- **Orchestration**: LangGraph (`>=0.6`); explicit state machine with first-class store and checkpointer.
+- **LLM**: `ChatOpenAI` pointed at OpenRouter's OpenAI-compatible endpoint; default `openai/gpt-oss-120b:free`, chosen for the strongest tool-calling among current free models. Swapping `model.py` to Claude or any other provider is a one-function change.
+- **Embeddings**: `sentence-transformers` / `all-MiniLM-L6-v2`, local and lazily loaded ($0, no API embedding cost).
+- **Vector store**: `chromadb`, embedded (`EphemeralClient` for tests, `PersistentClient` for the CLI / Streamlit).
+- **Web search**: `ddgs` (keyless DuckDuckGo).
+- **UI**: Streamlit, with `@st.cache_resource` on the graph build so the embedder loads once per session.
+- **Env / packaging**: `python-dotenv`, `uv` (committed `uv.lock`), hatchling build.
 
 ## Project layout
 
@@ -210,13 +210,13 @@ TROUBLESHOOTING.md      symptom → cause → fix for gotchas hit during the bui
 
 ## Status & limitations
 
-The memory system and the four-tool agentic build are complete and measured; the tables above are the current state, not aspirations.
+The memory system and the four-tool agentic build are complete and measured. The tables above describe what the code does today.
 
-- The free-tier model is non-deterministic even at temperature 0. `contradiction_update` (case_040) and the chain case (`act_029`) flip across re-runs, and the over-action traps (`act_031`, `act_032`) fail consistently — all named above rather than averaged away.
-- There is no pytest unit suite yet; the eval harnesses are the verification story. `pytest` is configured in `pyproject.toml` for future unit tests.
-- The Streamlit Community Cloud filesystem resets on reboot, so `.chroma/` is not durable there — memories persist within a session, not across Cloud restarts. See `TROUBLESHOOTING.md`.
+- The free-tier model is non-deterministic even at temperature 0. `contradiction_update` (case_040) and the chain case (`act_029`) flip across re-runs, while the over-action traps (`act_031`, `act_032`) fail consistently. Each of these is listed by case ID above.
+- There is no pytest unit suite; the evaluation harnesses are what verifies behaviour. `pytest` is configured in `pyproject.toml` for unit tests added later.
+- The Streamlit Community Cloud filesystem resets on reboot, so `.chroma/` is not durable there: memories persist within a session but not across Cloud restarts. See `TROUBLESHOOTING.md`.
 
-**Not built yet:** decay / consolidation (TTL on episodic memories, periodic dedupe), reflection / auto-summarization of accumulated memories, and a second-opinion eval on a stronger model to cross-check the free-tier numbers.
+**Possible extensions:** decay and consolidation (a TTL on episodic memories, periodic dedupe), reflection / auto-summarization of accumulated memories, and a second-opinion eval on a stronger model to cross-check the free-tier numbers.
 
 ## License
 
