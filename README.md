@@ -3,6 +3,8 @@
 A memory-augmented chat agent built on a LangGraph ReAct loop. It decides for itself when to recall a memory, save one, search the web, or track a goal. Two evaluation suites score whether those decisions are the right ones.
 
 > **Live demo:** [sage-agent.streamlit.app](https://sage-agent.streamlit.app/). Tell it something about yourself, reload the page, and ask it back.
+>
+> **Write-up:** [the story behind it, and the numbers](https://manvendra-github.github.io/2026/06/25/i-didnt-want-to-build-a-memory-agent.html).
 
 ## What it does
 
